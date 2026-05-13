@@ -1,0 +1,64 @@
+name: kitomat-openclaw-precheck
+version: 0.1.0
+purpose: Advisory pre-review for incoming KItomat contributions.
+language: de
+
+inputs:
+  - artifact_path
+  - changed_files
+  - issue_or_pr_context
+  - validator_output
+  - optional_peer_notes
+
+allowed_artifact_types:
+  - prompt_package
+  - dataset_package
+  - model
+
+checks:
+  - required_files_present
+  - metadata_common_fields_present
+  - metadata_type_fields_present
+  - scenario_triad_present
+  - expert_feedback_present
+  - sources_declared
+  - license_status_declared
+  - data_risk_plausible
+  - human_review_required_set
+  - pii_heuristic_reviewed
+  - sensitive_domain_escalation
+
+output_statuses:
+  - needs_fixes
+  - needs_sources
+  - needs_trust_review
+  - ready_for_human_eval
+  - post_mvp_recommended
+
+hard_stops:
+  - real_personal_data
+  - real_customer_data
+  - health_data
+  - confidential_finance_data
+  - real_hr_or_application_documents
+  - internal_company_documents
+  - unclear_local_file_uploads
+  - legal_or_audit_claims
+  - automated_decisions_about_people
+
+handoff:
+  ready_for_human_eval: human_admin_review
+  needs_fixes: contributor_revision
+  needs_sources: contributor_source_work
+  needs_trust_review: maintainer_trust_review
+  post_mvp_recommended: roadmap_or_backlog
+
+not_allowed:
+  - approve_publication
+  - merge_pull_requests
+  - push_to_main
+  - assign_final_bronze
+  - create_releases
+  - provide_legal_advice
+  - claim_audit_completion
+

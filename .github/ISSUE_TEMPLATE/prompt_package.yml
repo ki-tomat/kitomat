@@ -1,0 +1,64 @@
+name: Prompt-Paket
+description: Ein neues Prompt-Paket fuer KItomat vorschlagen.
+title: "[prompt] <artifact-id>"
+labels: ["prompt_package", "needs_human_input"]
+body:
+  - type: input
+    id: participant_code
+    attributes:
+      label: Teilnehmercode oder Team
+      placeholder: "p01 oder team-marketing"
+    validations:
+      required: true
+  - type: input
+    id: artifact_id
+    attributes:
+      label: Artefakt-ID
+      placeholder: "seo-content-brief-kmu"
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case
+      description: Welches konkrete Problem loest das Prompt-Paket?
+    validations:
+      required: true
+  - type: textarea
+    id: target_users
+    attributes:
+      label: Zielgruppe
+    validations:
+      required: true
+  - type: textarea
+    id: inputs_outputs
+    attributes:
+      label: Eingaben und erwarteter Output
+    validations:
+      required: true
+  - type: textarea
+    id: scenario_triad
+    attributes:
+      label: Szenario-Triade
+      description: Positiv, nachbearbeitbar, negativ mit Expertenfeedback.
+    validations:
+      required: true
+  - type: dropdown
+    id: data_risk
+    attributes:
+      label: Datenrisiko
+      options:
+        - green
+        - yellow
+        - red
+        - unclear
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Quellen oder Quellenstatus
+      description: Keine erfundenen Quellen. Abrufdatum nennen, falls Quellen genutzt werden.
+    validations:
+      required: true
+

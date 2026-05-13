@@ -1,0 +1,31 @@
+name: Validate artifacts
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install validator dependencies
+        run: python -m pip install pyyaml
+
+      - name: Validate metadata
+        run: python tools/validators/validate_metadata.py
+
+      - name: Validate completeness
+        run: python tools/validators/validate_completeness.py
+
+      - name: PII heuristic scan
+        run: python tools/validators/pii_heuristic.py

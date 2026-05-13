@@ -1,0 +1,23 @@
+id: replace-with-artifact-id
+artifact_type: dataset_package
+title: "Replace with title"
+category: replace-with-category
+status: draft
+language: de
+version: "0.1.0"
+maintainer: pXX
+license: CC-BY-4.0
+license_status: declared
+data_risk: green
+human_review_required: true
+ai_act_proximity: none
+legal_disclaimer: "Synthetisches oder quellenbasiertes Kontextpaket. Nutzung, Lizenz und Aktualitaet muessen im eigenen Kontext geprueft werden."
+sources_status: provided
+linked_artifacts:
+  - "replace-with-linked-artifact"
+data_origin: synthetic
+contains_personal_data: false
+contains_sensitive_data: false
+sources_date: "2026-05-13"
+usage_scope: "Replace with usage scope"
+

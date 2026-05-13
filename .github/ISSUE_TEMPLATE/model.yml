@@ -1,0 +1,56 @@
+name: KMU-/Branchenmodell
+description: Ein Beratungs-, Denk- oder Prozessmodell vorschlagen.
+title: "[model] <artifact-id>"
+labels: ["model", "needs_human_input"]
+body:
+  - type: input
+    id: participant_code
+    attributes:
+      label: Teilnehmercode oder Team
+      placeholder: "p13 oder team-models"
+    validations:
+      required: true
+  - type: input
+    id: artifact_id
+    attributes:
+      label: Artefakt-ID
+    validations:
+      required: true
+  - type: textarea
+    id: model_purpose
+    attributes:
+      label: Modellzweck
+    validations:
+      required: true
+  - type: textarea
+    id: target_users
+    attributes:
+      label: Zielgruppe
+    validations:
+      required: true
+  - type: textarea
+    id: model_steps
+    attributes:
+      label: Schritte, Felder oder Canvas-Struktur
+    validations:
+      required: true
+  - type: textarea
+    id: scenario_triad
+    attributes:
+      label: Szenario-Triade
+      description: Positiv, nachbearbeitbar, negativ mit Expertenfeedback.
+    validations:
+      required: true
+  - type: textarea
+    id: limits
+    attributes:
+      label: Grenzen und Failure Modes
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Quellen oder Framework-Bezuege
+    validations:
+      required: true
+

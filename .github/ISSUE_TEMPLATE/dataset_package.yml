@@ -1,0 +1,61 @@
+name: Datensatz-/Quellenpaket
+description: Ein Quellen-, Kontext- oder synthetisches Datenpaket vorschlagen.
+title: "[dataset] <artifact-id>"
+labels: ["dataset_package", "needs_human_input"]
+body:
+  - type: input
+    id: participant_code
+    attributes:
+      label: Teilnehmercode oder Team
+      placeholder: "p09 oder team-sources"
+    validations:
+      required: true
+  - type: input
+    id: artifact_id
+    attributes:
+      label: Artefakt-ID
+    validations:
+      required: true
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Zweck
+      description: Welchen Prompt oder welches Modell stuetzt dieses Paket?
+    validations:
+      required: true
+  - type: dropdown
+    id: data_origin
+    attributes:
+      label: Herkunft
+      options:
+        - synthetic
+        - self_created
+        - public_sources
+        - mixed
+        - unclear
+    validations:
+      required: true
+  - type: textarea
+    id: sources_license
+    attributes:
+      label: Quellen, Lizenzstatus, Abrufdatum
+    validations:
+      required: true
+  - type: textarea
+    id: scenario_triad
+    attributes:
+      label: Szenario-Triade oder Beispiele
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Daten-Sicherheitscheck
+      options:
+        - label: Enthaelt keine echten personenbezogenen Daten
+          required: true
+        - label: Enthaelt keine echten Kundendaten
+          required: true
+        - label: Enthaelt keine internen Unternehmensdokumente
+          required: true
+

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KItomat Metadata",
+  "type": "object",
+  "required": [
+    "id",
+    "artifact_type",
+    "title",
+    "category",
+    "status",
+    "language",
+    "version",
+    "maintainer",
+    "license",
+    "license_status",
+    "data_risk",
+    "human_review_required",
+    "ai_act_proximity",
+    "legal_disclaimer",
+    "sources_status"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "artifact_type": { "enum": ["prompt_package", "dataset_package", "model"] },
+    "title": { "type": "string", "minLength": 3 },
+    "category": { "type": "string", "minLength": 2 },
+    "status": {
+      "enum": ["draft", "bronze_candidate", "bronze", "silver_candidate", "silver", "gold_candidate", "gold"]
+    },
+    "language": { "type": "string", "minLength": 2 },
+    "version": { "type": "string" },
+    "maintainer": { "type": "string", "minLength": 2 },
+    "license": { "type": "string", "minLength": 2 },
+    "license_status": { "enum": ["declared", "unclear", "not_applicable"] },
+    "data_risk": { "enum": ["green", "yellow", "red"] },
+    "human_review_required": { "type": "boolean" },
+    "ai_act_proximity": {
+      "enum": ["none", "transparency", "high_risk_adjacent", "prohibited_check", "unclear"]
+    },
+    "legal_disclaimer": { "type": "string", "minLength": 10 },
+    "sources_status": {
+      "enum": ["not_required", "missing", "provided", "checked", "unverified"]
+    }
+  },
+  "additionalProperties": true
+}
+

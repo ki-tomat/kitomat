@@ -1,0 +1,24 @@
+id: replace-with-artifact-id
+artifact_type: prompt_package
+title: "Replace with title"
+category: replace-with-category
+status: draft
+language: de
+version: "0.1.0"
+maintainer: pXX
+license: CC-BY-4.0
+license_status: declared
+data_risk: green
+human_review_required: true
+ai_act_proximity: none
+legal_disclaimer: "Arbeits- und Orientierungshilfe. Keine Rechtsberatung, kein Audit, kein produktives Entscheidungswerkzeug."
+sources_status: not_required
+target_users:
+  - "Replace with target users"
+use_case: "Replace with concrete use case"
+required_inputs:
+  - "Replace with required input"
+output_format: "Replace with expected output format"
+personal_data_possible: false
+evaluation_criteria: "Siehe evaluation.md"
+

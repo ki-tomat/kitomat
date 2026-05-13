@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KItomat Dataset Package Metadata",
+  "allOf": [
+    { "$ref": "metadata.schema.json" },
+    {
+      "type": "object",
+      "required": [
+        "linked_artifacts",
+        "data_origin",
+        "contains_personal_data",
+        "contains_sensitive_data",
+        "sources_date",
+        "usage_scope"
+      ],
+      "properties": {
+        "artifact_type": { "const": "dataset_package" },
+        "linked_artifacts": { "type": "array" },
+        "data_origin": { "type": "string", "minLength": 3 },
+        "contains_personal_data": { "type": "boolean" },
+        "contains_sensitive_data": { "type": "boolean" },
+        "sources_date": { "type": "string" },
+        "usage_scope": { "type": "string", "minLength": 3 }
+      }
+    }
+  ]
+}
+

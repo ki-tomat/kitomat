@@ -1,0 +1,27 @@
+id: replace-with-artifact-id
+artifact_type: model
+title: "Replace with title"
+category: replace-with-category
+status: draft
+language: de
+version: "0.1.0"
+maintainer: pXX
+license: CC-BY-4.0
+license_status: declared
+data_risk: yellow
+human_review_required: true
+ai_act_proximity: unclear
+legal_disclaimer: "Orientierungshilfe. Keine Rechtsberatung, kein Audit, kein produktives Entscheidungswerkzeug."
+sources_status: provided
+model_type: worksheet
+target_users:
+  - "Replace with target users"
+use_case: "Replace with use case"
+required_inputs:
+  - "Replace with required input"
+output_format: "Replace with output format"
+application_scope: "Workshop, Vorpruefung oder Orientierung"
+framework_references:
+  - "Replace with reference"
+required_review_level: trust_review
+
