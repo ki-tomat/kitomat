@@ -20,4 +20,9 @@ contains_personal_data: false
 contains_sensitive_data: false
 sources_date: "2026-05-13"
 usage_scope: "Replace with usage scope"
-
+release_asset_required: false
+release_asset_name: ""
+release_asset_version: ""
+release_asset_size_mb: ""
+release_asset_sha256: ""
+release_asset_url: ""

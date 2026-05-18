@@ -45,6 +45,7 @@ TYPE_REQUIRED = {
         "contains_sensitive_data",
         "sources_date",
         "usage_scope",
+        "release_asset_required",
     },
     "model": {
         "model_type",

@@ -20,3 +20,16 @@
 3. Ergebnisse menschlich pruefen.
 4. Bei Risiko `yellow` oder `red` Trust Review anfordern.
 
+## Download-Nutzung
+
+Groessere Dateien werden als GitHub Release Assets verlinkt.
+
+Vor Nutzung pruefen:
+
+1. Version.
+2. SHA-256-Pruefsumme.
+3. Lizenzstatus.
+4. Quellenstatus.
+5. Datenrisiko.
+
+Nicht nutzen, wenn Herkunft, Lizenz oder Datenrisiko unklar sind.

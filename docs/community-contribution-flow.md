@@ -17,6 +17,8 @@ Public visibility does not mean that contributions are automatically accepted or
 
 External contributors do not push directly to `main`.
 
+If large files are needed, describe them first. Maintainers publish reviewed files as GitHub Release Assets rather than accepting large binary files directly in Git.
+
 ## Participant path
 
 Participants can use one of two paths:
@@ -76,4 +78,3 @@ Do not submit:
 - copied full texts with unclear rights
 - legal, audit or compliance approval claims
 - automated decisions about people
-

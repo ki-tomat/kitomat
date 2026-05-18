@@ -27,6 +27,7 @@ Check:
 - data risk
 - legal disclaimer
 - human review requirement
+- release asset metadata when large download files are involved
 
 ## Output
 
@@ -47,5 +48,5 @@ Allowed status values:
 - Do not provide legal advice.
 - Do not claim audit completion.
 - Do not accept real personal or sensitive data.
+- Do not approve release assets.
 - If risk is unclear, choose review escalation.
-
