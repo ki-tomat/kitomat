@@ -13,6 +13,10 @@
 
 ## Step-by-step guides
 
+- [Teilnehmerpaket README](teilnehmerpaket/README.md)
+- [Teilnehmerpaket Projektueberblick](teilnehmerpaket/01_PROJEKT_UEBERBLICK.md)
+- [Teilnehmerpaket Claude/ChatGPT Prompts](teilnehmerpaket/06_CLAUDE_CHATGPT_PROMPTS.md)
+- [Teilnehmerpaket Abgabe-Checkliste](teilnehmerpaket/09_ABGABE_CHECKLISTE.md)
 - [Participant step by step](guides/participant-step-by-step.md)
 - [External contributor step by step](guides/external-contributor-step-by-step.md)
 - [Import batch step by step](guides/import-batch-step-by-step.md)
