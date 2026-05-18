@@ -1,0 +1,9 @@
+# Default review owner for public contributions.
+#
+# Replace or extend this with a maintainer team such as:
+# * @ki-tomat/maintainers
+#
+# Until a dedicated team exists, SKZL-AI is the default review owner.
+
+* @SKZL-AI
+

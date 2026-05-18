@@ -3,6 +3,7 @@
 ## Start
 
 - [Getting started](getting-started.md)
+- [Community contribution flow](community-contribution-flow.md)
 - [Artifact standard](artifact-standard.md)
 - [Trust layer guide](trust-layer-guide.md)
 - [Review process](review-process.md)

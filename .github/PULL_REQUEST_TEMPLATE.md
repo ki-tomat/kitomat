@@ -32,8 +32,9 @@
 - [ ] Peer Review noetig
 - [ ] Trust Review noetig
 - [ ] Maintainer-Entscheidung noetig
+- [ ] OpenClaw/Codex-Vorpruefung dokumentiert oder nicht erforderlich
+- [ ] Kein Merge ohne menschliche Freigabe
 
 ## Hinweise
 
 <!-- Offene Fragen, bekannte Risiken, automatische Syntax-Fixes, OpenClaw/Codex-Hinweise -->
-

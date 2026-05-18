@@ -54,6 +54,20 @@ Ein Pull Request sollte enthalten:
 - Hinweis, ob Peer Review und Trust Review noetig sind
 - kurze Liste automatischer Syntax- oder Struktur-Fixes, falls Codex geholfen hat
 
+## Externe Beitraege
+
+Externe Community-Beitraege laufen bevorzugt ueber Fork plus Pull Request.
+
+Regeln:
+
+- kein direkter Push auf `main`
+- ein Pull Request pro Hauptartefakt oder klar begrenztem Fix
+- keine Klarnamen in Beispieldaten oder Metadaten
+- keine echten Kunden-, Personen-, HR-, Gesundheits- oder vertraulichen Finanzdaten
+- Quellen mit Herkunft, Lizenzstatus und Abrufdatum dokumentieren
+- Status maximal `draft` oder `bronze_candidate` vorschlagen
+- OpenClaw/Codex-Vorfeedback ist kein Merge- oder Release-Approval
+
 ## Review
 
 Peer Review prueft:
@@ -74,3 +88,12 @@ Trust Review prueft nach Risiko:
 - sensible Bereiche
 - lokale Datei-Uploads
 
+## Maintainer Gate
+
+Nur Maintainer entscheiden:
+
+- Merge nach `main`
+- finaler Status `bronze`
+- Aufnahme in `v0.1-rc`
+- Rueckstellung auf `post_mvp`
+- oeffentliche Kommunikation

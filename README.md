@@ -45,16 +45,21 @@ Nicht erlaubt im MVP:
 
 ## Mitmachen
 
+KItomat ist oeffentlich, aber nicht offen fuer direkte Veroeffentlichung ohne Review.
+
 1. Waehle genau ein Hauptartefakt: Prompt, Datensatz/Quelle oder Modell.
 2. Nutze das passende Template.
 3. Fuelle `metadata.yml` vollstaendig aus.
 4. Ergaenze ein synthetisches Beispiel und eine Szenario-Triade.
 5. Markiere Quellen, Risiken und offene Review-Fragen.
-6. Reiche per Pull Request oder ueber den Maintainer ein.
+6. Reiche per Pull Request, Fork oder ueber den Maintainer-Import ein.
+7. Warte auf Validatoren, Vorpruefung und menschliche Review.
 
 Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [docs/getting-started.md](docs/getting-started.md).
 
 Maintainer-Setup: [docs/admin-github-setup.md](docs/admin-github-setup.md). OpenClaw-Vorpruefung: [docs/openclaw-pre-review.md](docs/openclaw-pre-review.md).
+
+Community Flow: [docs/community-contribution-flow.md](docs/community-contribution-flow.md).
 
 ## Statusmodell
 
@@ -75,3 +80,7 @@ Nicht regulaer im MVP:
 - `gold`
 
 Codex und andere agentische KI-Tools duerfen Struktur, Syntax und formale Readiness pruefen. Fachliche Freigabe, Trust Review, Merge und Release bleiben menschliche Entscheidungen.
+
+## Reviewed-only Regel
+
+Direkte Veroeffentlichung ueber `main` ist nicht der normale Beitragsweg. Beitraege laufen ueber Pull Request, Validatoren und mindestens eine menschliche Review. Maintainer entscheiden Merge, Status und Release-Aufnahme.

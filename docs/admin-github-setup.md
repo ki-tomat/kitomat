@@ -9,7 +9,7 @@ This guide is for maintainers who prepare `ki-tomat/kitomat` for public collabor
 - URL: `https://github.com/ki-tomat/kitomat`
 - Default release target: `v0.1-rc`
 
-The repository can be private during setup and made public only after the license, privacy and review gates are confirmed.
+The repository is public. Publication is still controlled through pull requests, validators and human maintainer review.
 
 ## Local bootstrap commands
 
@@ -43,7 +43,7 @@ Before participant work is merged:
 
 ## Branch protection status
 
-Target rule for `main`:
+Active target rule for `main`:
 
 - pull request required before merge
 - at least one approving human review
@@ -54,7 +54,7 @@ Target rule for `main`:
 
 The machine-readable target config is stored in `.github/branch-protection.main.json`.
 
-Important: If GitHub rejects branch protection for a private repository, keep the repository private and use a manual maintainer gate until either the repository is made public or the organization plan supports branch protection on private repositories.
+If GitHub rejects branch protection in another setup, use the manual maintainer gate until the repository is public or the organization plan supports branch protection.
 
 Manual private-mode gate:
 
