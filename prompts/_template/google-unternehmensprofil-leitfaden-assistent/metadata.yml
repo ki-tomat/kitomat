@@ -1,0 +1,256 @@
+schema_version: '1.0'
+package_id: google-unternehmensprofil-leitfaden-assistent
+title: Google-Unternehmensprofil Leitfaden-Assistent
+subtitle: Interaktiver Leitfaden zur Erstellung, Prüfung und Optimierung eines Google
+  Unternehmensprofils
+version: 0.1.0
+status: draft
+language: de
+created_at: '2026-05-11'
+last_updated_at: '2026-05-11'
+artifact_type: prompt-package
+prompt_type: interactive_guided_prompt
+category: Online-Marketing
+subcategory: Lokales Marketing / Google Unternehmensprofil
+keywords:
+- Google Unternehmensprofil
+- Google Business Profile
+- lokales Marketing
+- Local SEO
+- Online-Marketing
+- Rezensionen
+- Unternehmensbeschreibung
+- Profil-Audit
+- kleine Unternehmen
+short_description: 'Dieses Prompt-Paket führt Nutzer Schritt für Schritt durch die
+  Erstellung, Prüfung oder Optimierung eines Google Unternehmensprofils.
+
+  '
+description: 'Der Prompt unterstützt kleine lokale Unternehmen, Selbstständige und
+  Marketing-Anfänger dabei, ein bestehendes Google Unternehmensprofil zu überprüfen
+  oder ein neues Profil vorzubereiten. Er arbeitet interaktiv, unterscheidet zwischen
+  Audit- und Aufbau-Modus und erstellt am Ende einen priorisierten Maßnahmenplan mit
+  Textvorschlägen, offenen Fragen, Risikohinweisen und Pflege-Checkliste.
+
+  '
+primary_goal: 'Nutzer sollen ein Google Unternehmensprofil strukturiert aufbauen,
+  überprüfen und verbessern können, ohne dass die KI Unternehmensdaten, offizielle
+  Google-Kategorien oder Erfolgsgarantien erfindet.
+
+  '
+target_users:
+- kleine lokale Unternehmen
+- Selbstständige
+- lokale Dienstleister
+- Handwerksbetriebe
+- Cafés, Restaurants und Einzelhandel
+- Praxen, Studios und Bildungseinrichtungen
+- Marketing-Anfänger
+- Community-Mitglieder mit Bedarf an einem geführten Online-Marketing-Workflow
+not_suitable_for:
+- große Filialketten mit komplexem Standortmanagement
+- stark regulierte Branchen ohne zusätzliche Fachprüfung
+- Unternehmen ohne klaren lokalen Bezug
+- Fälle, in denen verbindliche Rechtsberatung erwartet wird
+- Fälle, in denen eine offizielle Google-Freigabe oder Ranking-Garantie erwartet wird
+difficulty: beginner
+required_marketing_knowledge: gering
+interactivity_level: hoch
+expected_usage_style: Schritt-für-Schritt-Dialog
+modes:
+- id: existing_profile_audit
+  name: Bestehendes Profil überprüfen
+  description: 'Der Prompt führt einen strukturierten Audit eines vorhandenen Google
+    Unternehmensprofils durch und leitet konkrete Optimierungen ab.
+
+    '
+- id: new_profile_setup
+  name: Neues Profil vorbereiten
+  description: 'Der Prompt sammelt die nötigen Informationen für ein neues Google
+    Unternehmensprofil und erstellt einen priorisierten Startplan.
+
+    '
+- id: profile_status_unclear
+  name: Profilstatus klären
+  description: 'Der Prompt hilft Nutzern, zuerst zu klären, ob bereits ein Profil
+    existiert oder beansprucht werden muss.
+
+    '
+input_required:
+- 'Profilstatus: vorhanden, nicht vorhanden oder unsicher'
+- Unternehmensname
+- Branche oder Tätigkeit
+- Standort oder Einzugsgebiet
+- wichtigstes Ziel des Profils
+input_optional:
+- bestehende Unternehmensbeschreibung
+- aktuelle Kategorien oder Kategorie-Ideen
+- Öffnungszeiten und Sonderöffnungszeiten
+- Telefonnummer und Website
+- Liste der Leistungen, Produkte oder Angebote
+- Zielgruppe
+- vorhandene Fotos oder geplante Fotomotive
+- Beispiele für Rezensionen
+- bisherige Beiträge oder geplante Aktualisierungen
+- interne Tonalitätsvorgaben
+expected_outputs:
+- Einschätzung des aktuellen Stands
+- strukturierter Audit oder Aufbauplan
+- optimierte Unternehmensbeschreibung
+- Vorschläge zur Leistungs- oder Angebotsstruktur
+- Fotoliste mit Prioritäten
+- Hinweise zum Rezensionenmanagement
+- Ideen für Beiträge und Aktualisierungen
+- Richtlinien- und Vertrauensrisiken
+- offene Fragen
+- priorisierte To-do-Liste
+- monatliche Pflege-Checkliste
+included_files:
+- path: MANIFEST.md
+  purpose: Übersicht über Paketinhalt und Prüfergebnis
+- path: README.md
+  purpose: Erklärung des Prompt-Pakets, Zielgruppe, Nutzung, Grenzen und Qualitätskriterien
+- path: prompt.md
+  purpose: Direkt nutzbarer Leitfaden-Prompt
+- path: metadata.yml
+  purpose: Strukturierte Metadaten für die Prompt-Bibliothek
+- path: sources.md
+  purpose: Quellenstatus, Datenstatus, Lizenz- und Prüfhinweise
+- path: scenario-triad.md
+  purpose: Positives, nachbearbeitbares und negatives Szenario mit Expertenfeedback
+- path: PR_DESCRIPTION.md
+  purpose: Vorlage für die Pull-Request-Beschreibung auf GitHub
+- path: GITHUB_UPLOAD_CHECKLIST.md
+  purpose: Checkliste für GitHub-Upload und Pull Request
+- path: examples/input-neues-profil-cafe.md
+  purpose: Beispielinput für ein neues Google Unternehmensprofil
+- path: examples/output-neues-profil-cafe.md
+  purpose: Beispieloutput zum neuen Profil
+- path: examples/input-audit-friseur.md
+  purpose: Beispielinput für den Audit eines bestehenden Profils
+- path: examples/output-audit-friseur.md
+  purpose: Beispieloutput zum Profil-Audit
+- path: evaluation.md
+  purpose: Bewertungskriterien und Testfragen
+- path: failure-modes.md
+  purpose: Typische Fehler, Risiken und Gegenmaßnahmen
+risk_level: mittel
+risk_reasoning: 'Das Prompt-Paket bearbeitet öffentlich sichtbare Unternehmensinformationen,
+  Rezensionen und lokale Marketingmaßnahmen. Risiken entstehen vor allem durch falsche
+  Angaben, übertriebene Versprechen, problematische Bewertungsanfragen, Datenschutzfehler
+  oder die Verwechslung von KI-Empfehlungen mit offiziellen Google-Vorgaben.
+
+  '
+risk_domains:
+- Faktentreue
+- Datenschutz
+- Reputation
+- Plattformrichtlinien
+- Marketingversprechen
+- lokale Sichtbarkeit
+human_review_required: true
+human_review_focus:
+- Sind alle Unternehmensdaten korrekt?
+- Sind fehlende Angaben klar als offen markiert?
+- Wurden keine offiziellen Google-Kategorien erfunden?
+- Wurden keine Ranking- oder Freigabegarantien gegeben?
+- Sind Formulierungen glaubwürdig und nicht übertrieben?
+- Werden Rezensionen datenschutzfreundlich und deeskalierend behandelt?
+- Sind Richtlinienfragen als Prüfpunkt markiert?
+guardrails:
+- Keine Unternehmensdaten erfinden.
+- Fehlende Informationen als offen markieren.
+- Keine offiziellen Google-Kategorien erfinden.
+- Keine Garantie geben, dass Google Angaben akzeptiert.
+- Keine Ranking-Garantie geben.
+- Keine Rechtsberatung geben.
+- Keine gekauften oder manipulierten Bewertungen empfehlen.
+- Keine Gegenleistung für positive Bewertungen vorschlagen.
+- Keine personenbezogenen Kundendaten öffentlich verwenden.
+- Keine aggressiven oder herabwürdigenden Antworten auf Rezensionen formulieren.
+- Keine übertriebenen Werbeversprechen erzeugen.
+- Bei Unsicherheit Rückfragen stellen oder Prüfung anhand offizieller Google-Richtlinien
+  empfehlen.
+privacy_notes:
+- Rezensionen nur anonymisiert verwenden, wenn Beispiele verarbeitet werden.
+- Keine Namen, Telefonnummern, E-Mail-Adressen oder internen Kundendetails in öffentliche
+  Antworten übernehmen.
+- Keine vertraulichen Unternehmensinformationen in Beispieloutputs verwenden.
+quality_criteria:
+- Der Prompt führt Anfänger verständlich durch den Prozess.
+- Der Prompt stellt nicht zu viele Fragen auf einmal.
+- Der Prompt unterscheidet sauber zwischen bestehendem Profil und neuem Profil.
+- Der Prompt liefert konkrete nächste Schritte statt nur allgemeiner Hinweise.
+- Der Prompt kennzeichnet Unsicherheit und fehlende Informationen.
+- Der Prompt vermeidet erfundene Fakten und übertriebene Marketingaussagen.
+- Der Prompt erzeugt am Ende eine priorisierte To-do-Liste.
+- Der Prompt berücksichtigt Pflege, Rezensionen, Fotos, Beiträge und Profilbeschreibung.
+test_scenarios:
+- id: new_profile_cafe
+  name: Neues Profil für ein fiktives Café vorbereiten
+  expected_files:
+  - examples/input-neues-profil-cafe.md
+  - examples/output-neues-profil-cafe.md
+- id: existing_profile_friseur
+  name: Bestehendes Profil eines fiktiven Friseursalons prüfen
+  expected_files:
+  - examples/input-audit-friseur.md
+  - examples/output-audit-friseur.md
+known_failure_modes:
+- Der Prompt stellt zu viele Fragen auf einmal.
+- Der Prompt erfindet fehlende Unternehmensdaten.
+- Der Prompt behauptet, eine bestimmte Google-Kategorie sei garantiert richtig.
+- Der Prompt gibt eine Freigabe- oder Ranking-Garantie.
+- Der Prompt erzeugt keyword-überladene und unnatürliche Texte.
+- Der Prompt empfiehlt problematische Bewertungsanfragen.
+- Der Prompt ignoriert Datenschutz bei Rezensionen.
+- Der Prompt liefert nur Textbausteine, aber keinen Maßnahmenplan.
+- Der Prompt unterscheidet nicht klar zwischen Audit und Neuaufbau.
+model_requirements:
+- Dialogfähigkeit
+- Fähigkeit, strukturierte Fragen zu stellen
+- Fähigkeit, fehlende Informationen zu markieren
+- Fähigkeit, tabellarische und priorisierte Ausgaben zu erzeugen
+recommended_model_behavior:
+- interaktiv arbeiten
+- kurze, verständliche Erklärungen geben
+- auf Antworten warten, bevor der nächste Abschnitt gestartet wird
+- zwischen Fakten, Annahmen und Prüfhinweisen unterscheiden
+- am Ende eine klare Zusammenfassung erstellen
+limitations:
+- Der Prompt ersetzt keine offiziellen Google-Richtlinien.
+- Der Prompt kann ohne bereitgestellte Daten kein Live-Profil prüfen.
+- Der Prompt garantiert keine bessere Platzierung in Google Suche oder Google Maps.
+- Der Prompt garantiert keine Freigabe durch Google.
+- Der Prompt ersetzt keine Rechtsberatung, Datenschutzberatung oder professionelle
+  Branchenprüfung.
+license: CC BY 4.0
+maintainers:
+- Community-Projekt
+review_status:
+  peer_review: offen
+  trust_review: offen
+  field_test: offen
+audit_status:
+  prompt_md_created: true
+  readme_md_created: true
+  metadata_yml_created: true
+  sources_md_created: true
+  scenario_triad_created: true
+  examples_created: true
+  evaluation_created: true
+  failure_modes_created: true
+  github_ready_package_created: true
+id: google-unternehmensprofil-leitfaden-assistent
+maintainer: Fabian Laude / Community-Projekt
+license_status: self_created_with_public_references
+data_risk: green
+ai_act_proximity: low
+legal_disclaimer: true
+sources_status: documented
+scenario_triad:
+  positive: Neues Profil für fiktives Café vorbereiten
+  editable: Bestehendes Profil eines fiktiven Friseursalons auditieren
+  negative: Manipulative Bewertungsanfrage oder erfundene Unternehmensdaten sicher
+    ablehnen/umlenken
+  file: scenario-triad.md
