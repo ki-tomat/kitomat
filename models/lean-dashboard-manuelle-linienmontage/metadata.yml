@@ -1,0 +1,46 @@
+id: lean-dashboard-manuelle-linienmontage
+artifact_type: model
+title: "Lean-Dashboard fuer manuelle Linienmontage"
+category: production_operations_lean_management
+status: bronze_candidate
+language: de
+version: "0.1.0"
+maintainer: Murat-777
+license: CC-BY-4.0
+license_status: unclear
+data_risk: yellow
+human_review_required: true
+ai_act_proximity: high_risk_adjacent
+legal_disclaimer: "Orientierungshilfe. Keine Rechtsberatung, kein Audit, keine Arbeitssicherheitsfreigabe und kein produktives Entscheidungswerkzeug."
+sources_status: unverified
+model_type: worksheet
+ target_users:
+  - Produktionsleiter
+  - Betriebsingenieure
+  - Industrial Engineering
+  - Prozessingenieure
+  - Lean Management
+  - Operational Excellence
+  - Werkleiter
+use_case: "Strukturierte Lean-Analyse bestehender manueller Montage- und Produktionslinien zur Vorbereitung von Shopfloor-Review, KVP-Workshop und PDCA-Test."
+required_inputs:
+  - Produktionszeit pro Schicht
+  - Schichtanzahl
+  - Linienauslastung
+  - Sollmenge
+  - Stationsanzahl
+  - Mitarbeitendenanzahl je Station ohne Namen
+  - wertschoepfende Zeit je Station
+  - synthetische oder anonymisierte NVA-Verlustzeiten
+output_format: "Reviewfaehige Lean-Hypothesen, PDCA-Arbeitspaket, To-Do-Liste, Ergebnisbericht und Management-One-Pager."
+application_scope: "Workshop, Vorpruefung, Shopfloor Review, KVP-Vorbereitung und PDCA-Testplanung."
+framework_references:
+  - Taktzeit
+  - Yamazumi
+  - 5S
+  - Standard Work
+  - Kanban
+  - Jidoka
+  - PDCA
+  - KVP
+required_review_level: trust_review
