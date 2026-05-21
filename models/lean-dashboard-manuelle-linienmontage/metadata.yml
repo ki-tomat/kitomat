@@ -14,7 +14,7 @@ ai_act_proximity: high_risk_adjacent
 legal_disclaimer: "Orientierungshilfe. Keine Rechtsberatung, kein Audit, keine Arbeitssicherheitsfreigabe und kein produktives Entscheidungswerkzeug."
 sources_status: unverified
 model_type: worksheet
- target_users:
+target_users:
   - Produktionsleiter
   - Betriebsingenieure
   - Industrial Engineering
