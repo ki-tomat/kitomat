@@ -1,0 +1,78 @@
+schema_id: input_schema_prompt_2_crm_summary
+prompt_id: prompt_2_crm_summary
+title: "Input-Karte für Prompt 2: Gesprächs- und Meetingzusammenfassung für CRM"
+version: "1.1"
+status: integration_ready
+
+purpose: >
+  Standardisierte Eingabe für Gesprächsnotizen, Telefonate, E-Mails,
+  Meetingprotokolle oder Transkripte, die in einen prüfbaren CRM-Entwurf
+  überführt werden sollen.
+
+required_fields:
+  - unternehmen
+  - ansprechpartner
+  - rolle
+  - gespraechsdatum
+  - gespraechsanlass
+  - quelle.typ
+  - gespraechsdaten.text
+  - datenschutz_check.personenbezogene_daten_enthalten
+  - datenschutz_check.sensible_daten_enthalten
+  - datenschutz_check.datenfreigabe_status
+  - human_review_required
+
+optional_fields:
+  - bekannte_pflichtfelder.follow_up_datum
+  - bekannte_pflichtfelder.verantwortliche_person
+  - crm_system
+  - datenschutzrelevanz_vorbekannt
+  - weitere_beteiligte_personen
+  - zusatznotizen
+  - input_source
+
+allowed_unknown_values:
+  - unbekannt
+  - nicht genannt
+  - nicht vorhanden
+  - noch zu klären
+
+input_card:
+  prompt_id: prompt_2_crm_summary
+  unternehmen:
+  ansprechpartner:
+  rolle:
+  gespraechsdatum:
+  gespraechsanlass:
+  quelle:
+    typ: "transkript | notiz | email | meetingprotokoll | telefonnotiz | unbekannt"
+  gespraechsdaten:
+    text:
+  bekannte_pflichtfelder:
+    follow_up_datum:
+    verantwortliche_person:
+  crm_system:
+  datenschutzrelevanz_vorbekannt:
+  datenschutz_check:
+    personenbezogene_daten_enthalten: "ja | nein | unbekannt"
+    sensible_daten_enthalten: "ja | nein | unbekannt"
+    datenfreigabe_status: "synthetisch | anonymisiert | freigegeben | unbekannt"
+  weitere_beteiligte_personen:
+    -
+  input_source:
+    typ: "manuell | crm | formular | email | transkript | csv | unbekannt"
+    system:
+    record_id:
+    imported_at:
+    mapped_by: "manuell | automation | unbekannt"
+    mapping_confidence: "hoch | mittel | niedrig | unbekannt"
+  zusatznotizen:
+  human_review_required: true
+
+preflight_rules:
+  empty_required_field: "Analyse stoppen und fehlende Pflichtinformationen ausgeben."
+  unknown_required_field: "Analyse fortsetzen, aber Unsicherheit im CRM-Entwurf markieren."
+  crm_status_rule: "Output bleibt immer Entwurf - nicht geprüft."
+  no_invention_rule: "Keine fehlenden CRM-Angaben, Budgets, Termine oder nächsten Schritte erfinden."
+  date_rule: "Relative Terminangaben nur übernehmen, wenn sie aus Gesprächsdatum und Kontext plausibel ableitbar sind."
+  sensitive_data_rule: "Sensible personenbezogene Details nicht ungeprüft in CRM-Felder übernehmen."
