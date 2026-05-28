@@ -23,7 +23,8 @@ Jeder ADR folgt dem leichtgewichtigen Schema:
 | [005](005-fonts.md) | Fonts | Google Fonts CDN für MVP, lokale Einbettung als Phase-2-TODO |
 | [006](006-deployment.md) | Deployment | GitHub Pages aus `web/` heraus, CI-Workflow in AP7 |
 | [007](007-test-framework.md) | Test-Framework | Vitest, Setup in AP7 |
+| [008](008-content-source.md) | Content-Anbindung an Upstream (Phase-3-Vorbereitung) | **Proposed** — drei Varianten dokumentiert, Empfehlung Variante A (Build-Time-Generator). Finale Entscheidung im Phase-3-Kickoff. |
 
 ## Neue ADRs
 
-Spätere Entscheidungen folgen dem gleichen Schema, fortlaufend nummeriert ab 008.
+Spätere Entscheidungen folgen dem gleichen Schema, fortlaufend nummeriert ab 009.
