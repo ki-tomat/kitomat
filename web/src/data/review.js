@@ -1,13 +1,9 @@
-// AP1b — Review-Pipeline: Reviewer, Spalten, Pipeline-Einträge
-// 1:1 extrahiert aus design/kitomat-remix-1/data.jsx
-
-// ---------- Review pipeline ----------
 export const REVIEWERS = [
-  { id: "mira",   name: "Mira K.",      role: "Reviewer",          avatar: "MK", color: "#B82318" },
-  { id: "jonas",  name: "Jonas R.",     role: "Reviewer",          avatar: "JR", color: "#2D8F4E" },
-  { id: "stefan", name: "Stefan W.",    role: "Trust-Verantw.",    avatar: "SW", color: "#D4A12E" },
-  { id: "anna",   name: "Anna L.",      role: "Reviewer",          avatar: "AL", color: "#3D4654" },
-  { id: "core",   name: "Core Maintain.", role: "Maintainer",      avatar: "CM", color: "#1A1916" },
+  { id: "mira",   name: "Mira K.",      role: "Reviewer",          avatar: "MK", color: "var(--tomato-deep)" },
+  { id: "jonas",  name: "Jonas R.",     role: "Reviewer",          avatar: "JR", color: "var(--leaf)" },
+  { id: "stefan", name: "Stefan W.",    role: "Trust-Verantw.",    avatar: "SW", color: "var(--amber)" },
+  { id: "anna",   name: "Anna L.",      role: "Reviewer",          avatar: "AL", color: "var(--slate)" },
+  { id: "core",   name: "Core Maintain.", role: "Maintainer",      avatar: "CM", color: "var(--ink)" },
 ];
 
 export const PIPELINE_COLS = [
@@ -91,5 +87,3 @@ export const REVIEW_PIPELINE = [
     agentReport: null,
   },
 ];
-
-// ---------- Admin ----------

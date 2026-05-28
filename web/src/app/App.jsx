@@ -7,6 +7,13 @@ import Dashboard from '../views/Dashboard.jsx';
 import Library from '../views/Library.jsx';
 import Detail from '../views/Detail.jsx';
 
+// ?? AP5 ? View-Imports ????????????????????????????????????????
+import About from '../views/About.jsx';
+import Community from '../views/Community.jsx';
+import Contribution from '../views/Contribution.jsx';
+import FAQ from '../views/FAQ.jsx';
+import MyRequests from '../views/MyRequests.jsx';
+
 const ROLE_STORAGE_KEY = 'kitomat_role_v1';
 const THEME_STORAGE_KEY = 'kitomat_theme_v1';
 

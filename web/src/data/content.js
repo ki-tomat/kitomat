@@ -1,6 +1,3 @@
-// AP1b — Content: Privacy-Hinweise, FAQ, Roadmap
-// 1:1 extrahiert aus design/kitomat-remix-1/data.jsx
-
 export const DATENSCHUTZ_HINWEIS =
   "Verwende ausschließlich synthetische Beispiele, selbst erstellte Musterfälle oder öffentlich nutzbare Quellen mit klarer Herkunft und Lizenz. Keine echten personenbezogenen Daten, keine Kundendaten, keine internen Unternehmensdokumente und keine anonymisierten Echtdaten.";
 
@@ -10,12 +7,12 @@ export const DATENSCHUTZ_KURZ_DONT = [
   "Interne Unternehmensdokumente",
   "Anonymisierte Echtdaten",
 ];
+
 export const DATENSCHUTZ_KURZ_DO = [
   "Synthetische Beispiele",
   "Selbst erstellte Musterfälle",
   "Öffentlich nutzbare Quellen mit Lizenz",
 ];
-
 
 export const FAQ_ITEMS = [
   { q: "Was ist KItomat?",
@@ -40,7 +37,6 @@ export const FAQ_ITEMS = [
     a: "Du baust ein öffentliches, reviewtes Portfolio an KI-Arbeitsbausteinen auf, erhältst Anerkennungs-Badges, vernetzt dich mit anderen Consultants und stärkst gemeinsam einen vertrauenswürdigen KI-Werkzeugkasten für KMU." },
 ];
 
-// ---------- Roadmap (now on Über KItomat) ----------
 export const ROADMAP = [
   { phase: "Jetzt im MVP", color: "tomato",
     items: [

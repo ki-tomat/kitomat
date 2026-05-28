@@ -1,7 +1,3 @@
-// AP1b — Library: publizierte Gold-Artefakte (siehe Plan ADR-/Phase-0)
-// 1:1 extrahiert aus design/kitomat-remix-1/data.jsx
-
-// ---------- Library: only published / gold ----------
 export const LIBRARY = [
   {
     id: "kitomat-onboarding-kmu",
