@@ -47,12 +47,11 @@ function renderRoute({ route, detailId, go, role, openChat, openVideo }) {
     case 'detail':    return <Detail id={detailId} go={go} />;
 
     // ── AP5 — Contribution, Community, MyRequests, FAQ, About ──
-    case 'contribution':
-    case 'community':
-    case 'my-requests':
-    case 'faq':
-    case 'about':
-      return <DummyView routeId={route} detailId={detailId} />;
+    case 'contribution': return <Contribution go={go} />;
+    case 'community':    return <Community go={go} />;
+    case 'my-requests':  return <MyRequests go={go} />;
+    case 'faq':          return <FAQ />;
+    case 'about':        return <About go={go} />;
 
     // ── AP6 — Review, Admin ────────────────────────────────────
     case 'review':
