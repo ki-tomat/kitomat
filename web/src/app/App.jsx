@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import { Footer, Header, ToastProvider, useToast } from '../components/index.js';
 import { isRouteAllowed } from '../lib/nav.js';
 
+// ── AP4 — View-Imports ────────────────────────────────────────
+import Dashboard from '../views/Dashboard.jsx';
+import Library from '../views/Library.jsx';
+import Detail from '../views/Detail.jsx';
+
 const ROLE_STORAGE_KEY = 'kitomat_role_v1';
 const THEME_STORAGE_KEY = 'kitomat_theme_v1';
 
@@ -27,13 +32,12 @@ function parseHash() {
 
 // ── Routen-Map mit Sektions-Markern pro AP ─────────────────────
 // Andere APs ergänzen ihre View-Imports + Map-Einträge unter ihrer Sektion.
-function renderRoute({ route, detailId }) {
+function renderRoute({ route, detailId, go, role, openChat, openVideo }) {
   switch (route) {
     // ── AP4 — Library, Detail, Dashboard ──────────────────────
-    case 'dashboard':
-    case 'library':
-    case 'detail':
-      return <DummyView routeId={route} detailId={detailId} />;
+    case 'dashboard': return <Dashboard go={go} role={role} openChat={openChat} openVideo={openVideo} />;
+    case 'library':   return <Library go={go} />;
+    case 'detail':    return <Detail id={detailId} go={go} />;
 
     // ── AP5 — Contribution, Community, MyRequests, FAQ, About ──
     case 'contribution':
@@ -49,7 +53,7 @@ function renderRoute({ route, detailId }) {
       return <DummyView routeId={route} detailId={detailId} />;
 
     default:
-      return <DummyView routeId="dashboard" detailId={null} />;
+      return <Dashboard go={go} role={role} openChat={openChat} openVideo={openVideo} />;
   }
 }
 
@@ -151,10 +155,11 @@ function AppShell() {
     }
   };
 
-  // Modal-Stubs für AP3b — bis dahin als No-Op-Toasts, damit Header-Aktionen funktionieren.
+  // Modal-Stubs für AP3b — bis dahin als No-Op-Toasts, damit Header- und View-Aktionen funktionieren.
   const { show } = useToast();
   const openChat = () => show({ title: 'Chatbot folgt in AP3b', tone: 'info' });
   const openLogin = () => show({ title: 'Admin-Login folgt in AP3b', tone: 'info' });
+  const openVideo = () => show({ title: 'Erklärvideo folgt in AP3b', tone: 'info' });
 
   return (
     <>
@@ -168,7 +173,7 @@ function AppShell() {
         theme={theme}
         setTheme={setTheme}
       />
-      {renderRoute({ route, detailId })}
+      {renderRoute({ route, detailId, go, role, openChat, openVideo })}
       <Footer go={go} />
     </>
   );

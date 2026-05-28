@@ -16,7 +16,15 @@ export { ToastProvider, useToast } from './Toast.jsx';
 // export { VideoModal } from './modals/VideoModal.jsx';
 // export { AdminLoginModal } from './modals/AdminLoginModal.jsx';
 
-// ── AP4 — Library/Detail-Spezifika (folgt, falls benötigt) ────
+// ── AP4 — Library/Detail-Spezifika ─────────────────────────────
+export { RiskBadge, RISK } from './RiskBadge.jsx';
+export { TypeBadge, TYPE_META } from './TypeBadge.jsx';
+export { GoldBadge } from './GoldBadge.jsx';
+export { PhaseBadge } from './PhaseBadge.jsx';
+export { Avatar } from './Avatar.jsx';
+export { MetricTile } from './MetricTile.jsx';
+export { EmptyState } from './EmptyState.jsx';
+export { ProcessStrip } from './ProcessStrip.jsx';
 
 // ── AP5 — Contribution/Community-Spezifika (folgt, falls benötigt) ──
 
