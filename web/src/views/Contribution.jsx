@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon, PhaseBadge, RiskBadge, useToast } from '../components/index.js';
 import { DATENSCHUTZ_HINWEIS, DATENSCHUTZ_KURZ_DO, DATENSCHUTZ_KURZ_DONT } from '../data/content.js';
+import { useIsDarkMode } from '../lib/useIsDarkMode.js';
 
 // Contribution Center (v2) — 7-step process with upload + KI-Agent
 export default function Contribution({ go }) {
@@ -488,6 +489,8 @@ function TrustCheckStep() {
 // ---------- Step 7: Review Request ----------
 function RequestStep({ requestSent, setRequestSent }) {
   const { show } = useToast();
+  const isDark = useIsDarkMode();
+  const headerTextColor = isDark ? '#1A1916' : 'white';
   const submit = () => {
     if (requestSent) return;
     setRequestSent(true);
@@ -518,7 +521,7 @@ function RequestStep({ requestSent, setRequestSent }) {
 
       {/* GitHub PR mock */}
       <div className="card" style={{padding:0, overflow:"hidden"}}>
-        <div style={{padding:"14px 18px", background:"var(--ink)", color:"white", display:"flex", alignItems:"center", gap:10}}>
+        <div style={{padding:"14px 18px", background:"var(--ink)", color: headerTextColor, display:"flex", alignItems:"center", gap:10}}>
           <Icon.github size={16}/>
           <strong style={{fontSize:13}}>ki-tomat / kitomat</strong>
           <span className="mono" style={{fontSize:11, opacity:.7}}>· new pull request</span>

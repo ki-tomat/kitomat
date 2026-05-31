@@ -1,19 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Icon } from './Icon.jsx';
-
-// Reactive dark-mode flag — beobachtet body.dark Klassen-Wechsel
-function useIsDarkMode() {
-  const [isDark, setIsDark] = useState(
-    () => typeof document !== 'undefined' && document.body.classList.contains('dark')
-  );
-  useEffect(() => {
-    const update = () => setIsDark(document.body.classList.contains('dark'));
-    const observer = new MutationObserver(update);
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, []);
-  return isDark;
-}
+import { useIsDarkMode } from '../lib/useIsDarkMode.js';
 
 const ToastContext = createContext({ show: () => {}, dismiss: () => {} });
 
