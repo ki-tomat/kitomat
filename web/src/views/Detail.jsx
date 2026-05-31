@@ -3,6 +3,7 @@ import {
   TypeBadge,
   GoldBadge,
   RiskBadge,
+  useToast,
 } from '../components/index.js';
 // TODO(AP1b): auf '../data/library.js' / '../data/content.js' umstellen sobald AP1b gemerged
 import { LIBRARY, DATENSCHUTZ_KURZ_DONT } from '../data/library.bridge.js';
@@ -92,6 +93,18 @@ function ScenarioCard({ color, label, icon, text }) {
 
 export default function Detail({ id, go }) {
   const a = LIBRARY.find((x) => x.id === id) || LIBRARY[0];
+  const { show } = useToast();
+
+  const canCopySample = a.sampleOut && a.sampleOut !== '—';
+  const copySample = async () => {
+    if (!canCopySample) return;
+    try {
+      await navigator.clipboard.writeText(a.sampleOut);
+      show({ title: 'Beispiel kopiert', body: 'Der Beispiel-Output liegt in der Zwischenablage.', tone: 'success' });
+    } catch (e) {
+      show({ title: 'Kopieren nicht möglich', body: 'Die Zwischenablage ist in diesem Browser blockiert.', tone: 'error' });
+    }
+  };
 
   const trustGate = [
     { l: 'Metadaten vollständig', s: 'checked' },
@@ -165,16 +178,29 @@ export default function Detail({ id, go }) {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', position: 'relative' }}>
             <a
               className="btn btn-primary btn-sm"
-              href={`https://github.com/pfernando-KI/kitomat/tree/main/artifacts/${a.id}`}
+              href={`https://github.com/ki-tomat/kitomat/tree/main/artifacts/${a.id}`}
               target="_blank"
               rel="noreferrer"
             >
               <Icon.github size={14} /> Auf GitHub öffnen <Icon.external />
             </a>
-            <button className="btn btn-secondary btn-sm">Beispiel kopieren</button>
-            <button className="btn btn-secondary btn-sm">
-              <Icon.plus /> Änderung vorschlagen
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={copySample}
+              disabled={!canCopySample}
+              title={canCopySample ? 'Beispiel-Output in Zwischenablage kopieren' : 'Kein Beispiel-Output verfügbar'}
+            >
+              Beispiel kopieren
             </button>
+            <a
+              className="btn btn-secondary btn-sm"
+              href="https://github.com/ki-tomat/kitomat"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon.plus /> Änderung vorschlagen
+            </a>
           </div>
         </div>
 
@@ -359,7 +385,7 @@ export default function Detail({ id, go }) {
                 {DATENSCHUTZ_KURZ_DONT.map((d, i) => (
                   <li
                     key={i}
-                    style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}
+                    style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, color: 'var(--tomato-deep)' }}
                   >
                     <span
                       style={{

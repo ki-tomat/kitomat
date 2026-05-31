@@ -75,7 +75,7 @@ export function Header({ route, go, openChat, openLogin, role, setRole, theme, s
           <a
             className="btn btn-ghost btn-sm tt tt-bottom"
             data-tt="GitHub Repository"
-            href="https://github.com/pfernando-KI/kitomat"
+            href="https://github.com/ki-tomat/kitomat"
             target="_blank"
             rel="noreferrer"
           >

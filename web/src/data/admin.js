@@ -33,7 +33,7 @@ export const AUDIT_LOG = [
 ];
 
 export const INTEGRATIONS = [
-  { name:"GitHub Repository",        status:"verbunden",  badge:"green",   note:"github.com/pfernando-KI/kitomat" },
+  { name:"GitHub Repository",        status:"verbunden",  badge:"green",   note:"github.com/ki-tomat/kitomat" },
   { name:"GitHub OAuth Login",       status:"geplant",    badge:"amber",   note:"Phase 3" },
   { name:"E-Mail-Benachrichtigung",  status:"Demo",       badge:"slate",   note:"Mockup für Review-Trigger" },
   { name:"Discord Webhook",          status:"Post-MVP",   badge:"slate",   note:"Channel #kitomat-reviews" },

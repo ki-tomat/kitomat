@@ -55,7 +55,7 @@ export function MobileNav({
           <button type="button" className="btn btn-secondary btn-sm" onClick={openChat}>
             <Icon.chat size={14} /> Assistent
           </button>
-          <a className="btn btn-secondary btn-sm" href="https://github.com/pfernando-KI/kitomat" target="_blank" rel="noreferrer">
+          <a className="btn btn-secondary btn-sm" href="https://github.com/ki-tomat/kitomat" target="_blank" rel="noreferrer">
             <Icon.github size={14} /> GitHub
           </a>
           <button type="button" className="btn btn-secondary btn-sm" onClick={openLogin}>

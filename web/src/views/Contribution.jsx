@@ -115,7 +115,7 @@ export default function Contribution({ go }) {
                 </button>
               ) : (
                 <div style={{display:"flex", gap:8}}>
-                  <a className="btn btn-secondary btn-sm" href="https://github.com/pfernando-KI/kitomat" target="_blank" rel="noreferrer">
+                  <a className="btn btn-secondary btn-sm" href="https://github.com/ki-tomat/kitomat" target="_blank" rel="noreferrer">
                     <Icon.github size={14}/> Repository öffnen <Icon.external/>
                   </a>
                 </div>
@@ -145,7 +145,7 @@ function PrivacyBlock() {
           <div className="h-eyebrow" style={{marginBottom:10, color:"var(--leaf)"}}>Erlaubt</div>
           <ul style={{margin:0, padding:0, listStyle:"none", display:"flex", flexDirection:"column", gap:8}}>
             {DATENSCHUTZ_KURZ_DO.map((d, i) => (
-              <li key={i} style={{display:"flex", gap:10, alignItems:"center", fontSize:13.5}}>
+              <li key={i} style={{display:"flex", gap:10, alignItems:"center", fontSize:13.5, color:"var(--leaf-ink)"}}>
                 <span style={{width:18, height:18, borderRadius:5, background:"var(--leaf-soft)", color:"var(--leaf-ink)", display:"inline-flex", alignItems:"center", justifyContent:"center", fontWeight:700, fontSize:11}}>✓</span>
                 {d}
               </li>
@@ -156,7 +156,7 @@ function PrivacyBlock() {
           <div className="h-eyebrow" style={{marginBottom:10, color:"var(--tomato-deep)"}}>Nicht erlaubt</div>
           <ul style={{margin:0, padding:0, listStyle:"none", display:"flex", flexDirection:"column", gap:8}}>
             {DATENSCHUTZ_KURZ_DONT.map((d, i) => (
-              <li key={i} style={{display:"flex", gap:10, alignItems:"center", fontSize:13.5}}>
+              <li key={i} style={{display:"flex", gap:10, alignItems:"center", fontSize:13.5, color:"var(--tomato-deep)"}}>
                 <span style={{width:18, height:18, borderRadius:5, background:"var(--tomato-soft)", color:"var(--tomato-deep)", display:"inline-flex", alignItems:"center", justifyContent:"center", fontWeight:700, fontSize:11}}>✕</span>
                 {d}
               </li>
@@ -508,7 +508,7 @@ function RequestStep({ requestSent, setRequestSent }) {
           <strong style={{color: requestSent ? "var(--leaf-ink)" : "var(--tomato-deep)", fontSize:15}}>
             {requestSent ? "Request übergeben" : "Bereit für Review"}
           </strong>
-          <div style={{color: requestSent ? "var(--leaf-ink)" : "var(--tomato-deep)", fontSize:13, marginTop:2}}>
+          <div style={{color: "var(--ink)", fontSize:13, marginTop:2}}>
             {requestSent
               ? "Dein Review Request liegt jetzt im Review Center. Reviewer werden benachrichtigt."
               : "Alle Schritte abgeschlossen. Du kannst den Review Request jetzt vorbereiten und an GitHub übergeben."}
@@ -557,7 +557,7 @@ Sprache: DE · Lizenz: CC BY 4.0
                 "Pull Request wird im Repository angelegt",
                 "Artefakt erscheint im Review Center",
                 "Reviewer-Gruppe erhält eine Benachrichtigung",
-                "Du bekommst eine Bestätigung als Toast",
+                "Du bekommst eine kurze Bestätigungsmeldung eingeblendet",
               ].map((s, i) => (
                 <li key={i} style={{display:"flex", gap:9, fontSize:13.5, color:"var(--ink-2)"}}>
                   <span style={{width:18, height:18, borderRadius:5, background: requestSent ? "var(--leaf-soft)" : "var(--bg-2)", color: requestSent ? "var(--leaf)" : "var(--ink-3)", display:"inline-flex", alignItems:"center", justifyContent:"center", flexShrink:0, marginTop:1}}>
@@ -575,7 +575,7 @@ Sprache: DE · Lizenz: CC BY 4.0
         <div style={{padding:"14px 20px", borderTop:"1px solid var(--line)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, flexWrap:"wrap"}}>
           <span className="muted" style={{fontSize:12}}>Im MVP simuliert – der Beitrag wird im Repository angelegt.</span>
           <div style={{display:"flex", gap:8}}>
-            <a className="btn btn-secondary btn-sm" href="https://github.com/pfernando-KI/kitomat" target="_blank" rel="noreferrer">
+            <a className="btn btn-secondary btn-sm" href="https://github.com/ki-tomat/kitomat" target="_blank" rel="noreferrer">
               <Icon.github size={13}/> Repository
             </a>
             <button className="btn btn-primary btn-sm" onClick={submit} disabled={requestSent}>
