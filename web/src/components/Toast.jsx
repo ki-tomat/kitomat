@@ -1,6 +1,20 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Icon } from './Icon.jsx';
 
+// Reactive dark-mode flag — beobachtet body.dark Klassen-Wechsel
+function useIsDarkMode() {
+  const [isDark, setIsDark] = useState(
+    () => typeof document !== 'undefined' && document.body.classList.contains('dark')
+  );
+  useEffect(() => {
+    const update = () => setIsDark(document.body.classList.contains('dark'));
+    const observer = new MutationObserver(update);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+  return isDark;
+}
+
 const ToastContext = createContext({ show: () => {}, dismiss: () => {} });
 
 export function useToast() {
@@ -31,6 +45,7 @@ export function ToastProvider({ children }) {
 }
 
 function ToastView({ toast, onDismiss }) {
+  const isDark = useIsDarkMode();
   if (!toast) return null;
   const tone = toast.tone || 'success';
   const palette = {
@@ -38,6 +53,7 @@ function ToastView({ toast, onDismiss }) {
     info:    { ring: 'var(--slate)',  icon: <Icon.spark size={14} /> },
     error:   { ring: 'var(--tomato)', icon: '!' },
   }[tone];
+  const textColor = isDark ? '#1A1916' : 'white';
 
   return (
     <div
@@ -46,7 +62,7 @@ function ToastView({ toast, onDismiss }) {
       style={{
         position: 'fixed', left: '50%', bottom: 96, zIndex: 80,
         transform: 'translateX(-50%)',
-        background: 'var(--ink)', color: 'white',
+        background: 'var(--ink)', color: textColor,
         padding: '12px 16px 12px 14px', borderRadius: 14,
         minWidth: 280, maxWidth: 480,
         display: 'flex', alignItems: 'center', gap: 12,
@@ -70,7 +86,7 @@ function ToastView({ toast, onDismiss }) {
         type="button"
         onClick={onDismiss}
         aria-label="Schließen"
-        style={{ color: 'white', opacity: 0.7, padding: 4, borderRadius: 6, background: 'transparent', border: 'none', cursor: 'pointer' }}
+        style={{ color: textColor, opacity: 0.7, padding: 4, borderRadius: 6, background: 'transparent', border: 'none', cursor: 'pointer' }}
       >
         <Icon.close size={12} />
       </button>
