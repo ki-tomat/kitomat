@@ -2,6 +2,20 @@ import React from 'react';
 import { Icon, PhaseBadge, RiskBadge, useToast } from '../components/index.js';
 import { DATENSCHUTZ_HINWEIS, DATENSCHUTZ_KURZ_DO, DATENSCHUTZ_KURZ_DONT } from '../data/content.js';
 
+// Reactive dark-mode flag — beobachtet body.dark Klassen-Wechsel
+function useIsDarkMode() {
+  const [isDark, setIsDark] = React.useState(
+    () => typeof document !== 'undefined' && document.body.classList.contains('dark')
+  );
+  React.useEffect(() => {
+    const update = () => setIsDark(document.body.classList.contains('dark'));
+    const observer = new MutationObserver(update);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+  return isDark;
+}
+
 // Contribution Center (v2) — 7-step process with upload + KI-Agent
 export default function Contribution({ go }) {
   const [active, setActive] = React.useState(0);
@@ -488,6 +502,7 @@ function TrustCheckStep() {
 // ---------- Step 7: Review Request ----------
 function RequestStep({ requestSent, setRequestSent }) {
   const { show } = useToast();
+  const isDark = useIsDarkMode();
   const submit = () => {
     if (requestSent) return;
     setRequestSent(true);
@@ -505,10 +520,10 @@ function RequestStep({ requestSent, setRequestSent }) {
           <Icon.check size={15}/>
         </span>
         <div style={{flex:1}}>
-          <strong style={{color: requestSent ? "var(--leaf-ink)" : "var(--tomato-deep)", fontSize:15}}>
+          <strong style={{color: isDark ? "#1A1916" : (requestSent ? "var(--leaf-ink)" : "var(--tomato-deep)"), fontSize:15}}>
             {requestSent ? "Request übergeben" : "Bereit für Review"}
           </strong>
-          <div style={{color: "var(--ink)", fontSize:13, marginTop:2}}>
+          <div style={{color: isDark ? "#1A1916" : "var(--ink)", fontSize:13, marginTop:2}}>
             {requestSent
               ? "Dein Review Request liegt jetzt im Review Center. Reviewer werden benachrichtigt."
               : "Alle Schritte abgeschlossen. Du kannst den Review Request jetzt vorbereiten und an GitHub übergeben."}
