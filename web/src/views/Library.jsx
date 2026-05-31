@@ -124,7 +124,7 @@ export function LibraryCard({ a, onOpen, compact }) {
         <a
           className="btn btn-secondary btn-sm tt"
           data-tt="Auf GitHub öffnen"
-          href={`https://github.com/pfernando-KI/kitomat/tree/main/artifacts/${a.id}`}
+          href={`https://github.com/ki-tomat/kitomat/tree/main/artifacts/${a.id}`}
           target="_blank"
           rel="noreferrer"
           onClick={(e) => e.stopPropagation()}
@@ -220,11 +220,22 @@ const RISK_OPTS = [
   { id: 'red', label: 'risk_red' },
 ];
 
+const VIEW_STORAGE_KEY = 'kitomat_library_view_v1';
+
 export default function Library({ go }) {
   const [search, setSearch] = useState('');
   const [type, setType] = useState('all');
   const [risk, setRisk] = useState('all');
-  const [view, setView] = useState('grid');
+  const [view, setViewState] = useState(() => {
+    try {
+      const stored = sessionStorage.getItem(VIEW_STORAGE_KEY);
+      return stored === 'table' || stored === 'grid' ? stored : 'grid';
+    } catch (e) { return 'grid'; }
+  });
+  const setView = (next) => {
+    setViewState(next);
+    try { sessionStorage.setItem(VIEW_STORAGE_KEY, next); } catch (e) { /* ignore */ }
+  };
 
   const filtered = LIBRARY.filter((a) => {
     if (type !== 'all' && a.type !== type) return false;

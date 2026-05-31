@@ -63,11 +63,11 @@ export function Footer({ go }) {
             <a
               className="mono"
               style={{ fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--ink-2)' }}
-              href="https://github.com/pfernando-KI/kitomat"
+              href="https://github.com/ki-tomat/kitomat"
               target="_blank"
               rel="noreferrer"
             >
-              <Icon.github size={13} /> github.com/pfernando-KI/kitomat
+              <Icon.github size={13} /> github.com/ki-tomat/kitomat
             </a>
             <div className="mono muted" style={{ fontSize: 11, marginTop: 8 }}>v0.2 · MVP</div>
           </div>

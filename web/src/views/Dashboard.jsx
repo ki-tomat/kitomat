@@ -129,7 +129,7 @@ export default function Dashboard({ go, role, openChat, openVideo }) {
               )}
               <span className="muted mono" style={{ fontSize: 11 }}>·</span>
               <a
-                href="https://github.com/pfernando-KI/kitomat"
+                href="https://github.com/ki-tomat/kitomat"
                 target="_blank"
                 rel="noreferrer"
                 className="btn btn-ghost btn-sm"

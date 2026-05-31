@@ -122,7 +122,7 @@ export default function Community({ go }) {
           </div>
           <div style={{display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:12}}>
               <ContactRow color="var(--ink)" icon={<Icon.github size={16}/>} name="GitHub" desc="Detaillierte Fragen, PR-Diskussionen, Issues." status="live"
-                href="https://github.com/pfernando-KI/kitomat"/>
+                href="https://github.com/ki-tomat/kitomat"/>
               <ContactRow color="var(--post)" icon={<span style={{fontFamily:"'JetBrains Mono', monospace", fontWeight:800, fontSize:13}}>in</span>} name="LinkedIn" desc="Beiträge teilen, Mitstreiter:innen finden." status="geplant"/>
               <ContactRow color="var(--slate)" icon={<span style={{fontFamily:"'JetBrains Mono', monospace", fontWeight:800, fontSize:13}}>DC</span>} name="Discord" desc="Live-Austausch zu Artefakten und Reviews." status="geplant"/>
           </div>
