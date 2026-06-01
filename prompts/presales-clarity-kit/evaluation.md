@@ -68,3 +68,11 @@ Ein Output gilt als nicht nutzbar, wenn er:
 - bei HR-, Gesundheits-, Finanz-, Rechts-, Datenschutz-, Compliance- oder Bildungskontext eine verbindliche Empfehlung, Bewertung oder Entscheidungsvorlage erstellt,
 - widersprüchliche Kernanforderungen als problemlos umsetzbar darstellt,
 - Zugangsdaten, CRM-Notizen, Kundendatenlisten oder Bewerbungsdaten handlungsorientiert auswertet.
+
+## Szenario-Triade
+
+Das Promptpaket wird mit drei Szenariotypen geprüft:
+
+- **positiv:** Die Anfrage passt klar zum vorgesehenen Einsatzbereich, enthält ausreichend Kontext und kann direkt in ein strukturiertes Pre-Sales-Briefing überführt werden.
+- **nachbearbeitbar:** Die Anfrage ist grundsätzlich relevant, enthält aber Lücken, Unklarheiten oder widersprüchliche Angaben, sodass gezielte Rückfragen oder manuelle Prüfung nötig sind.
+- **negativ:** Die Anfrage ist fachfremd, sensibel, reguliert, riskant oder überschreitet die Grenzen des Promptpakets und darf nicht als normale Leistungsanfrage verarbeitet werden.
