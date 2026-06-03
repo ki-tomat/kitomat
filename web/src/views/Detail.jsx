@@ -1,12 +1,12 @@
 import {
+import { CONTENT_REPO_URL, contentArtifactUrl } from '../lib/links.js';
   Icon,
   TypeBadge,
   GoldBadge,
   RiskBadge,
   useToast,
 } from '../components/index.js';
-// TODO(AP1b): auf '../data/library.js' / '../data/content.js' umstellen sobald AP1b gemerged
-import { LIBRARY, DATENSCHUTZ_KURZ_DONT } from '../data/library.bridge.js';
+import { LIBRARY, DATENSCHUTZ_KURZ_DONT } from '../data/index.js';
 
 function Meta({ label, v, mono, color }) {
   return (
@@ -178,7 +178,7 @@ export default function Detail({ id, go }) {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', position: 'relative' }}>
             <a
               className="btn btn-primary btn-sm"
-              href={`https://github.com/ki-tomat/kitomat/tree/main/artifacts/${a.id}`}
+              href={contentArtifactUrl(a.id)}
               target="_blank"
               rel="noreferrer"
             >
@@ -195,7 +195,7 @@ export default function Detail({ id, go }) {
             </button>
             <a
               className="btn btn-secondary btn-sm"
-              href="https://github.com/ki-tomat/kitomat"
+              href={CONTENT_REPO_URL}
               target="_blank"
               rel="noreferrer"
             >

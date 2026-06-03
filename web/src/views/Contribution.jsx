@@ -3,6 +3,7 @@ import { Icon, PhaseBadge, RiskBadge, useToast } from '../components/index.js';
 import { DATENSCHUTZ_HINWEIS, DATENSCHUTZ_KURZ_DO, DATENSCHUTZ_KURZ_DONT } from '../data/content.js';
 import { useIsDarkMode } from '../lib/useIsDarkMode.js';
 
+import { CONTENT_REPO_URL } from '../lib/links.js';
 // Contribution Center (v2) — 7-step process with upload + KI-Agent
 export default function Contribution({ go }) {
   const [active, setActive] = React.useState(0);
@@ -116,7 +117,7 @@ export default function Contribution({ go }) {
                 </button>
               ) : (
                 <div style={{display:"flex", gap:8}}>
-                  <a className="btn btn-secondary btn-sm" href="https://github.com/ki-tomat/kitomat" target="_blank" rel="noreferrer">
+                  <a className="btn btn-secondary btn-sm" href={CONTENT_REPO_URL} target="_blank" rel="noreferrer">
                     <Icon.github size={14}/> Repository öffnen <Icon.external/>
                   </a>
                 </div>
@@ -578,7 +579,7 @@ Sprache: DE · Lizenz: CC BY 4.0
         <div style={{padding:"14px 20px", borderTop:"1px solid var(--line)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, flexWrap:"wrap"}}>
           <span className="muted" style={{fontSize:12}}>Im MVP simuliert – der Beitrag wird im Repository angelegt.</span>
           <div style={{display:"flex", gap:8}}>
-            <a className="btn btn-secondary btn-sm" href="https://github.com/ki-tomat/kitomat" target="_blank" rel="noreferrer">
+            <a className="btn btn-secondary btn-sm" href={CONTENT_REPO_URL} target="_blank" rel="noreferrer">
               <Icon.github size={13}/> Repository
             </a>
             <button className="btn btn-primary btn-sm" onClick={submit} disabled={requestSent}>

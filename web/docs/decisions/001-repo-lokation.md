@@ -1,24 +1,23 @@
 # ADR-001: Repo-Lokation als Unterordner `web/`
 
-**Status:** Accepted (Phase 0, 2026-05-27)
+**Status:** Accepted (Phase 0, aktualisiert 2026-06-03)
 
 ## Context
 
-Das KI-tomat-Web-UI-Übergabepaket muss in ein gemeinsam entwickelbares GitHub-Repository überführt werden. Die KItomat-Planungsgruppe betreibt bereits das öffentliche Repo `kitomat-github-work` für Content (Datasets, Prompts, Schemas, Agenten-Configs). Es stellte sich die Frage, ob die Weboberfläche ein eigenes Standalone-Repo `kitomat-web` werden soll oder als Unterordner in das bestehende Repo wandert.
+Das KI-tomat-Web-UI-?bergabepaket musste in ein gemeinsam entwickelbares GitHub-Repository ?berf?hrt werden. F?r Phase 2 wird die Weboberfl?che im Repository `pfernando-KI/kitomat` entwickelt. Gleichzeitig bleibt `ki-tomat/kitomat` als Content-Upstream f?r echte Artefakte und sp?tere Phase-3-Anbindung relevant.
 
 ## Decision
 
-Die Weboberfläche lebt unter `kitomat-github-work/web/` als Unterordner mit eigenem `package.json` und eigener Vite-Konfiguration. Bestehende Top-Level-Dateien (`README.md`, `AGENTS.md`, `CONTRIBUTING.md`) bleiben für den Content-Teil reserviert. Web-spezifische Pendants liegen unter `web/` (`web/README.md`, `web/AGENTS.md`).
+Die Weboberfl?che lebt unter `web/` als Unterordner mit eigenem `package.json` und eigener Vite-Konfiguration. Web-spezifische Dokumentation liegt unter `web/`; das Designpaket bleibt als Read-only-Archiv unter `web/design/kitomat-remix-1/`.
 
 ## Consequences
 
-- Ein gemeinsames Repo statt zwei → ein Issue-Tracker, ein PR-Workflow, eine Mitgliederliste.
-- `.github/` bleibt auf Repo-Wurzel-Ebene. Issue-Templates trennen über Frontmatter `area: content` vs. `area: web`.
-- Wurzel-AGENTS.md verweist mit Markdown-Link auf `web/AGENTS.md` (keine Symlinks — Git-unfreundlich).
-- GitHub-Pages-Workflow muss explizit aus `web/` bauen und mit `base: '/kitomat-github-work/web/'` deployen (siehe [ADR-006](006-deployment.md)).
-- Release-Zyklen Content vs. Web sind gekoppelt — vor einem Web-Release muss der Content-Stand stabil sein.
+- Ein gemeinsamer PR- und Review-Workflow f?r die Web UI in `pfernando-KI/kitomat`.
+- GitHub-Pages-Workflow baut explizit aus `web/`.
+- F?r AP7 ist als Zielpfad `/kitomat/web/` vorgesehen, sofern die Web UI unter `https://pfernando-KI.github.io/kitomat/web/` ver?ffentlicht wird.
+- Content-Links in der UI k?nnen bewusst auf `ki-tomat/kitomat` zeigen; Web-UI-Entwicklungslinks zeigen auf `pfernando-KI/kitomat`.
 
 ## Alternatives considered
 
-- **Separates Repo `kitomat-web`** — saubere Trennung, aber zweiter Verwaltungs-Overhead (Permissions, Issues, CI) für ein 7–8-Personen-Team zu schwer.
-- **Phase-0-Entscheidung vertagen** — verworfen, blockiert AP1a sofort.
+- **Separates Repo `kitomat-web`** ? saubere Trennung, aber zus?tzlicher Verwaltungsaufwand.
+- **Content-Repo direkt als UI-Repo** ? verworfen f?r Phase 2, weil die Web UI zuerst als Fork/Arbeitsstand stabilisiert wird.

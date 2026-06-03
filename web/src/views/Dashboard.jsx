@@ -1,4 +1,5 @@
 import {
+import { CONTENT_REPO_URL } from '../lib/links.js';
   Icon,
   GoldBadge,
   PhaseBadge,
@@ -6,8 +7,7 @@ import {
   ProcessStrip,
 } from '../components/index.js';
 import { LibraryCard } from './Library.jsx';
-// TODO(AP1b): auf '../data/library.js' / '../data/review.js' umstellen sobald AP1b gemerged
-import { LIBRARY, REVIEW_PIPELINE } from '../data/library.bridge.js';
+import { LIBRARY, REVIEW_PIPELINE } from '../data/index.js';
 import markUrl from '../assets/kitomat-mark.png';
 
 const PROCESS = [
@@ -129,7 +129,7 @@ export default function Dashboard({ go, role, openChat, openVideo }) {
               )}
               <span className="muted mono" style={{ fontSize: 11 }}>·</span>
               <a
-                href="https://github.com/ki-tomat/kitomat"
+                href={CONTENT_REPO_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="btn btn-ghost btn-sm"

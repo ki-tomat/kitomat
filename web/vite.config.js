@@ -5,11 +5,11 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// base: './' für maximale Flexibilität (funktioniert in jedem Subpfad).
-// TODO AP7: für GitHub Pages auf konkreten Pfad setzen, z. B. '/kitomat/web/' oder
-// '/kitomat-github-work/web/' je nach Deploy-Repo (siehe ADR-006).
+// base: './' bleibt vor AP7 bewusst robust f?r lokale Vorschau, Forks und Hash-Routing.
+// AP7 soll im Pages-Workflow VITE_BASE_PATH='/kitomat/web/' setzen, wenn die Web UI
+// unter https://pfernando-KI.github.io/kitomat/web/ ver?ffentlicht wird.
 export default defineConfig({
-  base: './',
+  base: process.env.VITE_BASE_PATH || './',
   plugins: [react()],
   resolve: {
     alias: {
