@@ -1,3 +1,4 @@
+import { CONTENT_REPO_LABEL } from '../lib/links.js';
 // AP1b — Admin: User-Verwaltung, Rechte-Matrix, Audit, Integrationen
 // 1:1 extrahiert aus design/kitomat-remix-1/data.jsx
 
@@ -33,7 +34,7 @@ export const AUDIT_LOG = [
 ];
 
 export const INTEGRATIONS = [
-  { name:"GitHub Repository",        status:"verbunden",  badge:"green",   note:"github.com/ki-tomat/kitomat" },
+  { name:"GitHub Repository",        status:"verbunden",  badge:"green",   note: CONTENT_REPO_LABEL },
   { name:"GitHub OAuth Login",       status:"geplant",    badge:"amber",   note:"Phase 3" },
   { name:"E-Mail-Benachrichtigung",  status:"Demo",       badge:"slate",   note:"Mockup für Review-Trigger" },
   { name:"Discord Webhook",          status:"Post-MVP",   badge:"slate",   note:"Channel #kitomat-reviews" },

@@ -16,7 +16,7 @@ Jeder ADR folgt dem leichtgewichtigen Schema:
 
 | # | Thema | Entscheidung |
 |---|---|---|
-| [001](001-repo-lokation.md) | Repo-Lokation | Unterordner `web/` im bestehenden `kitomat-github-work` |
+| [001](001-repo-lokation.md) | Repo-Lokation | Unterordner `web/` im Repository `pfernando-KI/kitomat` |
 | [002](002-sprache.md) | Sprache | Deutsch für UI/Issues/Commits, Englisch für Code-Identifier |
 | [003](003-routing.md) | Routing | Hash-Router beibehalten (kein React Router v6 für MVP) |
 | [004](004-tooling.md) | Tooling | JavaScript, kein TypeScript für MVP |

@@ -1,14 +1,56 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Icon } from '../Icon.jsx';
 import kitomatMark from '@/assets/kitomat-mark.png';
 
 export function VideoModal({ open, onClose }) {
-  // ESC schließt Modal
+  const dialogRef = useRef(null);
+  const closeButtonRef = useRef(null);
+  const previousActiveRef = useRef(null);
+
   useEffect(() => {
-    if (!open) return;
-    const handler = (e) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
+    if (!open) return undefined;
+
+    previousActiveRef.current = document.activeElement;
+    const dialog = dialogRef.current;
+    const getFocusable = () => Array.from(
+      dialog?.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])') || [],
+    ).filter((el) => !el.disabled && !el.getAttribute('aria-hidden'));
+
+    requestAnimationFrame(() => {
+      const first = closeButtonRef.current || getFocusable()[0];
+      first?.focus?.();
+    });
+
+    const handleKey = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusable = getFocusable();
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      previousActiveRef.current?.focus?.();
+      previousActiveRef.current = null;
+    };
   }, [open, onClose]);
 
   if (!open) return null;
@@ -26,6 +68,7 @@ export function VideoModal({ open, onClose }) {
       }}
     >
       <div
+        ref={dialogRef}
         onClick={e => e.stopPropagation()}
         style={{
           width: 'min(840px, 100%)',

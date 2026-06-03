@@ -5,8 +5,8 @@ import {
   GoldBadge,
   EmptyState,
 } from '../components/index.js';
-// TODO(AP1b): auf '../data/library.js' umstellen sobald AP1b gemerged
-import { LIBRARY } from '../data/library.bridge.js';
+import { LIBRARY } from '../data/index.js';
+import { contentArtifactUrl } from '../lib/links.js';
 
 export function LibraryCard({ a, onOpen, compact }) {
   return (
@@ -124,7 +124,7 @@ export function LibraryCard({ a, onOpen, compact }) {
         <a
           className="btn btn-secondary btn-sm tt"
           data-tt="Auf GitHub öffnen"
-          href={`https://github.com/ki-tomat/kitomat/tree/main/artifacts/${a.id}`}
+          href={contentArtifactUrl(a.id)}
           target="_blank"
           rel="noreferrer"
           onClick={(e) => e.stopPropagation()}
@@ -296,7 +296,7 @@ export default function Library({ go }) {
             padding: '14px 18px',
             marginBottom: 18,
             background: 'var(--leaf-soft)',
-            border: '1px solid #C5E2CF',
+            border: '1px solid var(--leaf-border)',
             display: 'flex',
             alignItems: 'center',
             gap: 12,

@@ -16,7 +16,7 @@ Phase 3 soll die UI an dieses Upstream-Repo anschließen. Diese ADR hält die dr
 
 ### Variante A — Build-Time-Generator (empfohlen)
 
-GitHub Action im Upstream-Repo `ki-tomat/kitomat` schreibt bei jedem Merge auf `main` eine generierte `library.json` (+ `review.json`, `community.json`, …) als PR in den UI-Fork oder als Release-Asset. Die UI lädt diese statisch im Build.
+GitHub Action im Upstream-Repo `ki-tomat/kitomat` schreibt bei jedem Merge auf `main` eine generierte `library.json` (+ `review.json`, `community.json`, …) als PR in den UI-Fork `pfernando-KI/kitomat` oder als Release-Asset. Die UI lädt diese statisch im Build.
 
 - **Vorteil:** Minimaler Aufwand, kein API-Rate-Limit, kein Backend nötig, Content-Repo bleibt strukturell unverändert
 - **Nachteil:** Inhalte sind nicht „live" — Verzögerung von 1 Workflow-Lauf

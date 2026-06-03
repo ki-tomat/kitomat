@@ -2,6 +2,7 @@ import { Icon } from './Icon.jsx';
 import { RoleSwitcher } from './RoleSwitcher.jsx';
 import { ThemeToggle } from './ThemeToggle.jsx';
 
+import { CONTENT_REPO_URL } from '../lib/links.js';
 export function MobileNav({
   primary, secondary, route, go, onClose, openChat, openLogin,
   role, setRole, theme, setTheme,
@@ -55,7 +56,7 @@ export function MobileNav({
           <button type="button" className="btn btn-secondary btn-sm" onClick={openChat}>
             <Icon.chat size={14} /> Assistent
           </button>
-          <a className="btn btn-secondary btn-sm" href="https://github.com/ki-tomat/kitomat" target="_blank" rel="noreferrer">
+          <a className="btn btn-secondary btn-sm" href={CONTENT_REPO_URL} target="_blank" rel="noreferrer">
             <Icon.github size={14} /> GitHub
           </a>
           <button type="button" className="btn btn-secondary btn-sm" onClick={openLogin}>

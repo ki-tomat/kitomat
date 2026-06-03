@@ -21,19 +21,6 @@ import Review from '../views/Review.jsx';
 const ROLE_STORAGE_KEY = 'kitomat_role_v1';
 const THEME_STORAGE_KEY = 'kitomat_theme_v1';
 
-const ROUTE_LABELS = {
-  dashboard: 'Dashboard',
-  library: 'Bibliothek',
-  detail: 'Detail',
-  contribution: 'Beitrag vorbereiten',
-  review: 'Review Center',
-  admin: 'Admin-Bereich',
-  community: 'Community',
-  'my-requests': 'Meine Requests',
-  faq: 'FAQ',
-  about: 'Über KItomat',
-};
-
 function parseHash() {
   const hash = window.location.hash.replace(/^#\/?/, '');
   if (!hash) return { route: 'dashboard', id: null };
@@ -72,38 +59,6 @@ function renderRoute({ route, detailId, go, role, openChat, openVideo }) {
     default:
       return <Dashboard go={go} role={role} openChat={openChat} openVideo={openVideo} />;
   }
-}
-
-function DummyView({ routeId, detailId }) {
-  const label = ROUTE_LABELS[routeId] || routeId;
-  const { show } = useToast();
-  return (
-    <main className="page">
-      <div className="container" style={{ padding: '32px 0' }}>
-        <div className="h-eyebrow">AP3a Platzhalter</div>
-        <h1 className="h1">{label}</h1>
-        <p className="muted">
-          Diese Ansicht ist ein App-Shell-Platzhalter. Die echte Implementierung folgt in AP4-AP6.
-          {detailId && <> Detail-ID: <code>{detailId}</code></>}
-        </p>
-        <div className="card" style={{ marginTop: 22, padding: 22 }}>
-          <div className="h3">Route aktiv: <code>#/{routeId}{detailId ? `/${detailId}` : ''}</code></div>
-          <p className="muted" style={{ marginTop: 8 }}>
-            Header + Footer + Theme + Rollenwechsel + Toast laufen live aus den
-            Komponenten in <code>src/components/</code>.
-          </p>
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            style={{ marginTop: 12 }}
-            onClick={() => show({ title: 'Toast-Demo', body: 'Toast-Context funktioniert.', tone: 'success' })}
-          >
-            Toast auslösen
-          </button>
-        </div>
-      </div>
-    </main>
-  );
 }
 
 function AppShell() {

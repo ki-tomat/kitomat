@@ -6,6 +6,7 @@ import { ThemeToggle } from './ThemeToggle.jsx';
 import { navForRole } from '../lib/nav.js';
 import kitomatMark from '../assets/kitomat-mark.png';
 
+import { CONTENT_REPO_URL } from '../lib/links.js';
 export function Header({ route, go, openChat, openLogin, role, setRole, theme, setTheme }) {
   const { primary: PRIMARY, secondary: SECONDARY } = navForRole(role);
 
@@ -75,7 +76,7 @@ export function Header({ route, go, openChat, openLogin, role, setRole, theme, s
           <a
             className="btn btn-ghost btn-sm tt tt-bottom"
             data-tt="GitHub Repository"
-            href="https://github.com/ki-tomat/kitomat"
+            href={CONTENT_REPO_URL}
             target="_blank"
             rel="noreferrer"
           >

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "KI-tomat Web UI — Vite + React Skeleton (AP1a)",
+  "description": "KI-tomat Web UI - React/Vite MVP with app shell, views, modals and static data",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

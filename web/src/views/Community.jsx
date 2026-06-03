@@ -1,6 +1,7 @@
 import { Avatar, Icon, PhaseBadge } from '../components/index.js';
 import { COMMUNITY_MEMBERS, COMMUNITY_THREADS } from '../data/community.js';
 
+import { CONTENT_REPO_URL } from '../lib/links.js';
 // Community view (v3) — forum first, contact channels at bottom
 export default function Community({ go }) {
   return (
@@ -122,7 +123,7 @@ export default function Community({ go }) {
           </div>
           <div style={{display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:12}}>
               <ContactRow color="var(--ink)" icon={<Icon.github size={16}/>} name="GitHub" desc="Detaillierte Fragen, PR-Diskussionen, Issues." status="live"
-                href="https://github.com/ki-tomat/kitomat"/>
+                href={CONTENT_REPO_URL}/>
               <ContactRow color="var(--post)" icon={<span style={{fontFamily:"'JetBrains Mono', monospace", fontWeight:800, fontSize:13}}>in</span>} name="LinkedIn" desc="Beiträge teilen, Mitstreiter:innen finden." status="geplant"/>
               <ContactRow color="var(--slate)" icon={<span style={{fontFamily:"'JetBrains Mono', monospace", fontWeight:800, fontSize:13}}>DC</span>} name="Discord" desc="Live-Austausch zu Artefakten und Reviews." status="geplant"/>
           </div>
