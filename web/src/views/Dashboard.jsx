@@ -1,5 +1,4 @@
 import {
-import { CONTENT_REPO_URL } from '../lib/links.js';
   Icon,
   GoldBadge,
   PhaseBadge,
@@ -8,6 +7,7 @@ import { CONTENT_REPO_URL } from '../lib/links.js';
 } from '../components/index.js';
 import { LibraryCard } from './Library.jsx';
 import { LIBRARY, REVIEW_PIPELINE } from '../data/index.js';
+import { CONTENT_REPO_URL } from '../lib/links.js';
 import markUrl from '../assets/kitomat-mark.png';
 
 const PROCESS = [

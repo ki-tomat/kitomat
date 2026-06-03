@@ -1,5 +1,4 @@
 import {
-import { CONTENT_REPO_URL, contentArtifactUrl } from '../lib/links.js';
   Icon,
   TypeBadge,
   GoldBadge,
@@ -7,6 +6,7 @@ import { CONTENT_REPO_URL, contentArtifactUrl } from '../lib/links.js';
   useToast,
 } from '../components/index.js';
 import { LIBRARY, DATENSCHUTZ_KURZ_DONT } from '../data/index.js';
+import { CONTENT_REPO_URL, contentArtifactUrl } from '../lib/links.js';
 
 function Meta({ label, v, mono, color }) {
   return (

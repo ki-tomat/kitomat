@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import {
-import { contentArtifactUrl } from '../lib/links.js';
   Icon,
   TypeBadge,
   GoldBadge,
   EmptyState,
 } from '../components/index.js';
 import { LIBRARY } from '../data/index.js';
+import { contentArtifactUrl } from '../lib/links.js';
 
 export function LibraryCard({ a, onOpen, compact }) {
   return (
