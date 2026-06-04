@@ -1,0 +1,86 @@
+﻿name: Deploy Web UI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Build Pages bundle
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /kitomat/web/
+
+      - name: Stage Pages artifact
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p ../pages/web
+          cp -R dist/* ../pages/web/
+          cat > ../pages/index.html <<'EOF'
+          <!doctype html>
+          <html lang="de">
+            <head>
+              <meta charset="utf-8">
+              <meta http-equiv="refresh" content="0; url=web/">
+              <title>KItomat Web UI</title>
+            </head>
+            <body>
+              <a href="web/">KItomat Web UI öffnen</a>
+            </body>
+          </html>
+          EOF
+
+      - name: Configure Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
