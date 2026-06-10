@@ -5,8 +5,11 @@ import {
   GoldBadge,
   EmptyState,
 } from '../components/index.js';
-import { LIBRARY } from '../data/index.js';
-import { contentArtifactUrl } from '../lib/links.js';
+import {
+  useLibraryData,
+  artifactGithubUrl,
+  DATA_SOURCE_LABEL,
+} from '../data/index.js';
 
 export function LibraryCard({ a, onOpen, compact }) {
   return (
@@ -124,7 +127,7 @@ export function LibraryCard({ a, onOpen, compact }) {
         <a
           className="btn btn-secondary btn-sm tt"
           data-tt="Auf GitHub öffnen"
-          href={contentArtifactUrl(a.id)}
+          href={artifactGithubUrl(a)}
           target="_blank"
           rel="noreferrer"
           onClick={(e) => e.stopPropagation()}
@@ -223,6 +226,7 @@ const RISK_OPTS = [
 const VIEW_STORAGE_KEY = 'kitomat_library_view_v1';
 
 export default function Library({ go }) {
+  const { artifacts, status } = useLibraryData();
   const [search, setSearch] = useState('');
   const [type, setType] = useState('all');
   const [risk, setRisk] = useState('all');
@@ -237,7 +241,7 @@ export default function Library({ go }) {
     try { sessionStorage.setItem(VIEW_STORAGE_KEY, next); } catch (e) { /* ignore */ }
   };
 
-  const filtered = LIBRARY.filter((a) => {
+  const filtered = artifacts.filter((a) => {
     if (type !== 'all' && a.type !== type) return false;
     if (risk !== 'all' && a.risk !== risk) return false;
     if (
@@ -274,19 +278,42 @@ export default function Library({ go }) {
               Entwurfs- oder Review-Status befinden sich im geschützten Review Center.
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button
-              className={`btn btn-sm ${view === 'grid' ? 'btn-secondary' : 'btn-ghost'}`}
-              onClick={() => setView('grid')}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                className={`btn btn-sm ${view === 'grid' ? 'btn-secondary' : 'btn-ghost'}`}
+                onClick={() => setView('grid')}
+              >
+                Cards
+              </button>
+              <button
+                className={`btn btn-sm ${view === 'table' ? 'btn-secondary' : 'btn-ghost'}`}
+                onClick={() => setView('table')}
+              >
+                Tabelle
+              </button>
+            </div>
+            <span
+              className="mono tt"
+              data-tt="Reihenfolge: Content-API, Browser-Cache, Beispieldaten"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 11,
+                color: 'var(--ink-3)',
+              }}
             >
-              Cards
-            </button>
-            <button
-              className={`btn btn-sm ${view === 'table' ? 'btn-secondary' : 'btn-ghost'}`}
-              onClick={() => setView('table')}
-            >
-              Tabelle
-            </button>
+              <span
+                style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: 99,
+                  background: status === 'live' ? 'var(--leaf)' : status === 'stale' ? 'var(--amber)' : 'var(--ink-3)',
+                }}
+              ></span>
+              {DATA_SOURCE_LABEL[status] || DATA_SOURCE_LABEL.fallback}
+            </span>
           </div>
         </div>
 
@@ -361,7 +388,7 @@ export default function Library({ go }) {
               }}
             >
               <span className="muted mono" style={{ fontSize: 12 }}>
-                {filtered.length} von {LIBRARY.length} Artefakten
+                {filtered.length} von {artifacts.length} Artefakten
               </span>
               <button
                 className="btn btn-ghost btn-sm"

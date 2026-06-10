@@ -5,8 +5,12 @@ import {
   RiskBadge,
   useToast,
 } from '../components/index.js';
-import { LIBRARY, DATENSCHUTZ_KURZ_DONT } from '../data/index.js';
-import { CONTENT_REPO_URL, contentArtifactUrl } from '../lib/links.js';
+import {
+  DATENSCHUTZ_KURZ_DONT,
+  useLibraryData,
+  artifactGithubUrl,
+} from '../data/index.js';
+import { CONTENT_REPO_URL } from '../lib/links.js';
 
 function Meta({ label, v, mono, color }) {
   return (
@@ -92,8 +96,75 @@ function ScenarioCard({ color, label, icon, text }) {
 }
 
 export default function Detail({ id, go }) {
-  const a = LIBRARY.find((x) => x.id === id) || LIBRARY[0];
+  const { artifacts, loading } = useLibraryData();
   const { show } = useToast();
+
+  const a = artifacts.find((x) => x.id === id);
+
+  // Kontrollierter Zustand, wenn die ID (noch) nicht in den Daten ist: waehrend
+  // des API-Ladens ein dezenter Lade-Hinweis, danach ein echter Not-Found-State.
+  // Bewusst NICHT automatisch das erste Artefakt anzeigen.
+  if (!a) {
+    return (
+      <main className="page">
+        <div className="container">
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{ marginBottom: 18, marginLeft: -10 }}
+            onClick={() => go('library')}
+          >
+            <Icon.back size={13} /> Zurück zur Bibliothek
+          </button>
+          <div className="card" style={{ padding: 40, textAlign: 'center' }}>
+            <h1 className="h3" style={{ marginBottom: 8 }}>
+              {loading ? 'Artefakt wird geladen…' : 'Artefakt nicht gefunden'}
+            </h1>
+            <p className="muted" style={{ margin: '0 auto', maxWidth: 460, fontSize: 14 }}>
+              {loading
+                ? 'Die Daten werden gerade aus der Content-API geladen.'
+                : 'Zu dieser Kennung gibt es kein freigegebenes Artefakt in der Bibliothek.'}
+            </p>
+            {!loading && (
+              <button
+                className="btn btn-secondary btn-sm"
+                style={{ marginTop: 18 }}
+                onClick={() => go('library')}
+              >
+                Zur Bibliothek
+              </button>
+            )}
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Quelllose Detailfelder (nur in Mockdaten vorhanden) werden fuer API-Artefakte
+  // ausgeblendet statt leer gerendert.
+  const hasScenarios = a.pos || a.nb || a.neg;
+  const hasSample =
+    (a.sampleIn && a.sampleIn !== '—') || (a.sampleOut && a.sampleOut !== '—');
+  const hasFailures = Array.isArray(a.failure) && a.failure.length > 0;
+  // DSGVO-/Hinweisfelder aus AP9 nur anzeigen, sobald vorhanden.
+  const complianceFields = [
+    { l: 'Rechtlicher Hinweis', v: a.legal_disclaimer },
+    {
+      l: 'Personenbezogene Daten möglich',
+      v: typeof a.personal_data_possible === 'boolean' ? (a.personal_data_possible ? 'Ja' : 'Nein') : a.personal_data_possible,
+    },
+    {
+      l: 'Menschlicher Review erforderlich',
+      v: typeof a.human_review_required === 'boolean' ? (a.human_review_required ? 'Ja' : 'Nein') : a.human_review_required,
+    },
+    {
+      l: 'Enthält personenbezogene Daten',
+      v: typeof a.contains_personal_data === 'boolean' ? (a.contains_personal_data ? 'Ja' : 'Nein') : a.contains_personal_data,
+    },
+    {
+      l: 'Enthält sensible Daten',
+      v: typeof a.contains_sensitive_data === 'boolean' ? (a.contains_sensitive_data ? 'Ja' : 'Nein') : a.contains_sensitive_data,
+    },
+  ].filter((f) => f.v !== undefined && f.v !== null && f.v !== '');
 
   const canCopySample = a.sampleOut && a.sampleOut !== '—';
   const copySample = async () => {
@@ -178,7 +249,7 @@ export default function Detail({ id, go }) {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', position: 'relative' }}>
             <a
               className="btn btn-primary btn-sm"
-              href={contentArtifactUrl(a.id)}
+              href={artifactGithubUrl(a)}
               target="_blank"
               rel="noreferrer"
             >
@@ -206,30 +277,33 @@ export default function Detail({ id, go }) {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 18 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            <section className="card" style={{ padding: 26 }}>
-              <div className="h-eyebrow" style={{ marginBottom: 6 }}>
-                Trust Layer · Szenario-Triade
-              </div>
-              <h3 className="h3" style={{ marginBottom: 16 }}>
-                Wann hilft es, wann muss nachbearbeitet werden, wann nicht?
-              </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-                <ScenarioCard color="leaf" label="Positives Szenario" icon="✓" text={a.pos} />
-                <ScenarioCard
-                  color="amber"
-                  label="Nachbearbeitbares Szenario"
-                  icon="≈"
-                  text={a.nb}
-                />
-                <ScenarioCard
-                  color="tomato"
-                  label="Negatives Szenario"
-                  icon="✕"
-                  text={a.neg}
-                />
-              </div>
-            </section>
+            {hasScenarios && (
+              <section className="card" style={{ padding: 26 }}>
+                <div className="h-eyebrow" style={{ marginBottom: 6 }}>
+                  Trust Layer · Szenario-Triade
+                </div>
+                <h3 className="h3" style={{ marginBottom: 16 }}>
+                  Wann hilft es, wann muss nachbearbeitet werden, wann nicht?
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                  <ScenarioCard color="leaf" label="Positives Szenario" icon="✓" text={a.pos} />
+                  <ScenarioCard
+                    color="amber"
+                    label="Nachbearbeitbares Szenario"
+                    icon="≈"
+                    text={a.nb}
+                  />
+                  <ScenarioCard
+                    color="tomato"
+                    label="Negatives Szenario"
+                    icon="✕"
+                    text={a.neg}
+                  />
+                </div>
+              </section>
+            )}
 
+            {hasSample && (
             <section className="card" style={{ padding: 26 }}>
               <div className="h-eyebrow" style={{ marginBottom: 14 }}>
                 Synthetisches Beispiel
@@ -315,7 +389,9 @@ export default function Detail({ id, go }) {
                 </div>
               </div>
             </section>
+            )}
 
+            {hasFailures && (
             <section className="card" style={{ padding: 24 }}>
               <div className="h-eyebrow" style={{ marginBottom: 12 }}>
                 Bekannte Grenzen
@@ -350,6 +426,27 @@ export default function Detail({ id, go }) {
                 ))}
               </ul>
             </section>
+            )}
+
+            {complianceFields.length > 0 && (
+              <section className="card" style={{ padding: 24 }}>
+                <div className="h-eyebrow" style={{ marginBottom: 14 }}>
+                  Datenschutz &amp; Compliance-Hinweise
+                </div>
+                <dl
+                  style={{
+                    margin: 0,
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '14px 18px',
+                  }}
+                >
+                  {complianceFields.map((f) => (
+                    <Meta key={f.l} label={f.l} v={f.v} />
+                  ))}
+                </dl>
+              </section>
+            )}
 
             <section
               className="card"
