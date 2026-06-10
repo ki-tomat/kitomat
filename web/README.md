@@ -35,6 +35,26 @@ npm run preview
 
 Nach AP7 kommen zus?tzlich `npm run test` und `npm run test:ci` hinzu.
 
+## Datenquelle (Content API)
+
+Die WebUI bezieht Bibliotheksdaten ueber eine Data Bridge (`src/data/liveContent.js`,
+Hook `useLibraryData`). Fallback-Reihenfolge:
+
+1. Sites Content API (`GET /api/content`) wenn `VITE_KITOMAT_CONTENT_API_URL` gesetzt ist
+2. Browser-Cache (`localStorage`, TTL 30 min)
+3. Mockdaten (`src/data/library.js`)
+
+Konfiguration ueber `.env.local` (Vorlage: `.env.example`):
+
+```bash
+VITE_KITOMAT_CONTENT_API_URL=https://<deine-content-api>/
+```
+
+Die Variable wird beim Build ins Bundle geschrieben; ein API-Wechsel braucht einen
+neuen Build. Ohne gesetzte Variable laeuft die App im Mockdaten-Modus, das ist kein
+Fehler. Die Bibliothek zeigt die aktive Datenquelle als kleine Anzeige
+(`Live-Daten` / `Cache` / `Beispieldaten`).
+
 ## Struktur
 
 ```
