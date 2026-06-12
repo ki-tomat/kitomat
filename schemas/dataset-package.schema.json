@@ -11,7 +11,8 @@
         "contains_personal_data",
         "contains_sensitive_data",
         "sources_date",
-        "usage_scope"
+        "usage_scope",
+        "release_asset_required"
       ],
       "properties": {
         "artifact_type": { "const": "dataset_package" },
@@ -20,9 +21,14 @@
         "contains_personal_data": { "type": "boolean" },
         "contains_sensitive_data": { "type": "boolean" },
         "sources_date": { "type": "string" },
-        "usage_scope": { "type": "string", "minLength": 3 }
+        "usage_scope": { "type": "string", "minLength": 3 },
+        "release_asset_required": { "type": "boolean" },
+        "release_asset_name": { "type": "string" },
+        "release_asset_version": { "type": "string" },
+        "release_asset_size_mb": { "type": "string" },
+        "release_asset_sha256": { "type": "string" },
+        "release_asset_url": { "type": "string" }
       }
     }
   ]
 }
-

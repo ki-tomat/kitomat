@@ -34,6 +34,8 @@ At least one useful material form should be present:
 - template
 - short context package
 
+Large files are not stored directly in Git by default. Use GitHub Release Assets and document file name, version, size, checksum, source status, license status and data risk.
+
 ## Model
 
 Required files:
@@ -59,4 +61,3 @@ Every release candidate artifact needs:
 - short expert feedback
 
 The triad can live in examples, evaluation, usage or failure modes. It does not create a new artifact type.
-

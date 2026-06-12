@@ -7,7 +7,8 @@
 3. Metadata consistency
 4. Scenario quality
 5. Source and license clarity
-6. Human review readiness
+6. Release asset safety if downloads are involved
+7. Human review readiness
 
 ## Status rules
 
@@ -31,6 +32,21 @@ Use only when the contribution appears structurally complete and safe enough for
 
 Use for high-risk or complex contributions that should not block `v0.1-rc`.
 
+## Release asset rule
+
+If a contribution references large files, check whether asset metadata is present:
+
+- file name
+- version
+- size
+- checksum
+- source status
+- license status
+- data risk
+- human review status
+
+Missing asset metadata means `needs_fixes` or `needs_trust_review`.
+
 ## Never do
 
 - Never approve final status.
@@ -38,4 +54,3 @@ Use for high-risk or complex contributions that should not block `v0.1-rc`.
 - Never publish.
 - Never override human review.
 - Never claim legal, audit or compliance approval.
-
