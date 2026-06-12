@@ -1,0 +1,197 @@
+id: kiwerkstatt-leadbearbeitung
+artifact_type: prompt_package
+title: "Effektive Leadbearbeitung für die KIWerkstatt Hamburg GmbH"
+subtitle: "Prompt-Paket mit Input-Layer für Lead-Scoring, CRM-Zusammenfassung und Einwandvorbereitung"
+category: sales
+subcategories:
+  - lead_qualification
+  - crm_documentation
+  - objection_handling
+  - b2b_sales
+  - ai_consulting
+
+language: de
+version: "0.1.0"
+status: bronze_candidate
+
+repository_path: "prompts/sales/kiwerkstatt-leadbearbeitung/"
+
+maintainer: "KIWerkstatt Community Team"
+contributors:
+  - "JochenTDM"
+
+license: CC-BY-4.0
+license_status: declared
+
+summary: >
+  Dieses Prompt-Paket unterstützt Vertriebsmitarbeiter, kleine Agenturen,
+  selbstständige B2B-Dienstleister und KI-Berater dabei, Leads strukturierter
+  zu bewerten, Gespräche CRM-tauglich zusammenzufassen und Budget-, Preis-
+  oder Prioritätseinwände respektvoll vorzubereiten.
+
+use_case: >
+  Strukturierte, human-geprüfte Unterstützung bei der Leadbearbeitung für eine
+  fiktive B2B-KI-Beratung, ohne automatische Vertriebsentscheidungen und ohne
+  ungeprüfte CRM-Übernahme.
+
+target_users:
+  - "Vertriebsmitarbeiter in KMU"
+  - "kleine Agenturen"
+  - "selbstständige B2B-Dienstleister"
+  - "KI-Berater mit Vertriebsaufgaben"
+  - "Teams mit CRM- und Leadbearbeitungsprozessen"
+
+modules:
+  - id: lead_scoring
+    title: "Lead-Qualifizierung & Scoring"
+    file: "prompts/prompt-1-lead-scoring.md"
+    source_version: "v2.4"
+    input_schema: "input-layer/input-schema-prompt-1.yml"
+  - id: crm_summary
+    title: "Gesprächs- und Meetingzusammenfassung für CRM"
+    file: "prompts/prompt-2-crm-zusammenfassung.md"
+    source_version: "v2.4"
+    input_schema: "input-layer/input-schema-prompt-2.yml"
+  - id: budget_objection_handling
+    title: "Umgang mit Budget-, Preis- und Prioritätseinwänden im Vertrieb"
+    file: "prompts/prompt-3-budgeteinwaende.md"
+    source_version: "v2.2"
+    input_schema: "input-layer/input-schema-prompt-3.yml"
+
+input_layer:
+  status: integrated
+  files:
+    - "input-layer/input-layer-konzept.md"
+    - "input-layer/preflight-check.md"
+    - "input-layer/input-schema-prompt-1.yml"
+    - "input-layer/input-schema-prompt-2.yml"
+    - "input-layer/input-schema-prompt-3.yml"
+    - "input-layer/crm-field-mapping.md"
+
+required_inputs:
+  common:
+    - "standardisierte Input-Karte"
+    - "Datenschutzcheck"
+    - "Human-Review-Status"
+  lead_scoring:
+    - "Unternehmen"
+    - "Branche"
+    - "Unternehmensgröße"
+    - "Ansprechpartnerrolle"
+    - "Leadquelle"
+    - "Ausgangssituation"
+    - "Pain Points"
+  crm_summary:
+    - "Unternehmen"
+    - "Ansprechpartner"
+    - "Rolle"
+    - "Gesprächsdatum"
+    - "Gesprächsanlass"
+    - "Gesprächsdaten oder Transkript"
+  budget_objection_handling:
+    - "Unternehmen"
+    - "Branche"
+    - "Ansprechpartnerrolle"
+    - "bisheriger Gesprächskontext"
+    - "genannter Einwand"
+    - "Gesprächsphase"
+    - "Ziel des Vertriebsmitarbeiters"
+    - "erlaubte Angebote"
+    - "nicht erlaubte Aussagen"
+
+output_format: >
+  Strukturierte Markdown-Ausgabe je Modul mit klarer Trennung von Fakten,
+  Einschätzungen, Unsicherheiten, Risiken und menschlich zu prüfenden Punkten.
+
+data_risk: yellow
+personal_data_possible: true
+synthetic_examples_only: true
+ai_act_proximity: transparency
+human_review_required: true
+
+human_review_points:
+  - "Lead-Score und Lead-Kategorie"
+  - "empfohlener nächster Vertriebschritt"
+  - "CRM-Übernahme"
+  - "Budget-, Timing- oder Entscheidungsannahmen"
+  - "Datenschutz- und IT-Risiken"
+  - "externe Kommunikation mit Leads oder Kunden"
+
+trust_layer:
+  data_risk_reason: >
+    Das Paket kann mit Lead-, Gesprächs- und CRM-Daten genutzt werden. Diese
+    Daten können personenbezogene oder vertrauliche Informationen enthalten
+    und in Vertriebspriorisierung oder externe Kommunikation einfließen.
+  human_review_reason: >
+    Die KI liefert nur Entwürfe und Vorbewertungen. Vertriebsentscheidungen,
+    CRM-Einträge und externe Kommunikation müssen durch eine verantwortliche
+    Person geprüft und freigegeben werden.
+  allowed_data:
+    - "synthetische Leads"
+    - "anonymisierte Gesprächsnotizen"
+    - "fiktive CRM-Beispiele"
+    - "nicht vertrauliche Prozessbeschreibungen"
+  prohibited_data:
+    - "echte Kundendaten ohne Freigabe"
+    - "personenbezogene Echtdaten in öffentlichen Beispielen"
+    - "vertrauliche CRM-Daten ohne Prüfung"
+    - "Gesundheitsdaten"
+    - "Bewerbungsunterlagen echter Personen"
+    - "vertrauliche Finanzdaten"
+    - "personenbezogene E-Mails ohne Anonymisierung"
+  prohibited_outputs:
+    - "finale automatische Leadentscheidung"
+    - "ungeprüfter CRM-Eintrag"
+    - "erfundene Rabatte"
+    - "erfundene ROI-Zahlen"
+    - "erfundene Referenzen"
+    - "erfundene Fallstudien"
+    - "manipulative Vertriebssprache"
+
+legal_disclaimer: >
+  Arbeits- und Orientierungshilfe. Keine Rechtsberatung, keine automatische
+  Vertriebsentscheidung und keine produktive CRM-Übernahme ohne menschliche
+  Prüfung. Vor produktiver Nutzung sind Kontext, Daten, Quellen und Ergebnis
+  durch eine verantwortliche Person zu prüfen.
+
+
+failure_modes:
+  file: "failure-modes.md"
+  status: documented
+  coverage:
+    - "paketweite Failure Modes"
+    - "Input-Layer Failure Modes"
+    - "Modul 1 Lead-Scoring"
+    - "Modul 2 CRM-Zusammenfassung"
+    - "Modul 3 Budgeteinwaende"
+    - "Datensatz- und Beispielrisiken"
+  critical_controls:
+    - "Leere Pflichtfelder stoppen die Analyse"
+    - "Unbekannt-Werte sind erlaubt und werden als Unsicherheit markiert"
+    - "Keine finalen Vertriebsentscheidungen"
+    - "Keine ungeprueften CRM-Eintraege"
+    - "Keine erfundenen Rabatte, ROI-Zahlen, Referenzen oder Fallstudien"
+    - "Human Review bleibt verpflichtend"
+
+
+pr_description:
+  file: "PR_DESCRIPTION.md"
+  status: documented
+
+review:
+  peer_review_required: true
+  trust_review_required: true
+  review_status: pending
+  merge_allowed: false
+
+tags:
+  - sales
+  - vertrieb
+  - lead-scoring
+  - crm
+  - b2b
+  - kmu
+  - ki-beratung
+  - human-in-the-loop
+  - trust-layer
+  - in
