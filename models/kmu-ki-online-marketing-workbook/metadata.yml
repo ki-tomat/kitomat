@@ -1,0 +1,36 @@
+id: kmu-ki-online-marketing-workbook
+artifact_type: model
+title: "KI-Online-Marketing-Beratungsmodell für Kleinstunternehmen"
+category: consulting
+status: bronze_candidate
+language: de
+version: "0.1.0"
+maintainer: p99
+license: CC-BY-4.0
+license_status: declared
+data_risk: yellow
+human_review_required: true
+ai_act_proximity: unclear
+legal_disclaimer: "Dieses Artefakt ist eine Arbeits- und Orientierungshilfe. Es ersetzt keine fachliche, rechtliche oder datenschutzrechtliche Prüfung. Vor produktiver Nutzung sind Kontext, Daten, Quellen und Ergebnis durch eine verantwortliche Person zu prüfen."
+sources_status: provided
+model_type: workbook
+target_users:
+  - "Kleinstunternehmen bis 10 Mitarbeitende"
+  - "KMU-Geschäftsführung"
+  - "Selbstständige"
+  - "KI-Beraterinnen und KI-Berater"
+use_case: "Online-Marketing mit KI strukturiert analysieren, priorisieren, pilotieren und datenschutzbewusst in einfache Routinen überführen"
+required_inputs:
+  - "Unternehmensprofil"
+  - "Zielgruppe"
+  - "Marketing-Ist-Stand"
+  - "bestehende Marketingmaterialien"
+  - "häufige Kundenfragen ohne personenbezogene Daten"
+  - "Ressourcen, Budget und Zeitrahmen"
+output_format: "Ausgefülltes Workbook mit KI-Marketing-Routine, Pilotentscheidung, Prüfpunkten und Reviewplan"
+application_scope: "Workshop, Erstberatung, Vorprüfung und Pilotplanung für kleine Online-Marketing-Routinen"
+framework_references:
+  - "Sakizli-Konsultationsmodell"
+  - "Sakizli 5-Phasen-Beratungsmodell"
+  - "Sakizli Fragenmodell"
+required_review_level: trust_review
