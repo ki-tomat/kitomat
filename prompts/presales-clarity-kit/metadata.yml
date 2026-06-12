@@ -1,0 +1,46 @@
+id: presales-clarity-kit
+artifact_type: prompt_package
+title: "Pre-Sales Clarity Kit"
+category: consulting
+status: bronze_candidate
+language: de
+version: "1.1.0"
+maintainer: "Nadine Schadt (@tireeshore)"
+license: CC-BY-4.0
+license_status: declared
+data_risk: yellow
+human_review_required: true
+ai_act_proximity: unclear
+sources_status: provided
+target_users:
+  - "KMU"
+  - "KMU-nahe Dienstleister"
+  - "kleine B2B-Teams mit Angebotsprozess"
+use_case: "Unklare Kundenanfragen strukturieren, Rückfragen priorisieren, Erstgespräche vorbereiten und eine nicht-bindende Grundlage für spätere Angebotserstellung schaffen."
+required_files:
+  - "prompt.md"
+  - "context/nutzerprofil.md"
+  - "context/pre-sales-briefing-framework.md"
+  - "context/anfragequalifizierungs-checkliste.md"
+  - "context/html-aktionsdashboard-styleguide.md"
+supporting_files:
+  - "README.md"
+  - "sources.md"
+  - "license.md"
+  - "usage.md"
+  - "evaluation.md"
+  - "failure-modes.md"
+  - "examples/input-01.md"
+  - "examples/output-01.md"
+  - "examples/input-02.md"
+  - "examples/output-02.md"
+  - "examples/nutzerprofil-beispiel.md"
+  - "TESTPROTOKOLL.md"
+  - "tools/nutzerprofil-erstellen.html"
+required_inputs:
+  - "bereinigte Kundenanfrage"
+  - "angepasstes Nutzerprofil mit Unternehmensdaten, Leistungen, Grenzen und Tonalität"
+output_format: "Kurze Startantwort ohne Kundenanfrage; danach Markdown-Analyse mit kompaktem HTML-Dashboard, Kurzdiagnose, Ampelstatus, offenen Punkten, Rückfragen, Erstgespräch, Angebotsvorbereitung, Antwortmail und Kontrollhinweisen."
+personal_data_possible: true
+legal_disclaimer: "Dieses Artefakt ist eine Arbeits- und Orientierungshilfe. Es ersetzt keine fachliche, datenschutzrechtliche, rechtliche, steuerliche, finanzielle oder vertragliche Kontrolle. Bei sensiblen, regulierten oder entscheidungsnahen Fällen ist Human Review erforderlich."
+evaluation_criteria: "Siehe evaluation.md"
