@@ -1,0 +1,37 @@
+id: masterprompt-websiteanalysekonzept-kmu
+artifact_type: prompt_package
+title: "Masterprompt Websiteanalysekonzept fuer KMU"
+category: online_marketing
+status: draft
+language: de
+version: "0.1.0"
+maintainer: "p99"
+license: CC-BY-4.0
+license_status: declared
+data_risk: yellow
+human_review_required: true
+ai_act_proximity: transparency
+legal_disclaimer: "Dieses Artefakt ist eine Arbeits- und Orientierungshilfe. Es ersetzt keine fachliche, rechtliche oder datenschutzrechtliche Pruefung. Vor produktiver Nutzung sind Kontext, Daten, Quellen und Ergebnis durch eine verantwortliche Person zu pruefen."
+sources_status: provided
+target_users:
+  - "KMU bis 10 Mitarbeitende"
+  - "Geschaeftsfuehrende ohne eigene Webanalyse-Abteilung"
+  - "Marketingverantwortliche mit wenig Zeit und kleinem Budget"
+  - "KI-Beraterinnen und KI-Berater fuer Kleinst-KMU"
+use_case: "Ein KMU erstellt Schritt fuer Schritt ein Websiteanalysekonzept, um die Unternehmenswebsite messbar fuer Anfragen, Kaeufe, Terminbuchungen oder Newsletter-Anmeldungen zu verbessern."
+required_inputs:
+  - "Websiteziel und wichtigste Conversion"
+  - "Zielgruppe und Angebot"
+  - "Aktuelles Problem oder Analysefokus"
+  - "Vorhandene Websitebereiche oder Beispielseiten"
+  - "Vorhandene aggregierte Kennzahlen, z. B. aus GA4"
+  - "Zeitbudget, Verantwortliche und technische Moeglichkeiten"
+output_format: "Websiteanalysekonzept als Markdown mit Kurzdiagnose, Fragen-Daten-Aktions-Matrix, Customer-Journey-Sicht, KPI- und Trackingplan, Hypothesen, priorisierten Massnahmen, 30/60/90-Tage-Plan und Human-Review-Checkliste."
+personal_data_possible: true
+evaluation_criteria: "Siehe evaluation.md"
+linked_model: "models/kimo-5-kmu-online-marketing"
+framework_references:
+  - "KIMO-5: KI-Marketing-Optimierungsmodell fuer Kleinst-KMU"
+  - "Webanalytika: Erfolgreiche Online-Marketing-Strategie entwickeln"
+  - "Google Analytics 4: Key Events, Funnel Exploration und empfohlene Events"
+sources_date: "2026-05-11"

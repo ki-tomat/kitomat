@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Praxisanleitung fuer Anfaenger</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --paper: #ffffff;
+      --text: #1f2937;
+      --muted: #5d6878;
+      --line: #d8dee8;
+      --accent: #176b87;
+      --accent-soft: #e7f4f7;
+      --green-soft: #eaf7ef;
+      --green: #236b3b;
+      --warn-soft: #fff4d6;
+      --warn: #765200;
+      --bad-soft: #fff0f0;
+      --bad: #8a1f1f;
+      --code: #111827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.58;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 38px 20px 58px;
+    }
+
+    article {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgba(20, 31, 48, 0.08);
+      padding: 34px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 31px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      border-top: 1px solid var(--line);
+      font-size: 21px;
+      margin-top: 30px;
+      padding-top: 26px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-size: 17px;
+      margin: 18px 0 8px;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 16px 22px;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 7px;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 14px 0 20px;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3f7;
+    }
+
+    code,
+    pre {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    code {
+      background: #eef3f7;
+      border-radius: 4px;
+      padding: 2px 5px;
+    }
+
+    pre {
+      background: var(--code);
+      border-radius: 8px;
+      color: #eef6ff;
+      margin: 14px 0 18px;
+      overflow-x: auto;
+      padding: 16px;
+      white-space: pre-wrap;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 17px;
+      margin-bottom: 22px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0 26px;
+    }
+
+    .pill {
+      background: var(--accent-soft);
+      border: 1px solid #b9dbe3;
+      border-radius: 999px;
+      color: #124f63;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 7px 12px;
+    }
+
+    .box {
+      background: #f9fbfd;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 16px 0;
+      padding: 18px;
+    }
+
+    .tip {
+      background: var(--green-soft);
+      border: 1px solid #b9dfc5;
+      border-radius: 8px;
+      color: var(--green);
+      margin: 16px 0;
+      padding: 16px 18px;
+    }
+
+    .warning {
+      background: var(--warn-soft);
+      border: 1px solid #e8cf86;
+      border-radius: 8px;
+      color: var(--warn);
+      margin: 16px 0;
+      padding: 16px 18px;
+    }
+
+    .danger {
+      background: var(--bad-soft);
+      border: 1px solid #efb8b8;
+      border-radius: 8px;
+      color: var(--bad);
+      margin: 16px 0;
+      padding: 16px 18px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 14px 0;
+      padding: 18px;
+    }
+
+    .step-label {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .footer {
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 34px;
+      padding-top: 18px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      main {
+        padding: 0;
+      }
+
+      article {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <h1>Praxisanleitung fuer Anfaenger</h1>
+      <p class="lead">So wendest du das KI-Online-Marketing-Beratungsmodell Schritt fuer Schritt auf dein eigenes Unternehmen oder deinen eigenen Fall an.</p>
+
+      <div class="meta">
+        <span class="pill">Fuer Einsteiger</span>
+        <span class="pill">Mit konkreten Prompts</span>
+        <span class="pill">Datenschutzarm</span>
+        <span class="pill">Kleiner Pilot statt grosser Automation</span>
+      </div>
+
+      <div class="box">
+        <strong>Kurz gesagt:</strong> Du oeffnest einen neuen KI-Chat, laedst zuerst die wichtigsten Modell-Dateien hoch, beantwortest einfache Fragen und laesst daraus einen kleinen, pruefbaren Marketing-Pilot entwickeln.
+      </div>
+
+      <h2>1. Was du mit dem Modell erreichst</h2>
+      <p>Das Modell hilft dir, dein Online-Marketing nicht zufaellig, sondern Schritt fuer Schritt zu verbessern. Es geht nicht darum, sofort alles zu automatisieren. Es geht darum, ein kleines Problem zu verstehen, eine passende KI-Routine zu testen und das Ergebnis menschlich zu pruefen.</p>
+
+      <p>Typische Ziele sind:</p>
+      <ul>
+        <li>regelmaessiger Inhalte erstellen,</li>
+        <li>Website-Texte verbessern,</li>
+        <li>Social-Media- oder Google-Beitraege vorbereiten,</li>
+        <li>Newsletter-Entwuerfe erstellen,</li>
+        <li>Kundenfragen in FAQ oder Blogideen verwandeln.</li>
+      </ul>
+
+      <h2>2. Welche KI oeffnest du?</h2>
+      <p>Nutze ein KI-System, in das du Dateien hochladen oder laengere Texte kopieren kannst.</p>
+      <ul>
+        <li>ChatGPT</li>
+        <li>Claude</li>
+        <li>Gemini</li>
+        <li>ein vergleichbares KI-System mit Datei- oder Langtextfunktion</li>
+      </ul>
+      <div class="tip"><strong>Empfehlung fuer Unsichere:</strong> Starte mit ChatGPT und oeffne einen neuen Chat. Nenne ihn zum Beispiel <code>KI-Online-Marketing-Modell fuer mein Unternehmen</code>.</div>
+
+      <h2>3. Welche Daten darfst du nicht eingeben?</h2>
+      <div class="danger">
+        <strong>Nicht in die KI eingeben:</strong>
+        <ul>
+          <li>Kundennamen, E-Mail-Adressen oder Telefonnummern,</li>
+          <li>private Nachrichten oder echte Support-Tickets,</li>
+          <li>Newsletterlisten, CRM-Daten oder Shopsystem-Exporte,</li>
+          <li>Bewerbungsdaten, Gesundheitsdaten oder vertrauliche Finanzdaten,</li>
+          <li>interne Kundendokumente oder sensible Unternehmensunterlagen.</li>
+        </ul>
+      </div>
+      <p>Besser sind allgemeine Beschreibungen, synthetische Beispiele, ungefaehre Zahlen und oeffentlich sichtbare Website-Texte.</p>
+
+      <h2>4. Start: Diese Dateien zuerst laden</h2>
+      <p>Lade nicht sofort alles hoch. Beginne mit diesem Startpaket:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Datei</th>
+            <th>Wofuer sie gebraucht wird</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>model.md</code></td>
+            <td>Erklaert das 6-Phasen-Modell.</td>
+          </tr>
+          <tr>
+            <td><code>application-guide.md</code></td>
+            <td>Erklaert die praktische Anwendung.</td>
+          </tr>
+          <tr>
+            <td><code>worksheet/01-erstgespraech-anamnese.md</code></td>
+            <td>Hilft beim Start und bei deiner Ausgangslage.</td>
+          </tr>
+          <tr>
+            <td><code>failure-modes.md</code></td>
+            <td>Warnt vor typischen Fehlern und Datenschutzrisiken.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>5. Prompt 1: KI auf das Modell einstellen</h2>
+      <p>Nachdem du die Dateien hochgeladen oder eingefuegt hast, schreibe diesen Prompt:</p>
+      <pre>Ich moechte das hochgeladene KI-Online-Marketing-Beratungsmodell auf meine eigene Situation anwenden.
+
+Bitte lies zuerst die Dateien:
+- model.md
+- application-guide.md
+- worksheet/01-erstgespraech-anamnese.md
+- failure-modes.md
+
+Erklaere mir danach in einfachen Worten:
+1. Was dieses Modell fuer mich leisten kann.
+2. Welche Informationen du von mir brauchst.
+3. Welche Daten ich nicht eingeben darf.
+4. Wie wir Schritt fuer Schritt starten.
+
+Stelle mir danach maximal 8 einfache Fragen, damit wir Phase 1: Orientierung & Anamnese ausfuellen koennen.</pre>
+
+      <h2>6. Phase 1: Deine Ausgangslage beschreiben</h2>
+      <p>Beantworte die Fragen der KI in einfacher Sprache. Wenn du etwas nicht weisst, schreibe: <code>Das weiss ich noch nicht.</code></p>
+      <pre>Unser Unternehmen:
+
+Branche:
+Anzahl Mitarbeitende:
+Was wir anbieten:
+Unsere wichtigsten Kunden:
+Unsere aktuellen Marketingkanaele:
+Was aktuell nicht gut funktioniert:
+Was wir mit Online-Marketing erreichen wollen:
+Wie viel Zeit wir pro Woche investieren koennen:
+Was die KI auf keinen Fall verwenden oder behaupten darf:</pre>
+
+      <h2>7. Prompt 2: Phase 1 zusammenfassen lassen</h2>
+      <pre>Fasse meine Angaben als ausgefuelltes Worksheet 01 zusammen.
+
+Bitte nutze diese Struktur:
+1. Unternehmensprofil
+2. Zielgruppe
+3. aktueller Online-Marketing-Stand
+4. Hauptproblem
+5. Zielbild
+6. No-Gos und ausgeschlossene Daten
+7. offene Fragen
+
+Markiere alle Annahmen klar als Annahme.</pre>
+      <p>Pruefe danach, ob die KI dein Unternehmen richtig verstanden hat. Korrigiere falsche Punkte sofort.</p>
+
+      <h2>8. Zweites Dateipaket: Use Case auswaehlen</h2>
+      <p>Wenn Phase 1 stimmt, lade diese Dateien nach:</p>
+      <ul>
+        <li><code>worksheet/02-use-case-auswahl.md</code></li>
+        <li><code>canvas/ki-marketing-routine-canvas.md</code></li>
+      </ul>
+      <p>Dann nutze diesen Prompt:</p>
+      <pre>Nutze jetzt worksheet/02-use-case-auswahl.md und das Canvas.
+
+Hilf mir, 3 bis 5 moegliche KI-Use-Cases fuer mein Online-Marketing zu finden.
+
+Bewerte jeden Use Case nach:
+- Nutzen
+- Aufwand
+- Kosten
+- Datenrisiko
+- Kontrollbedarf
+
+Empfiehl mir danach maximal 1 bis 3 kleine Pilot-Use-Cases.
+
+Wichtig:
+- keine echten Kundendaten,
+- keine vollautomatische Veroeffentlichung,
+- menschliche Pruefung bleibt Pflicht,
+- kleine Schritte statt grosser Automation.</pre>
+
+      <h2>9. Genau einen Pilot auswaehlen</h2>
+      <p>Waehle den Use Case, der klein, schnell testbar und risikoarm ist. Nutze diesen Prompt:</p>
+      <pre>Bitte empfiehl mir einen einzigen Pilot-Use-Case fuer den Start.
+
+Begruende die Empfehlung einfach:
+1. Warum dieser Pilot fuer mein Unternehmen sinnvoll ist.
+2. Was die KI dabei genau macht.
+3. Was der Mensch pruefen muss.
+4. Welche Daten erlaubt sind.
+5. Welche Daten ausgeschlossen sind.
+6. Woran wir nach 4 Wochen erkennen, ob der Pilot hilft.</pre>
+
+      <h2>10. Drittes Dateipaket: Pilot planen</h2>
+      <p>Wenn ein Pilot feststeht, lade nach:</p>
+      <ul>
+        <li><code>worksheet/03-pilot-testprotokoll.md</code></li>
+        <li>ein passendes Beispiel aus <code>examples/</code></li>
+      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>Dein Fall</th>
+            <th>Passende Beispieldatei</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Google, lokale Sichtbarkeit, Social Media</td>
+            <td><code>examples/example-01.md</code></td>
+          </tr>
+          <tr>
+            <td>Blogartikel aus Kundenproblemen</td>
+            <td><code>examples/example-02-medienunternehmen-blogartikel.md</code></td>
+          </tr>
+          <tr>
+            <td>Newsletter oder E-Mail-Folge</td>
+            <td><code>examples/example-03-email-folge-leadmagnet.md</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <pre>Nutze worksheet/03-pilot-testprotokoll.md und das passende Beispiel als Orientierung.
+
+Erstelle fuer meinen ausgewaehlten Pilot ein Pilot-Testprotokoll.
+
+Bitte enthalte:
+1. Ziel des Piloten
+2. erlaubte Eingabedaten
+3. ausgeschlossene Daten
+4. genaue KI-Aufgabe
+5. menschliche Pruefpunkte
+6. erwartetes Ergebnis
+7. einfache Erfolgsmessung
+8. Entscheidungskriterien: uebernehmen, anpassen oder verwerfen
+
+Formuliere alles so, dass ein kleines Unternehmen es versteht.</pre>
+
+      <h2>11. Einen ersten KI-Entwurf erzeugen lassen</h2>
+      <p>Jetzt darf die KI einen Entwurf machen. Passe den Prompt an deinen Pilot an.</p>
+      <pre>Erstelle auf Basis unseres Pilot-Testprotokolls einen ersten Entwurf fuer den ausgewaehlten Use Case.
+
+Nutze nur die erlaubten Informationen.
+Erfinde keine Fakten.
+Mache keine falschen Versprechen.
+Markiere Annahmen.
+Schreibe am Ende eine Pruefliste, was ein Mensch vor Nutzung oder Veroeffentlichung kontrollieren muss.</pre>
+
+      <h2>12. Menschlich pruefen</h2>
+      <p>Bevor du etwas nutzt oder veroeffentlichst, pruefe:</p>
+      <ul>
+        <li>Stimmen alle Fakten?</li>
+        <li>Passt die Sprache zu deinem Unternehmen?</li>
+        <li>Sind keine personenbezogenen Daten enthalten?</li>
+        <li>Gibt es keine falschen Versprechen?</li>
+        <li>Ist klar, wer freigibt?</li>
+        <li>Gibt es rechtliche oder datenschutzrechtliche Fragen?</li>
+      </ul>
+      <div class="warning"><strong>Wenn etwas unklar ist:</strong> Nicht veroeffentlichen. Erst klaeren, korrigieren oder fachlich pruefen lassen.</div>
+
+      <h2>13. Vier Wochen klein testen</h2>
+      <p>Teste den Pilot nicht unbegrenzt. Vier Wochen reichen fuer einen ersten Eindruck.</p>
+      <p>Dokumentiere jede Woche:</p>
+      <ul>
+        <li>Was wurde erstellt?</li>
+        <li>Wer hat geprueft?</li>
+        <li>Wurde etwas genutzt oder veroeffentlicht?</li>
+        <li>Wie lange hat es gedauert?</li>
+        <li>Was war brauchbar?</li>
+        <li>Was musste angepasst werden?</li>
+      </ul>
+
+      <h2>14. Prompt 3: Nach 4 Wochen bewerten</h2>
+      <pre>Ich gebe dir jetzt meine Beobachtungen aus 4 Wochen Pilot.
+
+Bitte bewerte den Pilot nach dem Modell:
+1. positiv validierbar,
+2. nachbearbeitbar,
+3. negativ / nicht nutzbar.
+
+Bitte begruende die Bewertung einfach.
+Empfiehl danach:
+- uebernehmen,
+- anpassen,
+- oder verwerfen.
+
+Erstelle ausserdem eine kurze Liste, was wir beim naechsten Durchlauf verbessern sollten.</pre>
+
+      <h2>15. Was du speichern solltest</h2>
+      <ul>
+        <li>ausgefuelltes Worksheet 01,</li>
+        <li>Use-Case-Bewertung aus Worksheet 02,</li>
+        <li>Pilot-Testprotokoll,</li>
+        <li>KI-Entwuerfe,</li>
+        <li>menschliche Pruefnotizen,</li>
+        <li>Entscheidung nach 4 Wochen,</li>
+        <li>Verbesserungsnotizen.</li>
+      </ul>
+
+      <h2>16. Gesamt-Ablauf als Spickzettel</h2>
+      <pre>1. Neuen KI-Chat oeffnen
+2. model.md, application-guide.md, worksheet 01 und failure-modes.md laden
+3. Phase 1 mit der KI ausfuellen
+4. worksheet 02 und Canvas laden
+5. 1 bis 3 Use Cases bewerten
+6. genau einen Pilot auswaehlen
+7. worksheet 03 und passendes Beispiel laden
+8. Pilot-Testprotokoll erstellen
+9. KI-Entwurf erzeugen lassen
+10. Menschlich pruefen
+11. 4 Wochen klein testen
+12. Ergebnis bewerten
+13. Routine uebernehmen, anpassen oder verwerfen</pre>
+
+      <h2>17. Notfallregeln</h2>
+      <ol>
+        <li>Keine echten Kundendaten in die KI.</li>
+        <li>Keine automatische Veroeffentlichung.</li>
+        <li>Immer klein starten.</li>
+        <li>Immer menschlich pruefen.</li>
+        <li>Keine rechtlichen Aussagen der KI als Wahrheit uebernehmen.</li>
+        <li>Lieber nachfragen als raten.</li>
+      </ol>
+
+      <h2>18. Abschluss-Prompt</h2>
+      <pre>Bitte fasse unseren gesamten Prozess zusammen:
+
+1. Ausgangslage
+2. gewaehlter Use Case
+3. erlaubte und ausgeschlossene Daten
+4. KI-Routine
+5. menschliche Pruefpunkte
+6. Testergebnis
+7. Entscheidung
+8. naechste Verbesserung
+
+Formuliere das als kurzes internes Protokoll fuer ein kleines Unternehmen.</pre>
+
+      <div class="box">
+        <strong>Wichtigster Merksatz:</strong> Verstehen -> vorbereiten -> klein testen -> pruefen -> verbessern.
+      </div>
+
+      <div class="footer">
+        Praxisanleitung zum KI-Online-Marketing-Beratungsmodell fuer Kleinstunternehmen. Diese Datei ist eine Orientierungshilfe und ersetzt keine fachliche, rechtliche oder datenschutzrechtliche Pruefung.
+      </div>
+    </article>
+  </main>
+</body>
+</html>

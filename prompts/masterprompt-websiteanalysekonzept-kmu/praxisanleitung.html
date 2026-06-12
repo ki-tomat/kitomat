@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Praxisanleitung: Websiteanalyse-Promptpaket nutzen</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --paper: #ffffff;
+      --text: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d8dee8;
+      --accent: #0f6b68;
+      --accent-soft: #e4f4f2;
+      --blue-soft: #eaf2ff;
+      --blue: #204f8f;
+      --warn-soft: #fff4d7;
+      --warn: #755100;
+      --bad-soft: #fff0f0;
+      --bad: #8a1f1f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 38px 20px 58px;
+    }
+
+    article {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgba(20, 31, 48, 0.08);
+      padding: 34px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 31px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      border-top: 1px solid var(--line);
+      font-size: 21px;
+      margin-top: 30px;
+      padding-top: 26px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-size: 17px;
+      margin: 18px 0 8px;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 16px 22px;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 7px;
+    }
+
+    a {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    code,
+    pre {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    pre {
+      background: #101827;
+      border-radius: 8px;
+      color: #eef6ff;
+      margin: 14px 0 18px;
+      overflow-x: auto;
+      padding: 16px;
+      white-space: pre-wrap;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 14px 0 20px;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3f7;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 17px;
+      margin-bottom: 22px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0 26px;
+    }
+
+    .pill {
+      background: var(--accent-soft);
+      border: 1px solid #b4dad6;
+      border-radius: 999px;
+      color: #104f4d;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 7px 12px;
+    }
+
+    .box {
+      background: #f9fbfd;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 16px 0;
+      padding: 18px;
+    }
+
+    .tip {
+      background: var(--blue-soft);
+      border: 1px solid #c4d7f4;
+      border-radius: 8px;
+      color: var(--blue);
+      margin: 16px 0;
+      padding: 16px 18px;
+    }
+
+    .warning {
+      background: var(--warn-soft);
+      border: 1px solid #ead08a;
+      border-radius: 8px;
+      color: var(--warn);
+      margin: 16px 0;
+      padding: 16px 18px;
+    }
+
+    .danger {
+      background: var(--bad-soft);
+      border: 1px solid #efb8b8;
+      border-radius: 8px;
+      color: var(--bad);
+      margin: 16px 0;
+      padding: 16px 18px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 14px 0;
+      padding: 18px;
+    }
+
+    .step-label {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .checklist li {
+      list-style-type: square;
+    }
+
+    .footer {
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 34px;
+      padding-top: 18px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      main {
+        padding: 0;
+      }
+
+      article {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <h1>Praxisanleitung: Das Websiteanalyse-Promptpaket nutzen</h1>
+      <p class="lead">
+        Diese Anleitung zeigt Anfaengern Schritt fuer Schritt, wie sie das Promptpaket praktisch einsetzen, um aus einer Websitefrage ein klares Analysekonzept und erste Online-Marketing-Massnahmen abzuleiten.
+      </p>
+
+      <div class="meta">
+        <span class="pill">Fuer KMU bis 10 Mitarbeitende</span>
+        <span class="pill">Ohne Webanalyse-Vorkenntnisse</span>
+        <span class="pill">Direkt mit ChatGPT nutzbar</span>
+        <span class="pill">Datenschutzarm arbeiten</span>
+      </div>
+
+      <div class="box">
+        <strong>Kurz gesagt:</strong> Du kopierst den Masterprompt in ein KI-System, beschreibst deinen Websitefall, beantwortest Rueckfragen und nutzt das Ergebnis als Arbeitsplan fuer kleine, messbare Verbesserungen.
+      </div>
+
+      <h2>1. Was dieses Promptpaket leistet</h2>
+      <p>
+        Das Promptpaket hilft dir, deine Website nicht nur nach Gefuehl zu verbessern. Es fuehrt dich zu einem Websiteanalysekonzept: Was soll die Website leisten? Welche Nutzerhandlung ist wichtig? Welche Daten brauchst du? Wo koennen Besucher abbrechen? Welche Massnahmen lohnen sich zuerst?
+      </p>
+      <p>
+        Das Ergebnis ist kein fertiger Relaunch-Plan und kein Datenschutz-Audit. Es ist eine strukturierte Entscheidungshilfe fuer kleine Online-Marketing-Schritte.
+      </p>
+
+      <h2>2. Welche Dateien wichtig sind</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Datei</th>
+            <th>Wofuer du sie brauchst</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>prompt.md</code></td>
+            <td>Das ist der eigentliche Masterprompt. Diesen Text kopierst du in ChatGPT oder ein anderes KI-System.</td>
+          </tr>
+          <tr>
+            <td><code>workflow.md</code></td>
+            <td>Kurze Schrittfolge fuer die Nutzung.</td>
+          </tr>
+          <tr>
+            <td><code>examples/input-01.md</code></td>
+            <td>Beispiel, wie ein guter eigener Fall formuliert werden kann.</td>
+          </tr>
+          <tr>
+            <td><code>examples/output-01.md</code></td>
+            <td>Beispiel, wie ein Ergebnis ungefaehr aussehen kann.</td>
+          </tr>
+          <tr>
+            <td><code>evaluation.md</code></td>
+            <td>Checkliste, um zu pruefen, ob das KI-Ergebnis brauchbar ist.</td>
+          </tr>
+          <tr>
+            <td><code>failure-modes.md</code></td>
+            <td>Typische Fehler und Warnzeichen bei der Nutzung.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>3. Was du vor dem Start vorbereitest</h2>
+      <p>
+        Du brauchst keine perfekte Analyse. Sammle nur die wichtigsten Informationen, die du schon hast.
+      </p>
+      <ul class="checklist">
+        <li>Was bietet dein Unternehmen an?</li>
+        <li>Wer soll die Website nutzen?</li>
+        <li>Was soll ein Besucher tun: kaufen, anfragen, buchen, anmelden oder etwas anderes?</li>
+        <li>Welches Problem siehst du aktuell auf der Website?</li>
+        <li>Gibt es Google Analytics 4 oder ein anderes Analysewerkzeug?</li>
+        <li>Welche groben Zahlen kennst du, z. B. Besucher, Anfragen, Kaeufe oder Newsletter-Anmeldungen?</li>
+        <li>Wie viel Zeit und Budget sind realistisch?</li>
+      </ul>
+
+      <div class="tip">
+        <strong>Wenn du Zahlen nicht kennst:</strong> Schreibe einfach "unbekannt". Der Prompt ist so gebaut, dass die KI fehlende Informationen erkennen und Rueckfragen stellen kann.
+      </div>
+
+      <h2>4. So nutzt du den Masterprompt</h2>
+
+      <div class="step">
+        <div class="step-label">Schritt 1</div>
+        <h3>Oeffne <code>prompt.md</code></h3>
+        <p>
+          Markiere den kompletten Text in <code>prompt.md</code> und kopiere ihn.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-label">Schritt 2</div>
+        <h3>Oeffne ein KI-System</h3>
+        <p>
+          Nutze zum Beispiel ChatGPT, Claude, Gemini oder ein anderes System, mit dem du laengere Texte verarbeiten kannst.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-label">Schritt 3</div>
+        <h3>Fuege den Masterprompt ein</h3>
+        <p>
+          Fuege zuerst den gesamten Masterprompt ein. Schreibe danach deinen Fall unter die Zeile "Mein Fall".
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-label">Schritt 4</div>
+        <h3>Beschreibe deinen Fall einfach</h3>
+        <p>
+          Es muss nicht perfekt formuliert sein. Wichtig ist, dass die KI versteht, was deine Website leisten soll.
+        </p>
+      </div>
+
+      <pre>Modus: Schnellcheck
+
+Wir sind ein kleines Unternehmen mit 6 Mitarbeitenden.
+Unsere Website soll mehr Kontaktanfragen bringen.
+Unsere Zielgruppe sind lokale Firmenkunden.
+Wir haben Google Analytics 4, kennen uns damit aber kaum aus.
+Unser Problem: Viele Besucher kommen auf die Website, aber nur wenige fragen an.
+Bekannte Zahlen: ca. 900 Besucher pro Monat, ca. 8 Kontaktanfragen pro Monat.
+Budget: wenig, wir koennen etwa 2 Stunden pro Woche investieren.
+
+Bitte hilf uns, ein erstes Websiteanalysekonzept zu erstellen.</pre>
+
+      <h2>5. Waehle den passenden Modus</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Modus</th>
+            <th>Nutze ihn, wenn...</th>
+            <th>Was du bekommst</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Schnellcheck</td>
+            <td>du wenig Daten hast oder erst einmal Orientierung brauchst.</td>
+            <td>eine kurze Einschaetzung, offene Fragen und die naechsten Schritte.</td>
+          </tr>
+          <tr>
+            <td>Vollanalyse</td>
+            <td>du Zielgruppe, Websiteziel und einige Kennzahlen schon kennst.</td>
+            <td>ein vollstaendiges Websiteanalysekonzept mit Tabellen und Massnahmenplan.</td>
+          </tr>
+          <tr>
+            <td>Spezialfall</td>
+            <td>du einen konkreten Bereich verbessern willst, z. B. Checkout, Kontaktformular oder Landingpage.</td>
+            <td>eine gezielte Analyse dieses Bereichs.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tip">
+        <strong>Empfehlung fuer Anfaenger:</strong> Starte mit dem Schnellcheck. Danach kannst du die KI bitten, aus dem Schnellcheck eine Vollanalyse zu machen.
+      </div>
+
+      <h2>6. So beantwortest du Rueckfragen der KI</h2>
+      <p>
+        Wenn die KI Rueckfragen stellt, ist das gut. Der Prompt ist bewusst so gebaut. Er soll nicht raten, sondern fehlende Informationen klaeren.
+      </p>
+      <p>
+        Beantworte nur, was du weisst. Bei allem anderen schreibe "weiss ich nicht" oder "noch nicht gemessen".
+      </p>
+
+      <pre>Antwort auf Rueckfragen:
+
+1. Wichtigste Handlung: Kontaktformular absenden.
+2. Zielgruppe: kleine Handwerksbetriebe in unserer Region.
+3. Wichtigste Seite: Startseite und Leistungsseite.
+4. GA4: eingerichtet, aber Ziele/Ereignisse sind unklar.
+5. Mobile Nutzung: vermutlich hoch, genaue Zahl unbekannt.
+6. Budget: keine grosse Agentur, nur kleine Anpassungen.
+7. Erfolg: mehr qualifizierte Anfragen pro Monat.</pre>
+
+      <h2>7. So liest du das erzeugte Websiteanalysekonzept</h2>
+      <p>
+        Das Ergebnis kann lang wirken. Lies es nicht wie einen Aufsatz, sondern wie einen Arbeitsplan.
+      </p>
+      <ol>
+        <li>Starte mit der Kurzdiagnose: Hat die KI dein Problem richtig verstanden?</li>
+        <li>Pruefe das Zielsystem: Ist klar, welche Handlung verbessert werden soll?</li>
+        <li>Sieh dir die Fragen-Daten-Aktions-Matrix an: Fuehrt jede Kennzahl zu einer Handlung?</li>
+        <li>Pruefe den Trackingplan: Welche Messpunkte fehlen oder sind unklar?</li>
+        <li>Gehe zur Priorisierung: Welche Massnahmen sind einfach und wirkungsvoll?</li>
+      </ol>
+
+      <div class="warning">
+        <strong>Wichtig:</strong> Uebernimm das Ergebnis nicht blind. Die KI kennt deine Website nicht wirklich. Pruefe Annahmen, Daten, Datenschutzfragen und technische Machbarkeit selbst oder mit einer verantwortlichen Person.
+      </div>
+
+      <h2>8. Waehle die ersten 1 bis 3 Massnahmen aus</h2>
+      <p>
+        Kleine KMU sollten nicht alles auf einmal umsetzen. Suche zuerst Massnahmen, die wenig Aufwand haben und wahrscheinlich etwas bewirken.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Gute erste Massnahme</th>
+            <th>Warum?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Kontaktbutton klarer machen</td>
+            <td>geringer Aufwand, oft direkt sichtbar.</td>
+          </tr>
+          <tr>
+            <td>Formular auf Mobilgeraeten pruefen</td>
+            <td>viele Nutzer brechen ab, wenn Formulare schwer bedienbar sind.</td>
+          </tr>
+          <tr>
+            <td>Vertrauenstaexte ergaenzen</td>
+            <td>Besucher brauchen oft Sicherheit, bevor sie kaufen oder anfragen.</td>
+          </tr>
+          <tr>
+            <td>Tracking-Luecken notieren</td>
+            <td>ohne Messung ist spaeter nicht klar, ob eine Verbesserung wirkt.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Eine einfache Entscheidungshilfe:
+      </p>
+      <pre>Ich setze zuerst die Massnahmen um, die:
+- wenig Geld kosten,
+- schnell testbar sind,
+- direkt mit meinem Websiteziel zusammenhaengen,
+- kein grosses technisches Projekt brauchen.</pre>
+
+      <h2>9. So pruefst du nach 30/60/90 Tagen</h2>
+      <p>
+        Lege vor der Umsetzung fest, woran du Erfolg erkennst. Sonst wirkt Online-Marketing schnell wie Bauchgefuehl.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Zeitpunkt</th>
+            <th>Was du tust</th>
+            <th>Entscheidung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Nach 30 Tagen</td>
+            <td>Pruefe, ob die wichtigsten Messpunkte vorhanden sind und ob erste Massnahmen umgesetzt wurden.</td>
+            <td>Ist klar, was gemessen wird?</td>
+          </tr>
+          <tr>
+            <td>Nach 60 Tagen</td>
+            <td>Vergleiche grobe Kennzahlen vor und nach der Aenderung.</td>
+            <td>Beibehalten, verbessern oder stoppen?</td>
+          </tr>
+          <tr>
+            <td>Nach 90 Tagen</td>
+            <td>Ziehe ein Fazit und waehle die naechste Verbesserung aus.</td>
+            <td>Welche Massnahme wird Standard?</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>10. Diese Daten darfst du nicht eingeben</h2>
+      <div class="danger">
+        <strong>Nicht in die KI eingeben:</strong>
+        <ul>
+          <li>echte Kundennamen</li>
+          <li>personenbezogene E-Mails</li>
+          <li>einzelne Nutzerprofile</li>
+          <li>Support-Tickets mit echten Personenbezug</li>
+          <li>vollstaendige Rohdatenexporte</li>
+          <li>interne vertrauliche Dokumente</li>
+          <li>Zahlungsdaten oder sensible Informationen</li>
+        </ul>
+      </div>
+
+      <p>
+        Besser sind aggregierte Werte oder eigene Beschreibungen:
+      </p>
+      <pre>Gut:
+"Wir haben ungefaehr 900 Besucher pro Monat und 8 Kontaktanfragen."
+
+Nicht gut:
+"Hier ist eine Liste aller Nutzer mit E-Mail-Adresse und Verhalten."</pre>
+
+      <h2>11. Abschluss-Checkliste fuer deine erste Nutzung</h2>
+      <ul class="checklist">
+        <li>Ich habe <code>prompt.md</code> komplett kopiert.</li>
+        <li>Ich habe meinen Fall einfach beschrieben.</li>
+        <li>Ich habe keine personenbezogenen Daten eingefuegt.</li>
+        <li>Ich habe Rueckfragen der KI ehrlich beantwortet.</li>
+        <li>Ich habe das Ergebnis auf Plausibilitaet geprueft.</li>
+        <li>Ich habe maximal 1 bis 3 erste Massnahmen ausgewaehlt.</li>
+        <li>Ich weiss, woran ich nach 30/60/90 Tagen Erfolg pruefe.</li>
+      </ul>
+
+      <div class="box">
+        <strong>Merksatz:</strong> Der Masterprompt verbessert dein Online-Marketing nicht automatisch. Er hilft dir, klarer zu sehen, bessere Fragen zu stellen und die naechsten kleinen Schritte sauberer zu entscheiden.
+      </div>
+
+      <div class="footer">
+        Praxisanleitung zum Promptpaket "Masterprompt Websiteanalysekonzept fuer KMU". Erstellt fuer die Nutzung im Community-Projekt der Promptbibliothek.
+      </div>
+    </article>
+  </main>
+</body>
+</html>
