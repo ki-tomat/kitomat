@@ -1,0 +1,29 @@
+id: auftragsklarung-scs-coverdale
+artifact_type: prompt_package
+title: "Auftrag schärfen — Projektstart mit SCS-Analyse und Coverdale-Zielscheibe"
+category: project-management
+status: bronze_candidate
+language: de
+version: "0.1.0"
+maintainer: jk
+license: CC-BY-4.0
+license_status: declared
+data_risk: yellow
+human_review_required: true
+ai_act_proximity: high_risk_adjacent
+legal_disclaimer: "Orientierungshilfe für Auftragsklärung. Kein Ersatz für professionelle Projektmanagement-Beratung."
+sources_status: provided
+target_users:
+  - "KI Consultants"
+  - "Projektleiter:innen"
+  - "Führungskräfte"
+  - "Change-Manager:innen"
+use_case: "Strukturierte KI-gestützte Auftragsklärung zu Projektstart — zweiphasig mit SCS-Analyse und Coverdale-Zielscheibe"
+required_inputs:
+  - "Projektbeschreibung (3–8 Sätze, Kontext + Problem + Ziel)"
+output_format: "SCS-Analyse (3 Abschnitte) + Coverdale-Zielscheibe (4 Quadranten) + Cross-Check als strukturiertes Markdown-Dokument"
+personal_data_possible: conditional
+evaluation_criteria: "Siehe evaluation.md"
+framework_references:
+  - "Coverdale Zielscheibe (Thomas Wulz / coverdale.at, 2023)"
+  - "SCS-Framework (Situation-Complication-Solution)"
