@@ -1,0 +1,64 @@
+id: "finops-kmu-draft"
+title: "FinOps-Einfuehrungsmodell fuer KMU und technologiegetriebene Organisationen"
+artifact_type: "KMU-/Branchenmodell"
+category: "kmu_branchenmodell"
+subcategory: "consulting"
+path: "models/consulting/finops-kmu-draft"
+status: "draft"
+language: "de"
+maintainer: "IG"
+team: "solo"
+version: "0.1.0"
+license: "see repository LICENSE-CONTENT.md"
+
+summary: >
+  Beratungsmodell zur strukturierten Einfuehrung von FinOps als Operating Model
+  fuer Technologie-Wertsteuerung, Kostenallokation, Forecasting, Governance,
+  Optimierung und Enablement.
+
+target_users:
+  - "KI- und Digitalisierungsberater"
+  - "CIO / CTO / Head of IT"
+  - "Finance / Controlling"
+  - "Cloud- und Plattformteams"
+  - "Product Owner"
+  - "Procurement / Einkauf"
+
+use_cases:
+  - "FinOps-Ersteinfuehrung"
+  - "Cloud-Kostentransparenz herstellen"
+  - "Target Operating Model fuer FinOps entwickeln"
+  - "KPI- und Reporting-Modell aufbauen"
+  - "Optimierungsroadmap priorisieren"
+  - "Governance- und Enablement-Struktur etablieren"
+
+data_risk: "yellow"
+human_review_required: true
+ai_act_proximity: "low_to_unclear"
+legal_disclaimer: >
+  Dieses Modell ist eine Orientierungshilfe fuer Beratung, Strukturierung und
+  Managemententscheidungen. Es ersetzt keine Rechts-, Steuer-, Finanz-,
+  Datenschutz- oder Architekturberatung. Ergebnisse muessen von fachkundigen
+  Rollen geprueft werden.
+
+sources_status: "provided_research_and_project_documents"
+license_status: "Inhalt unter Repository-Lizenz (siehe LICENSE-CONTENT.md im Repo-Root). Externe Quellen siehe sources.md."
+contains_synthetic_examples: true
+contains_real_personal_data: false
+contains_customer_data: false
+contains_confidential_financial_data: false
+
+review_notes:
+  - "FinOps beruehrt Finance/Controlling und potenziell vertrauliche Unternehmensdaten."
+  - "Keine echten Cloud-Rechnungen, Kundendaten oder internen Finanzdaten im Beispiel verwenden."
+  - "Bei echter Anwendung muessen Quellen, Tool-Daten und Accounting-Regeln fachlich validiert werden."
+
+linked_artifacts_note: >
+  Die folgenden Quellen wurden bei der Erstellung verwendet, sind aber nicht
+  oeffentlich Bestandteil dieses Repositories. Sie dienen ausschliesslich der
+  Nachvollziehbarkeit fuer interne Reviewer und sind nicht ueber das Repo abrufbar.
+
+linked_artifacts:
+  - "deep-research-report _FINOPS.md (intern, nicht im Repo)"
+  - "sakizli-5-phasen-beratungsmodell (1).pdf (intern, nicht im Repo)"
+  - "Community_Projekt_Starterprompts.pdf (KItomat-Projektquelle, nicht im Repo)"
