@@ -1,0 +1,1219 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KI-Hardware-Bedarfsanalyse für KMU - Erklärboard</title>
+  <meta name="description" content="Ein lokales Erklärboard zum Beratungsmodell KI-Hardware-Bedarfsanalyse für KMU.">
+  <style>
+    /* Grundlayout: bewusst lokal, ohne externe Abhängigkeiten, Fonts oder Tracking. */
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #eef7f4;
+      --ink: #172033;
+      --muted: #526079;
+      --line: #d9e2ef;
+      --blue: #1d5fa7;
+      --blue-dark: #123e70;
+      --green: #257a5c;
+      --green-soft: #dff4ec;
+      --violet: #6950a8;
+      --violet-soft: #ece7fb;
+      --amber: #9a6a13;
+      --amber-soft: #fff4d9;
+      --red: #a63f3f;
+      --red-soft: #fde7e7;
+      --shadow: 0 14px 32px rgba(23, 32, 51, 0.10);
+      --radius: 8px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(29, 95, 167, 0.08), transparent 32rem),
+        linear-gradient(315deg, rgba(37, 122, 92, 0.08), transparent 30rem),
+        var(--bg);
+      line-height: 1.58;
+    }
+
+    a {
+      color: var(--blue-dark);
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid rgba(29, 95, 167, 0.38);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -4rem;
+      z-index: 10;
+      padding: 0.7rem 1rem;
+      background: var(--blue-dark);
+      color: #fff;
+      border-radius: var(--radius);
+      text-decoration: none;
+    }
+
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    header.hero {
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(18, 62, 112, 0.96), rgba(37, 122, 92, 0.88)),
+        radial-gradient(circle at 75% 20%, rgba(236, 231, 251, 0.35), transparent 22rem);
+    }
+
+    .hero-inner,
+    .nav-inner,
+    main,
+    footer {
+      width: min(var(--max), calc(100% - 2rem));
+      margin: 0 auto;
+    }
+
+    .hero-inner {
+      padding: 4.8rem 0 4rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin: 0 0 1rem;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      color: #eaf3ff;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 920px;
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4.7rem);
+    }
+
+    .subtitle {
+      max-width: 850px;
+      margin: 1.1rem 0 0;
+      font-size: clamp(1.15rem, 2vw, 1.55rem);
+      color: #eaf3ff;
+      font-weight: 650;
+    }
+
+    .hero-text {
+      max-width: 850px;
+      margin: 1.1rem 0 0;
+      color: #f4f8ff;
+      font-size: 1.05rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.7rem;
+    }
+
+    .hero-link,
+    .print-button {
+      min-height: 44px;
+      border: 0;
+      border-radius: var(--radius);
+      padding: 0.78rem 1rem;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .hero-link {
+      color: var(--blue-dark);
+      background: #fff;
+    }
+
+    .print-button {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.34);
+    }
+
+    .mode-note {
+      margin-top: 2.1rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.85rem;
+      max-width: 900px;
+      padding: 1rem;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+    }
+
+    .mode-note strong {
+      display: block;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      display: flex;
+      gap: 0.55rem;
+      overflow-x: auto;
+      padding: 0.7rem 0;
+    }
+
+    .nav-inner a {
+      flex: 0 0 auto;
+      padding: 0.48rem 0.68rem;
+      color: var(--ink);
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .nav-inner a:hover,
+    .nav-inner a:focus-visible {
+      background: var(--violet-soft);
+    }
+
+    main {
+      padding: 2.6rem 0 4rem;
+    }
+
+    section {
+      scroll-margin-top: 5rem;
+      margin: 0 0 3.2rem;
+    }
+
+    .section-head {
+      max-width: 840px;
+      margin-bottom: 1.15rem;
+    }
+
+    h2 {
+      margin: 0 0 0.6rem;
+      font-size: clamp(1.65rem, 3vw, 2.5rem);
+    }
+
+    h3 {
+      margin: 0 0 0.55rem;
+      font-size: 1.1rem;
+    }
+
+    p {
+      margin: 0 0 0.85rem;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card,
+    .notice,
+    details,
+    .tab-panel,
+    .process-panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 1rem;
+    }
+
+    .card p:last-child,
+    .notice p:last-child,
+    .tab-panel p:last-child,
+    .process-panel p:last-child {
+      margin-bottom: 0;
+    }
+
+    .marker {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2rem;
+      height: 2rem;
+      margin-bottom: 0.75rem;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--blue);
+      font-weight: 800;
+    }
+
+    .marker.green {
+      background: var(--green);
+    }
+
+    .marker.violet {
+      background: var(--violet);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      background: #eef3fb;
+      color: var(--blue-dark);
+      font-size: 0.9rem;
+      font-weight: 750;
+    }
+
+    .info-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.7rem;
+      margin: 1rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .info-list li {
+      padding: 0.82rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .notice {
+      padding: 1.1rem;
+      border-left: 6px solid var(--blue);
+    }
+
+    .notice.soft {
+      background: var(--surface-soft);
+      border-left-color: var(--green);
+    }
+
+    .notice.warning {
+      background: var(--amber-soft);
+      border-left-color: var(--amber);
+    }
+
+    .notice.limit {
+      background: #fbf9ff;
+      border-left-color: var(--violet);
+    }
+
+    .question {
+      padding: 1.35rem;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue-dark), var(--violet));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .question blockquote {
+      margin: 0;
+      font-size: clamp(1.35rem, 3vw, 2.1rem);
+      line-height: 1.2;
+      font-weight: 850;
+    }
+
+    .question p {
+      margin-top: 1rem;
+      color: #f2f5ff;
+    }
+
+    /* Didaktische Tabs und Prozesskarten. Inhalte bleiben ohne JavaScript sichtbar. */
+    .tab-list,
+    .process-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 0 0 1rem;
+    }
+
+    .tab-button,
+    .process-button {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.62rem 0.8rem;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 780;
+      text-align: left;
+    }
+
+    .tab-button[aria-selected="true"],
+    .process-button[aria-selected="true"] {
+      color: #fff;
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .tab-panel,
+    .process-panel {
+      padding: 1.15rem;
+      margin-bottom: 1rem;
+    }
+
+    .has-js .tab-panel[hidden],
+    .has-js .process-panel[hidden] {
+      display: none;
+    }
+
+    details {
+      padding: 0.2rem 0;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+
+    summary {
+      min-height: 48px;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--blue-dark);
+    }
+
+    details > div {
+      padding: 0 1rem 1rem;
+    }
+
+    .traffic {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .traffic .card {
+      box-shadow: none;
+    }
+
+    .traffic .green-card {
+      background: var(--green-soft);
+      border-color: #acd8c9;
+    }
+
+    .traffic .yellow-card {
+      background: var(--amber-soft);
+      border-color: #ead39a;
+    }
+
+    .traffic .red-card {
+      background: var(--red-soft);
+      border-color: #efb9b9;
+    }
+
+    .traffic ul,
+    .plain-list {
+      margin: 0.4rem 0 0;
+      padding-left: 1.15rem;
+    }
+
+    .plain-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    .glossary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .term {
+      padding: 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .term dt {
+      margin-bottom: 0.35rem;
+      font-weight: 850;
+      color: var(--blue-dark);
+    }
+
+    .term dd {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .callout-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .source-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    footer {
+      padding: 2rem 0 3rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 920px) {
+      .grid,
+      .grid.two,
+      .traffic,
+      .glossary,
+      .callout-row {
+        grid-template-columns: 1fr;
+      }
+
+      .info-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-inner {
+        padding: 3rem 0 2.6rem;
+      }
+
+      .mode-note {
+        grid-template-columns: 1fr;
+      }
+
+      .tab-list,
+      .process-list {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .tab-button,
+      .process-button {
+        width: 100%;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+      }
+
+      nav,
+      .hero-actions,
+      .skip-link {
+        display: none;
+      }
+
+      header.hero {
+        color: #000;
+        background: #fff;
+        border-bottom: 2px solid #000;
+      }
+
+      .hero-text,
+      .subtitle,
+      .mode-note {
+        color: #000;
+      }
+
+      .card,
+      .notice,
+      details,
+      .tab-panel,
+      .process-panel,
+      .question {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      .has-js .tab-panel[hidden],
+      .has-js .process-panel[hidden] {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Erklärboard - kein operatives Dashboard</p>
+      <h1>KI-Hardware-Bedarfsanalyse für KMU</h1>
+      <p class="subtitle">Ein Beratungsmodell, das vor Hardwarekäufen zuerst den tatsächlichen KI-Bedarf klärt.</p>
+      <p class="hero-text">Das Modell führt von Nutzungsszenario, Datenlage, Betriebsmodell, Governance, Parallelität und Budget zu einer vorläufigen Hardware- oder Architektur-Zielklasse. Es hilft, Entscheidungen nachvollziehbar vorzubereiten, ersetzt aber keine technische, rechtliche oder datenschutzbezogene Prüfung.</p>
+      <div class="hero-actions" aria-label="Schnelle Aktionen">
+        <a class="hero-link" href="#worum">Modell verstehen</a>
+        <button class="print-button" type="button" id="printButton">Druckansicht</button>
+      </div>
+      <div class="mode-note" role="note">
+        <strong>Wichtig</strong>
+        <p>Dieses HTML erklärt das Modell. Es sammelt keine Daten, berechnet keine Zielklasse, erzeugt keinen Export und ist keine Beschaffungs- oder Beratungssimulation.</p>
+      </div>
+    </div>
+  </header>
+
+  <nav aria-label="Abschnitte">
+    <div class="nav-inner">
+      <a href="#worum">Worum</a>
+      <a href="#zielgruppe">Zielgruppe</a>
+      <a href="#situationen">Wann nutzen</a>
+      <a href="#informationen">Informationen</a>
+      <a href="#prozess">Ablauf</a>
+      <a href="#leitfrage">Leitfrage</a>
+      <a href="#achsen">Achsen</a>
+      <a href="#zielklassen">Zielklassen</a>
+      <a href="#ergebnis">Ergebnis</a>
+      <a href="#agentisch">Agentische KI</a>
+      <a href="#grenzen">Grenzen</a>
+      <a href="#community">Community</a>
+      <a href="#beispiel">Beispiel</a>
+      <a href="#glossar">Glossar</a>
+    </div>
+  </nav>
+
+  <main id="inhalt">
+    <!-- Abschnitt 1: Zweck und Abgrenzung -->
+    <section id="worum" aria-labelledby="worum-title">
+      <div class="section-head">
+        <h2 id="worum-title">Worum geht es?</h2>
+        <p class="lead">Das Modell beginnt nicht bei Geräten, sondern beim geklärten Bedarf. Es macht sichtbar, welche technische Umgebung zu einem KI-Vorhaben passen könnte.</p>
+      </div>
+      <div class="grid two">
+        <article class="card">
+          <span class="marker">1</span>
+          <h3>Erst Bedarf, dann Technik</h3>
+          <p>Das Modell startet nicht mit Gerätelisten oder Produktnamen. Es klärt zuerst, was das KMU mit KI machen will, mit welchen Daten gearbeitet wird und wie die Nutzung im Alltag aussieht.</p>
+        </article>
+        <article class="card">
+          <span class="marker green">2</span>
+          <h3>Anforderungen sichtbar machen</h3>
+          <p>Technische, organisatorische und regulatorische Anforderungen werden gemeinsam betrachtet. Dazu gehören Datenlage, Governance, Betrieb, Parallelität und Budget.</p>
+        </article>
+        <article class="card">
+          <span class="marker violet">3</span>
+          <h3>Fehlentscheidungen reduzieren</h3>
+          <p>Das Modell hilft, Fehlkäufe und Überdimensionierung zu vermeiden. Es unterstützt den Vergleich von lokaler, hybrider, On-Premise- und cloudbasierter Nutzung.</p>
+        </article>
+        <article class="card">
+          <span class="marker">4</span>
+          <h3>Entscheidung vorbereiten</h3>
+          <p>Am Ende steht eine dokumentierte Entscheidungsgrundlage. Sie ist keine automatische Kaufentscheidung und keine verbindliche Freigabe.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="zielgruppe" aria-labelledby="zielgruppe-title">
+      <div class="section-head">
+        <h2 id="zielgruppe-title">Für wen ist das Modell?</h2>
+        <p class="lead">Das Modell richtet sich an Personen, die ein KI-Vorhaben vorbereiten oder beraten und vor einer Hardware- oder Architekturfrage stehen.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <h3>KMU-Geschäftsführung</h3>
+          <p>Die Geschäftsführung erhält eine klare Sprache für Nutzen, Risiken und nächste Schritte, bevor Geld in Technik gebunden wird.</p>
+        </article>
+        <article class="card">
+          <h3>IT-Verantwortliche</h3>
+          <p>IT-Verantwortliche können Anforderungen an Betrieb, Sicherheit, Nutzerzahl und vorhandene Infrastruktur früh sichtbar machen.</p>
+        </article>
+        <article class="card">
+          <h3>KI-Beraterinnen und KI-Berater</h3>
+          <p>Beratende Personen bekommen ein strukturiertes Gesprächsmodell, das nicht vorschnell Produkte empfiehlt.</p>
+        </article>
+        <article class="card">
+          <h3>Projektleitungen für KI-Einführungen</h3>
+          <p>Projektleitungen können fachliche Ziele, Budget, Betrieb und offene Prüffragen in eine gemeinsame Entscheidungslogik bringen.</p>
+        </article>
+        <article class="card">
+          <h3>Fachbereiche mit KI-Vorhaben</h3>
+          <p>Fachbereiche können erklären, wofür KI gebraucht wird, ohne sofort technische Details festlegen zu müssen.</p>
+        </article>
+        <article class="card">
+          <h3>Technische Dienstleister</h3>
+          <p>Dienstleister können das Modell im Discovery- oder Pre-Sales-Prozess nutzen, um Bedarf, Grenzen und Annahmen sauber zu trennen.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="situationen" aria-labelledby="situationen-title">
+      <div class="section-head">
+        <h2 id="situationen-title">Wann nutze ich das Modell?</h2>
+        <p class="lead">Besonders hilfreich ist das Modell, wenn ein KI-Vorhaben geplant ist, aber die passende technische Umgebung noch unklar ist.</p>
+      </div>
+      <ul class="info-list">
+        <li>Lokale oder hybride KI-Nutzung prüfen</li>
+        <li>Cloud, On-Premise und Hybrid vergleichen</li>
+        <li>Vorhandene Hardware einschätzen</li>
+        <li>Datenschutz- oder Vertraulichkeitsanforderungen berücksichtigen</li>
+        <li>Mehrere Hardwareoptionen vergleichbar machen</li>
+        <li>Einen Beratungsworkshop strukturieren</li>
+        <li>Einen KI-Agenten kontrolliert zur Vorstrukturierung einsetzen</li>
+      </ul>
+    </section>
+
+    <section id="informationen" aria-labelledby="informationen-title">
+      <div class="section-head">
+        <h2 id="informationen-title">Welche Informationen braucht das Modell?</h2>
+        <p class="lead">Diese Informationen sind für die Anwendung des Modells wichtig. In diesem Erklärboard werden sie nicht abgefragt, gespeichert oder bewertet.</p>
+      </div>
+      <div class="notice warning">
+        <strong>Keine Datenerfassung</strong>
+        <p>Die folgende Übersicht ist eine reine Infosektion. Sie ist keine Checkliste mit Fortschrittslogik und erzeugt keine Empfehlung.</p>
+      </div>
+      <ul class="info-list">
+        <li>Kurze Beschreibung des KI-Vorhabens</li>
+        <li>Organisationstyp, Branche und ungefähre Nutzerzahl</li>
+        <li>Haupt- und Nebenzwecke der KI-Nutzung</li>
+        <li>Datenarten und Datenschutzanforderungen</li>
+        <li>Gewünschtes Betriebsmodell: Cloud, lokal, On-Premise oder hybrid</li>
+        <li>Workload-Typ: Text, RAG, Coding, Medien, Automatisierung oder Fine-Tuning</li>
+        <li>Parallelität und erwartetes Lastprofil</li>
+        <li>Vorhandene IT, Betriebsreife und Administrationsfähigkeit</li>
+        <li>Budgetrahmen und Budgetlogik</li>
+        <li>Must-haves, No-Gos und offene Randbedingungen</li>
+      </ul>
+    </section>
+
+    <section id="prozess" aria-labelledby="prozess-title">
+      <div class="section-head">
+        <h2 id="prozess-title">So funktioniert das Modell</h2>
+        <p class="lead">Die sieben Schritte zeigen die Denklogik des Modells. Sie sind hier didaktisch erklärt und nicht als automatischer Workflow umgesetzt.</p>
+      </div>
+      <div class="process" data-process>
+        <div class="process-list" role="tablist" aria-label="Modellschritte">
+          <button class="process-button" type="button" role="tab" aria-selected="true" aria-controls="step-1" id="step-tab-1">1. Nutzungsszenario verstehen</button>
+          <button class="process-button" type="button" role="tab" aria-selected="false" aria-controls="step-2" id="step-tab-2">2. Bedarfe aufnehmen</button>
+          <button class="process-button" type="button" role="tab" aria-selected="false" aria-controls="step-3" id="step-tab-3">3. Achsen einordnen</button>
+          <button class="process-button" type="button" role="tab" aria-selected="false" aria-controls="step-4" id="step-tab-4">4. Zielklasse ableiten</button>
+          <button class="process-button" type="button" role="tab" aria-selected="false" aria-controls="step-5" id="step-tab-5">5. Risiken prüfen</button>
+          <button class="process-button" type="button" role="tab" aria-selected="false" aria-controls="step-6" id="step-tab-6">6. Tendenz formulieren</button>
+          <button class="process-button" type="button" role="tab" aria-selected="false" aria-controls="step-7" id="step-tab-7">7. Nächsten Schritt dokumentieren</button>
+        </div>
+        <div class="process-panel" role="tabpanel" id="step-1" aria-labelledby="step-tab-1">
+          <h3>Nutzungsszenario verstehen</h3>
+          <p>Zu Beginn wird in einfachen Worten beschrieben, wofür KI genutzt werden soll, wer damit arbeitet und welches Ergebnis erwartet wird.</p>
+        </div>
+        <div class="process-panel" role="tabpanel" id="step-2" aria-labelledby="step-tab-2">
+          <h3>Bedarfe strukturiert aufnehmen</h3>
+          <p>Datenlage, Nutzerzahl, Workload, Betriebsmodell, Budget und Must-haves werden geordnet. Unsichere Angaben bleiben sichtbar offen.</p>
+        </div>
+        <div class="process-panel" role="tabpanel" id="step-3" aria-labelledby="step-tab-3">
+          <h3>Anforderungen auf Bewertungsachsen einordnen</h3>
+          <p>Die neun Achsen helfen, die wichtigsten Treiber zu erkennen. Sie sind keine starre Rechenformel.</p>
+        </div>
+        <div class="process-panel" role="tabpanel" id="step-4" aria-labelledby="step-tab-4">
+          <h3>Passende Zielklasse ableiten</h3>
+          <p>Aus dem Gesamtbild wird eine vorläufige Hardware- oder Architektur-Zielklasse abgeleitet. Bei Unsicherheit können Alternativen genannt werden.</p>
+        </div>
+        <div class="process-panel" role="tabpanel" id="step-5" aria-labelledby="step-tab-5">
+          <h3>Risiken und offene Punkte prüfen</h3>
+          <p>Datenschutz, Governance, Betrieb, Parallelität, Budget und rechtliche Nähe werden ausdrücklich als Prüfpunkte betrachtet.</p>
+        </div>
+        <div class="process-panel" role="tabpanel" id="step-6" aria-labelledby="step-tab-6">
+          <h3>Vorläufige Hardware- oder Architektur-Empfehlung formulieren</h3>
+          <p>Die Empfehlung bleibt eine Tendenz auf Architektur- oder Zielklassenebene. Konkrete Produkte brauchen aktuelle Quellenprüfung.</p>
+        </div>
+        <div class="process-panel" role="tabpanel" id="step-7" aria-labelledby="step-tab-7">
+          <h3>Nächsten Entscheidungsschritt dokumentieren</h3>
+          <p>Am Ende wird festgehalten, welche Fragen offen sind, wer prüfen muss und welcher nächste Schritt sinnvoll ist.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="leitfrage" aria-labelledby="leitfrage-title">
+      <div class="question">
+        <h2 id="leitfrage-title">Die zentrale Leitfrage</h2>
+        <blockquote>Welche Architektur erfüllt Use Case, Datenrealität, Betriebsmodell und Budget mit dem geringsten Fehlentscheidungsrisiko?</blockquote>
+        <p>Das Modell sucht nicht die stärkste Hardware, sondern die passendste Architektur für den konkreten Bedarf.</p>
+      </div>
+    </section>
+
+    <section id="achsen" aria-labelledby="achsen-title">
+      <div class="section-head">
+        <h2 id="achsen-title">Die neun Bewertungsachsen</h2>
+        <p class="lead">Die Achsen sind eine strukturierte Entscheidungshilfe. Sie zeigen, welche Anforderungen ein KI-Vorhaben prägen, ohne daraus automatisch eine Empfehlung zu berechnen.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <span class="marker">1</span>
+          <h3>Compute-/GPU-Druck</h3>
+          <p>Diese Achse fragt, ob viel Rechenleistung, schnelle lokale Inferenz, Medienarbeit, Coding-Last oder GPU-nahe Arbeit wichtig sind.</p>
+        </article>
+        <article class="card">
+          <span class="marker">2</span>
+          <h3>Speicher-/Modellgrößendruck</h3>
+          <p>Hier geht es um RAM, VRAM, Unified Memory, große lokale Modelle, lange Kontexte und größere Wissensräume für RAG.</p>
+        </article>
+        <article class="card">
+          <span class="marker">3</span>
+          <h3>Datenschutz- und Datenkritikalität</h3>
+          <p>Diese Achse zeigt, wie sensibel die Daten sind und ob lokale Kontrolle oder besondere Schutzmaßnahmen die Architektur beeinflussen.</p>
+        </article>
+        <article class="card">
+          <span class="marker green">4</span>
+          <h3>Governance- und Auditbedarf</h3>
+          <p>Hier wird sichtbar, ob Rollen, Freigaben, Logging, Nachvollziehbarkeit oder kontrollierter Betrieb wichtig sind.</p>
+        </article>
+        <article class="card">
+          <span class="marker green">5</span>
+          <h3>Parallelitäts- und Mehrnutzerdruck</h3>
+          <p>Diese Achse fragt, wie viele Personen oder Prozesse gleichzeitig auf die KI-Umgebung zugreifen sollen.</p>
+        </article>
+        <article class="card">
+          <span class="marker green">6</span>
+          <h3>Betriebs- und Adminreife</h3>
+          <p>Sie betrachtet, ob das Unternehmen lokale oder hybride Systeme dauerhaft betreiben, warten und absichern kann.</p>
+        </article>
+        <article class="card">
+          <span class="marker violet">7</span>
+          <h3>Mobilität, Lautstärke und Arbeitsplatzrealität</h3>
+          <p>Diese Achse macht sichtbar, ob Formfaktor, Geräuschentwicklung, Energiebedarf und Mobilität eine Lösung einschränken.</p>
+        </article>
+        <article class="card">
+          <span class="marker violet">8</span>
+          <h3>Budgetstärke</h3>
+          <p>Hier geht es um den realistischen Investitions- oder Betriebskostenrahmen und darum, wie frei das Budget genutzt werden kann.</p>
+        </article>
+        <article class="card">
+          <span class="marker violet">9</span>
+          <h3>Zukunfts- und Ausbaupfad</h3>
+          <p>Diese Achse fragt, ob es nur um einen Pilot geht oder ob später mehr Nutzer, größere Modelle oder komplexere Workloads geplant sind.</p>
+        </article>
+      </div>
+      <div class="notice soft">
+        <strong>Keine starre Formel</strong>
+        <p>Die Achsen werden nicht einfach zusammengerechnet. Entscheidend ist, welche Anforderungen gemeinsam stark wirken und welche offenen Fragen noch geprüft werden müssen.</p>
+      </div>
+    </section>
+
+    <section id="zielklassen" aria-labelledby="zielklassen-title">
+      <div class="section-head">
+        <h2 id="zielklassen-title">Die sechs Zielklassen</h2>
+        <p class="lead">Die Zielklassen zeigen, wie unterschiedlich KI-Hardwarebedarfe ausfallen können. Sie sind keine finale Empfehlung und enthalten bewusst keine Produktnamen.</p>
+      </div>
+      <div class="tabs" data-tabs>
+        <div class="tab-list" role="tablist" aria-label="Zielklassen">
+          <button class="tab-button" type="button" role="tab" aria-selected="true" aria-controls="class-1" id="class-tab-1">Klasse 1</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="class-2" id="class-tab-2">Klasse 2</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="class-3" id="class-tab-3">Klasse 3</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="class-4" id="class-tab-4">Klasse 4</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="class-5" id="class-tab-5">Klasse 5</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="class-6" id="class-tab-6">Klasse 6</button>
+        </div>
+        <article class="tab-panel" role="tabpanel" id="class-1" aria-labelledby="class-tab-1">
+          <h3>Klasse 1: Browser-/Cloud-Arbeitsplatz</h3>
+          <p><strong>Kurzbeschreibung:</strong> Ein Arbeitsplatz, der vor allem über Browser, Cloud-Dienste oder APIs mit KI arbeitet.</p>
+          <p><strong>Typische Eignung:</strong> Einfache Wissensarbeit, Recherche, Textassistenz, Beratung und geringe lokale Anforderungen.</p>
+          <p><strong>Worauf achten:</strong> Datenschutz, Cloud-Policy, Kostenmodell und Governance müssen trotzdem geklärt bleiben.</p>
+          <p><strong>Grenze:</strong> Keine Produktnamen, keine Kaufempfehlung.</p>
+        </article>
+        <article class="tab-panel" role="tabpanel" id="class-2" aria-labelledby="class-tab-2">
+          <h3>Klasse 2: Leichter AI-PC</h3>
+          <p><strong>Kurzbeschreibung:</strong> Ein leichter Einstieg für Office-nahe KI-Nutzung und einfache lokale Experimente.</p>
+          <p><strong>Typische Eignung:</strong> Kleinere lokale Modelle, Demos, einfache Assistenz und ergänzende lokale Nutzung.</p>
+          <p><strong>Worauf achten:</strong> Diese Klasse ist kein Ersatz für schwere lokale Workloads oder Plattformbetrieb.</p>
+          <p><strong>Grenze:</strong> Keine Produktnamen, keine Kaufempfehlung.</p>
+        </article>
+        <article class="tab-panel" role="tabpanel" id="class-3" aria-labelledby="class-tab-3">
+          <h3>Klasse 3: Lokaler Datenschutz- oder Shared-Memory-Knoten</h3>
+          <p><strong>Kurzbeschreibung:</strong> Eine lokale oder hybride Umgebung, bei der Datenkontrolle, Speicher und nachvollziehbarer Betrieb wichtig sind.</p>
+          <p><strong>Typische Eignung:</strong> Sensible Daten, lokale Dokumentenanalyse, RAG, größere lokale Modelle und kleine Teams.</p>
+          <p><strong>Worauf achten:</strong> Datenarten, Rollen, Betrieb, Zugriffskontrolle und offene Datenschutzfragen müssen geprüft werden.</p>
+          <p><strong>Grenze:</strong> Keine Produktnamen, keine Kaufempfehlung.</p>
+        </article>
+        <article class="tab-panel" role="tabpanel" id="class-4" aria-labelledby="class-tab-4">
+          <h3>Klasse 4: Prosumer-GPU-System</h3>
+          <p><strong>Kurzbeschreibung:</strong> Ein leistungsorientierter Einzelplatz für GPU-nahe KI-Arbeit.</p>
+          <p><strong>Typische Eignung:</strong> Schnelle lokale Inferenz, Coding, Bildgenerierung, erste Medienworkflows und GPU-nahe Einzelplatznutzung.</p>
+          <p><strong>Worauf achten:</strong> Betriebsaufwand, Lautstärke, Strom, Kühlung und tatsächlicher Compute-Bedarf dürfen nicht unterschätzt werden.</p>
+          <p><strong>Grenze:</strong> Keine Produktnamen, keine Kaufempfehlung.</p>
+        </article>
+        <article class="tab-panel" role="tabpanel" id="class-5" aria-labelledby="class-tab-5">
+          <h3>Klasse 5: Workstation / High-End-GPU-System</h3>
+          <p><strong>Kurzbeschreibung:</strong> Eine starke lokale Workstation für professionelle und anspruchsvolle KI-Workloads.</p>
+          <p><strong>Typische Eignung:</strong> Medienproduktion, Fine-Tuning, Modelltests, Engineering-Workloads und lokale Entwicklung.</p>
+          <p><strong>Worauf achten:</strong> Höhere Investition, Kühlung, Strom, Betrieb und Verantwortlichkeit müssen realistisch sein.</p>
+          <p><strong>Grenze:</strong> Keine Produktnamen, keine Kaufempfehlung.</p>
+        </article>
+        <article class="tab-panel" role="tabpanel" id="class-6" aria-labelledby="class-tab-6">
+          <h3>Klasse 6: Forschungs-, Cluster- oder Hybrid-Modell</h3>
+          <p><strong>Kurzbeschreibung:</strong> Eine Architektur für mehrere schwere Workloads, hohe Parallelität oder strategische Skalierung.</p>
+          <p><strong>Typische Eignung:</strong> Verteilte Architekturen, gemischte lokale und cloudbasierte KI-Nutzung, Team- oder Plattformbetrieb.</p>
+          <p><strong>Worauf achten:</strong> Governance, Betriebsverantwortung, Kostenkontrolle und technische Reife sind hier besonders wichtig.</p>
+          <p><strong>Grenze:</strong> Keine Produktnamen, keine Kaufempfehlung.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="ergebnis" aria-labelledby="ergebnis-title">
+      <div class="section-head">
+        <h2 id="ergebnis-title">Was kommt am Ende heraus?</h2>
+        <p class="lead">Das Ergebnis ist keine automatische Kaufentscheidung, sondern eine dokumentierte Entscheidungsgrundlage.</p>
+      </div>
+      <article class="card">
+        <h3>Typische Ergebnisbestandteile</h3>
+        <ul class="plain-list">
+          <li>Ausgefülltes Bedarfsprofil</li>
+          <li>Einschätzung der Bewertungsachsen</li>
+          <li>Vorläufige Hardware-Zielklasse</li>
+          <li>Hardware- oder Architektur-Tendenz</li>
+          <li>Hinweise zu Software- und Betriebsmodell</li>
+          <li>Zentrale Risiken</li>
+          <li>Offene Prüffragen</li>
+          <li>Nächster sinnvoller Entscheidungsschritt</li>
+          <li>Hinweis, ob konkrete Produktauswahl bereits sinnvoll ist</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="agentisch" aria-labelledby="agentisch-title">
+      <div class="section-head">
+        <h2 id="agentisch-title">Nutzung mit agentischer KI</h2>
+        <p class="lead">Ein Berater-Agent darf das Modell unterstützen, aber nicht ersetzen. Menschliche Verantwortung bleibt erforderlich.</p>
+      </div>
+      <div class="grid two">
+        <article class="card">
+          <h3>Der Agent darf unterstützen</h3>
+          <ul class="plain-list">
+            <li>Freitext strukturieren</li>
+            <li>Rückfragen vorbereiten</li>
+            <li>Annahmen kennzeichnen</li>
+            <li>Bewertungsachsen vorbereiten</li>
+            <li>Offene Punkte sichtbar machen</li>
+            <li>Eine vorläufige Zielklasse als Diskussionsgrundlage vorbereiten</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Der Agent darf nicht ersetzen</h3>
+          <ul class="plain-list">
+            <li>Finale Beschaffungsentscheidungen treffen</li>
+            <li>Rechtsberatung geben</li>
+            <li>Datenschutzfreigaben erteilen</li>
+            <li>Verbindliche technische Freigaben ersetzen</li>
+            <li>Produktkäufe empfehlen</li>
+            <li>Menschliche Prüfung umgehen</li>
+          </ul>
+        </article>
+      </div>
+      <div class="traffic" aria-label="Ampel für agentische Nutzung">
+        <article class="card green-card">
+          <h3>Grün</h3>
+          <ul>
+            <li>Strukturieren</li>
+            <li>Zusammenfassen</li>
+            <li>Rückfragen vorbereiten</li>
+            <li>Begriffe erklären</li>
+          </ul>
+        </article>
+        <article class="card yellow-card">
+          <h3>Gelb</h3>
+          <ul>
+            <li>Zielklasse vorläufig ableiten</li>
+            <li>Risiken markieren</li>
+            <li>Annahmen dokumentieren</li>
+            <li>Alternativen gegenüberstellen</li>
+          </ul>
+        </article>
+        <article class="card red-card">
+          <h3>Rot</h3>
+          <ul>
+            <li>Finale Kaufentscheidung</li>
+            <li>Rechtsberatung</li>
+            <li>Datenschutzfreigabe</li>
+            <li>Verbindliche technische Freigabe</li>
+            <li>Automatisierte Beschaffung</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="grenzen" aria-labelledby="grenzen-title">
+      <div class="section-head">
+        <h2 id="grenzen-title">Trust Layer und Grenzen</h2>
+        <p class="lead">Die Grenzen gehören sichtbar zum Modell. Sie schützen vor Scheinsicherheit und vorschnellen Empfehlungen.</p>
+      </div>
+      <div class="notice limit">
+        <strong>Dieses Modell ist eine Beratungs- und Orientierungshilfe.</strong>
+        <ul class="plain-list">
+          <li>Es ersetzt keine technische Beschaffungsprüfung.</li>
+          <li>Es ersetzt keine Rechtsberatung.</li>
+          <li>Es ersetzt keine Datenschutzprüfung.</li>
+          <li>Es ersetzt keine AI-Act-Einstufung.</li>
+          <li>Es ersetzt kein IT-Sicherheitsaudit.</li>
+          <li>Konkrete Produkt-, Preis- und Verfügbarkeitsdaten müssen aktuell geprüft werden.</li>
+          <li>Menschliche Prüfung ist erforderlich.</li>
+        </ul>
+      </div>
+      <div aria-label="Typische Fehlanwendungen">
+        <details>
+          <summary>Zu frühe Produktempfehlung</summary>
+          <div>
+            <p>Konkrete Hardware darf nicht genannt werden, bevor Zielklasse, Budget, Datenlage und Betriebsmodell ausreichend geklärt sind. Sonst steigt das Risiko für Fehlkauf, falsche Architektur oder nicht prüfbare Empfehlung.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Datenschutz- oder Governance-Fragen übersehen</summary>
+          <div>
+            <p>Sensible Daten, Rollen, Rechte, Logging und Freigaben gehören früh in die Betrachtung. Das Modell nennt Prüfpunkte, ersetzt aber keine Datenschutzfreigabe und keine Rechtsprüfung.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Betriebsfähigkeit ignorieren</summary>
+          <div>
+            <p>Lokale oder hybride Systeme brauchen Betreuung, Updates, klare Verantwortung und realistische Betriebsreife. Wenn diese Basis fehlt, darf die Architektur nicht künstlich komplex gemacht werden.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Agentische KI handelt zu autonom</summary>
+          <div>
+            <p>Ein Berater-Agent darf strukturieren, Rückfragen vorbereiten und Annahmen markieren. Finale Beschaffung, Rechtsbewertung, Datenschutzfreigabe und technische Freigabe bleiben menschliche Verantwortung.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="community" aria-labelledby="community-title">
+      <div class="section-head">
+        <h2 id="community-title">Community-Projekt / Prompt-Bibliothek</h2>
+        <p class="lead">Das Modell ist kein einzelner Prompt, sondern ein wiederverwendbares Denk- und Beratungsframework für KI-Hardware-Bedarfsanalyse in KMU.</p>
+      </div>
+      <div class="grid two">
+        <article class="card">
+          <h3>Warum es zur Prompt-Bibliothek passt</h3>
+          <ul class="plain-list">
+            <li>Artefakttyp: KMU-/Branchenmodell</li>
+            <li>Zweck: wiederverwendbares Beratungsmodell für KI-Hardware-Bedarfsanalyse</li>
+            <li>Nutzen: strukturierte, nachvollziehbare Vorprüfung für KMU</li>
+            <li>Review-Bedarf: Peer Review und Trust Review</li>
+            <li>Status-Vorschlag: draft oder bronze_candidate, nicht bronze ohne Review-Gate</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Wie es verstanden werden sollte</h3>
+          <p>Das Artefakt bündelt Fragen, Bewertungsachsen, Zielklassen, Grenzen und Review-Hinweise. Es ist damit ein Beratungsmodell, das in Workshops, Discovery-Gesprächen und Peer Reviews Orientierung geben kann.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="beispiel" aria-labelledby="beispiel-title">
+      <div class="section-head">
+        <h2 id="beispiel-title">Beispielhafte Nutzung - ohne Eingabeformular</h2>
+        <p class="lead">Das Beispiel ist synthetisch und allgemein gehalten. Es zeigt nur die Denkweise des Modells.</p>
+      </div>
+      <div class="callout-row">
+        <article class="card">
+          <h3>Fiktive Ausgangslage</h3>
+          <p>Ein kleines Dienstleistungsunternehmen möchte KI für Textarbeit, interne Wissenssuche und einfache Automatisierung nutzen. Einige Dokumente können vertraulich sein. Es ist noch unklar, ob Cloud, lokale Verarbeitung oder eine Mischform passt.</p>
+          <h3>Welche Fragen zuerst wichtig wären</h3>
+          <ul class="plain-list">
+            <li>Welche Daten sollen verarbeitet werden?</li>
+            <li>Wie viele Personen arbeiten gleichzeitig damit?</li>
+            <li>Wer kann eine lokale oder hybride Umgebung betreiben?</li>
+            <li>Welche Budgetlogik ist realistisch?</li>
+          </ul>
+        </article>
+        <article class="notice warning">
+          <h3>Warum daraus noch keine Kaufentscheidung entsteht</h3>
+          <p>Besonders relevant wären Datenschutz- und Datenkritikalität, Speicher-/Modellgrößendruck, Parallelität, Betriebsreife und Budget. Solange Datenarten, Cloud-Policy, Nutzerzahl und Betrieb offen sind, entsteht daraus keine finale Empfehlung.</p>
+          <p>Der nächste sinnvolle Schritt wäre, die offenen Punkte mit Geschäftsführung, IT und Datenschutz zu klären und danach eine Zielklasse nur vorläufig zu diskutieren.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="glossar" aria-labelledby="glossar-title">
+      <div class="section-head">
+        <h2 id="glossar-title">Wichtige Begriffe einfach erklärt</h2>
+        <p class="lead">Kurze Erklärungen für Begriffe, die im Modell häufig vorkommen.</p>
+      </div>
+      <dl class="glossary">
+        <div class="term">
+          <dt>KI-Hardware</dt>
+          <dd>Geräte oder technische Umgebungen, auf denen KI genutzt oder betrieben wird.</dd>
+        </div>
+        <div class="term">
+          <dt>Betriebsmodell</dt>
+          <dd>Die Art, wie KI bereitgestellt wird: zum Beispiel Cloud, lokal, On-Premise oder hybrid.</dd>
+        </div>
+        <div class="term">
+          <dt>Cloud</dt>
+          <dd>KI läuft über externe Dienste und wird meist über Browser oder API genutzt.</dd>
+        </div>
+        <div class="term">
+          <dt>On-Premise</dt>
+          <dd>Die Technik läuft in der eigenen Umgebung oder unter eigener Verantwortung.</dd>
+        </div>
+        <div class="term">
+          <dt>Hybrid</dt>
+          <dd>Cloud und lokale Nutzung werden kombiniert, etwa je nach Datenart oder Aufgabe.</dd>
+        </div>
+        <div class="term">
+          <dt>RAG</dt>
+          <dd>Eine KI nutzt zusätzlich eigene Dokumente oder Wissensbestände, um Antworten besser einzuordnen.</dd>
+        </div>
+        <div class="term">
+          <dt>Fine-Tuning</dt>
+          <dd>Ein Modell wird gezielt angepasst. Das ist anspruchsvoller als normale Nutzung.</dd>
+        </div>
+        <div class="term">
+          <dt>GPU</dt>
+          <dd>Ein Rechenbaustein, der viele KI- und Medienaufgaben beschleunigen kann.</dd>
+        </div>
+        <div class="term">
+          <dt>VRAM / RAM / Unified Memory</dt>
+          <dd>Speicherarten, die beeinflussen, welche Modelle und Dokumentmengen lokal verarbeitet werden können.</dd>
+        </div>
+        <div class="term">
+          <dt>Governance</dt>
+          <dd>Regeln, Rollen und Verantwortlichkeiten für kontrollierte KI-Nutzung.</dd>
+        </div>
+        <div class="term">
+          <dt>Auditbedarf</dt>
+          <dd>Der Bedarf, Nutzung, Entscheidungen oder Zugriffe nachvollziehbar zu dokumentieren.</dd>
+        </div>
+        <div class="term">
+          <dt>Workload</dt>
+          <dd>Die Art und Menge der Arbeit, die eine KI-Umgebung leisten soll.</dd>
+        </div>
+        <div class="term">
+          <dt>Parallelität</dt>
+          <dd>Mehrere Personen oder Prozesse greifen gleichzeitig auf die KI-Umgebung zu.</dd>
+        </div>
+        <div class="term">
+          <dt>Zielklasse</dt>
+          <dd>Eine grobe Hardware- oder Architekturklasse, die als Orientierung dient.</dd>
+        </div>
+        <div class="term">
+          <dt>Human Review</dt>
+          <dd>Eine verantwortliche Person prüft Annahmen, Risiken und Ergebnisse, bevor entschieden wird.</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section id="abschluss" aria-labelledby="abschluss-title">
+      <div class="notice soft">
+        <h2 id="abschluss-title">Gute KI-Hardwareberatung beginnt nicht beim Gerät, sondern beim geklärten Bedarf.</h2>
+        <p class="source-note">Quellenbasis dieses Erklärboards: README.md und model.md, ergänzt durch application-guide.md, worksheet, example-01.md, scenarios.md, failure-modes.md, sources.md und metadata.yml.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Lokales Erklärboard. Keine Datenübertragung, kein Backend, keine API, kein Tracking, keine Speicherung von Nutzereingaben.</p>
+  </footer>
+
+  <script>
+    // Komfortinteraktionen: Tabs, Prozessschritte und Druckbutton. Inhalte bleiben ohne JavaScript lesbar.
+    document.documentElement.classList.add("has-js");
+
+    function setupTabGroup(rootSelector, buttonSelector, panelSelector) {
+      document.querySelectorAll(rootSelector).forEach(function (root) {
+        var buttons = Array.from(root.querySelectorAll(buttonSelector));
+        var panels = Array.from(root.querySelectorAll(panelSelector));
+
+        function activate(button) {
+          var targetId = button.getAttribute("aria-controls");
+          buttons.forEach(function (item) {
+            item.setAttribute("aria-selected", item === button ? "true" : "false");
+            item.setAttribute("tabindex", item === button ? "0" : "-1");
+          });
+          panels.forEach(function (panel) {
+            panel.hidden = panel.id !== targetId;
+          });
+        }
+
+        buttons.forEach(function (button, index) {
+          if (index > 0) {
+            button.setAttribute("tabindex", "-1");
+          }
+          button.addEventListener("click", function () {
+            activate(button);
+          });
+          button.addEventListener("keydown", function (event) {
+            var nextIndex = index;
+            if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+              nextIndex = (index + 1) % buttons.length;
+            } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+              nextIndex = (index - 1 + buttons.length) % buttons.length;
+            } else if (event.key === "Home") {
+              nextIndex = 0;
+            } else if (event.key === "End") {
+              nextIndex = buttons.length - 1;
+            } else {
+              return;
+            }
+            event.preventDefault();
+            buttons[nextIndex].focus();
+            activate(buttons[nextIndex]);
+          });
+        });
+
+        if (buttons[0]) {
+          activate(buttons[0]);
+        }
+      });
+    }
+
+    setupTabGroup("[data-tabs]", ".tab-button", ".tab-panel");
+    setupTabGroup("[data-process]", ".process-button", ".process-panel");
+
+    var printButton = document.getElementById("printButton");
+    if (printButton) {
+      printButton.addEventListener("click", function () {
+        window.print();
+      });
+    }
+  </script>
+</body>
+</html>
