@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zusammenfassung Promptpaket Websiteanalysekonzept</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --paper: #ffffff;
+      --text: #1d2430;
+      --muted: #596475;
+      --line: #d8dee8;
+      --accent: #176b87;
+      --accent-soft: #e6f3f6;
+      --warn: #7a4d00;
+      --warn-soft: #fff5d8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 20px 56px;
+    }
+
+    article {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 34px;
+      box-shadow: 0 12px 28px rgba(20, 29, 45, 0.08);
+    }
+
+    h1,
+    h2 {
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-top: 30px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 16px 22px;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 7px;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 17px;
+      margin-bottom: 24px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0 26px;
+    }
+
+    .pill {
+      background: var(--accent-soft);
+      border: 1px solid #b8dce5;
+      color: #124e63;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .box {
+      background: #f9fbfd;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      margin: 18px 0;
+    }
+
+    .note {
+      background: var(--warn-soft);
+      border: 1px solid #ecd48f;
+      color: var(--warn);
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-top: 22px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 20px;
+      font-size: 15px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #eef3f7;
+    }
+
+    a {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .footer {
+      border-top: 1px solid var(--line);
+      margin-top: 34px;
+      padding-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      main {
+        padding: 0;
+      }
+
+      article {
+        border: 0;
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <h1>Zusammenfassung: Promptpaket Websiteanalysekonzept fuer KMU</h1>
+      <p class="lead">
+        Kurzer Ueberblick darueber, wie das Promptpaket fuer ein durchdachtes Websiteanalysekonzept geplant und erstellt wurde.
+      </p>
+
+      <div class="meta">
+        <span class="pill">Artefakt: Prompt-Paket</span>
+        <span class="pill">Zielgruppe: KMU bis 10 Mitarbeitende</span>
+        <span class="pill">Status: draft</span>
+        <span class="pill">Maintainer: Kursbeitrag Oliver</span>
+      </div>
+
+      <h2>1. Ausgangsidee</h2>
+      <p>
+        Ziel war ein Masterprompt fuer die Promptbibliothek. Er soll kleinen KMU helfen, ein Websiteanalysekonzept zu erstellen, damit die Unternehmenswebsite messbar besser fuer Online-Marketing funktioniert.
+      </p>
+      <p>
+        Der Prompt sollte nicht nur allgemeine Website-Tipps liefern, sondern eine strukturierte Beratung ausloesen: erst klaeren, dann messen, dann bewerten, dann kleine realistische Massnahmen ableiten.
+      </p>
+
+      <h2>2. Planungsphase</h2>
+      <ol>
+        <li>Wir haben die lokalen Quellen zum Community-Projekt ausgewertet.</li>
+        <li>Wir haben geprueft, welche Pflichtdateien ein Prompt-Paket fuer die Abgabe braucht.</li>
+        <li>Wir haben das Thema auf KMU mit wenig Zeit, kleinem Budget und geringer Webanalyse-Erfahrung ausgerichtet.</li>
+        <li>Wir haben entschieden, den Prompt anfaengerfreundlich und toolneutral zu gestalten, aber mit GA4-Bezug.</li>
+        <li>Wir haben als fachlichen Rahmen den Webanalytika-Ansatz und offizielle GA4-Bezugspunkte herangezogen.</li>
+      </ol>
+
+      <h2>3. Fachliche Leitidee</h2>
+      <div class="box">
+        <p>
+          Die zentrale Logik lautet: Eine Websiteanalyse ist nur dann hilfreich, wenn jede Analysefrage mit passenden Daten, einer Kennzahl und einer moeglichen Handlung verbunden ist.
+        </p>
+      </div>
+      <p>
+        Deshalb wurde der Masterprompt so aufgebaut, dass er nicht einfach Kennzahlen sammelt. Er erzeugt eine Fragen-Daten-Aktions-Matrix, eine Customer-Journey-Sicht, einen KPI- und Trackingplan sowie priorisierte Low-Budget-Massnahmen.
+      </p>
+
+      <h2>4. Aufbau des Masterprompts</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Baustein</th>
+            <th>Zweck</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Rolle der KI</td>
+            <td>Die KI arbeitet als anfaengerfreundlicher Websiteanalyse- und Online-Marketing-Berater.</td>
+          </tr>
+          <tr>
+            <td>Drei Modi</td>
+            <td>Schnellcheck, Vollanalyse und Spezialfall, z. B. Checkout oder Kontaktformular.</td>
+          </tr>
+          <tr>
+            <td>Rueckfragen</td>
+            <td>Wenn Informationen fehlen, stellt die KI zuerst maximal sieben einfache Fragen.</td>
+          </tr>
+          <tr>
+            <td>Customer Journey</td>
+            <td>Die Website wird nach Aufmerksamkeit, Orientierung, Vertrauen, Handlung und Nachfassen betrachtet.</td>
+          </tr>
+          <tr>
+            <td>Messkonzept</td>
+            <td>Ziele, KPIs, Ereignisse, Tracking-Luecken und Pruefpunkte werden sichtbar gemacht.</td>
+          </tr>
+          <tr>
+            <td>Massnahmenplan</td>
+            <td>Empfehlungen werden nach Aufwand, Wirkung und Realismus fuer kleine KMU priorisiert.</td>
+          </tr>
+          <tr>
+            <td>Human Review</td>
+            <td>Der Mensch bleibt verantwortlich und prueft Daten, Annahmen, Datenschutz und Umsetzung.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>5. Erstellte Dateien</h2>
+      <ul>
+        <li><strong>prompt.md</strong>: der eigentliche Masterprompt.</li>
+        <li><strong>README.md</strong>: Zweck, Zielgruppe und Kurzstart.</li>
+        <li><strong>metadata.yml</strong>: maschinenlesbare Angaben fuer die Promptbibliothek.</li>
+        <li><strong>workflow.md</strong>: einfache Schritt-fuer-Schritt-Nutzung.</li>
+        <li><strong>examples/input-01.md</strong>: synthetisches Beispiel fuer Checkout-Optimierung.</li>
+        <li><strong>examples/output-01.md</strong>: gekuerzter Beispieloutput.</li>
+        <li><strong>evaluation.md</strong>: Pruefkriterien und Testszenarien.</li>
+        <li><strong>failure-modes.md</strong>: typische Fehler und Gegenmassnahmen.</li>
+        <li><strong>sources.md</strong>: lokale und externe Quellen.</li>
+      </ul>
+
+      <h2>6. Warum das Paket reviewfaehig ist</h2>
+      <p>
+        Das Paket folgt den Anforderungen der lokalen Projektquellen: Es enthaelt Pflichtdateien, klare Metadaten, Beispielinput, Beispieloutput, Bewertungskriterien, Fehlerfaelle und Trust-Hinweise.
+      </p>
+      <p>
+        Gleichzeitig bleibt der Status bewusst auf <strong>draft</strong>, weil fuer eine hoehere Einstufung Peer Review und Trust Review noetig waeren.
+      </p>
+
+      <div class="note">
+        <strong>Datenschutzhinweis:</strong> Das Promptpaket arbeitet mit aggregierten, oeffentlichen, synthetischen oder selbst beschriebenen Daten. Es fordert keine echten personenbezogenen Kundendaten an und ersetzt keine fachliche, rechtliche oder datenschutzrechtliche Pruefung.
+      </div>
+
+      <h2>7. Ergebnis</h2>
+      <p>
+        Am Ende entstand ein anfaengerfreundlicher Masterprompt, der KMU Schritt fuer Schritt zu einem Websiteanalysekonzept fuehrt. Er hilft dabei, Websiteziele, Nutzerreise, Kennzahlen, Tracking-Luecken, Hypothesen und konkrete Massnahmen in eine klare Struktur zu bringen.
+      </p>
+
+      <div class="footer">
+        Erstellt am 11.05.2026 im Rahmen des Community-Projekts zur Promptbibliothek.
+      </div>
+    </article>
+  </main>
+</body>
+</html>
