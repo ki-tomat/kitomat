@@ -54,6 +54,19 @@ Ein Pull Request sollte enthalten:
 - Hinweis, ob Peer Review und Trust Review noetig sind
 - kurze Liste automatischer Syntax- oder Struktur-Fixes, falls Codex geholfen hat
 
+## Lokale Build-Hinweise
+
+Auf Windows/OneDrive-Arbeitsplaetzen kann das Anlegen lokaler `dist/`-Ordner mit `EPERM` scheitern. Das ist ein Umgebungsblocker und kein Grund fuer unsichere Workarounds im Code.
+
+Fuer Sites-Builds kann ein temporaerer Ausgabepfad genutzt werden:
+
+```powershell
+$env:SITES_DIST_DIR = Join-Path $env:TEMP 'kitomat-content-api-dist'; npm run build
+$env:SITES_DIST_DIR = Join-Path $env:TEMP 'kitomat-admin-dist'; npm run build
+```
+
+Wenn auch der WebUI-Build lokal an `esbuild spawn EPERM` scheitert, im PR Syntaxchecks, betroffene Umgebung und den Blocker dokumentieren.
+
 ## Externe Beitraege
 
 Externe Community-Beitraege laufen bevorzugt ueber Fork plus Pull Request.

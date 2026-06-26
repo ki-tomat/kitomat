@@ -1,0 +1,10 @@
+{
+  "name": "kitomat-sites-content-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only Sites API foundation for KI-tomat content.",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  }
+}
