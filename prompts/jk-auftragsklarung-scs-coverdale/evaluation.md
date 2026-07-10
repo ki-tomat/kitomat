@@ -27,7 +27,7 @@
 |---|---|
 | Actionability | Output kann direkt in Kick-off-Meeting eingebracht werden, ohne Nacharbeit |
 | Konsistenz | SCS-Analyse und Zielscheibe widersprechen sich nicht |
-| Keine Platzhalter | Alle Felder ausgefüllt, kein `[TBD]` in Pflichtfeldern des Outputs |
+| Keine Platzhalter | Alle Felder ausgefüllt, keine offenen Datums- oder Wertangaben in Pflichtfeldern des Outputs |
 | Quellenintegrität | Coverdale-Zielscheibe ist korrekt referenziert |
 
 ## Bekannte Schwachstelle im Prompt

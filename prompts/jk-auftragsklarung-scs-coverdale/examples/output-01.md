@@ -34,7 +34,7 @@ Für HR: Etablierung eines Formats, das Kultur durch konkrete Ergebnisse belegt 
 Für Mitarbeitende: Erleben, dass Querdenken gewollt ist und Konsequenzen hat — Motivations- und Bindungsfaktor.
 
 **Endergebnis — „Was soll bis wann vorliegen?"**  
-Bis [Datum TBD, empfohlen: Q3 2026]: Ein eintägiges Innovations-Event hat stattgefunden.  
+Bis 30. September 2026: Ein eintägiges Innovations-Event hat stattgefunden.  
 Vorliegend danach:
 - Mindestens 3 pitchfertige Konzepte
 - Je ein Management-Sponsor pro Konzept (namentlich benannt)
