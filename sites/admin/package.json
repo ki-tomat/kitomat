@@ -1,0 +1,10 @@
+{
+  "name": "kitomat-sites-admin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Internal Sites admin workspace for KI-tomat Phase 3.",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  }
+}
