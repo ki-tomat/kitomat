@@ -1,0 +1,386 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kitomat.dev/schemas/review-run-v1.schema.json",
+  "title": "KItomat Review Run",
+  "description": "Protokoll eines vollstaendigen Review-Laufs. Der Agent fuellt die Phasen und Befunde. Der Reviewer gibt die Gates frei. Das Dokument ist niemals eine Freigabe des Beitrags, sondern das Protokoll einer Pruefung.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "created_at",
+    "artifact",
+    "reviewer",
+    "phases",
+    "overall",
+    "audit"
+  ],
+
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+
+    "run_id": {
+      "description": "Eindeutige Kennung des Laufs, Format rev-JJJJMMTT-NNN.",
+      "type": "string",
+      "pattern": "^rev-[0-9]{8}-[0-9]{3}$"
+    },
+
+    "created_at": { "type": "string", "format": "date-time" },
+
+    "ruleset_version": {
+      "description": "Version des Pruefkatalogs (review/policy/review-checks.yml), gegen den geprueft wurde.",
+      "type": "string"
+    },
+
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "artifact_type", "path", "files"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "title": { "type": "string" },
+        "artifact_type": {
+          "description": "Erkannter Artefakttyp. Weicht er vom deklarierten Typ ab, gehoert das als Befund in Phase 0.",
+          "enum": ["prompt_package", "dataset_package", "model", "mixed", "unknown"]
+        },
+        "artifact_type_declared": {
+          "enum": ["prompt_package", "dataset_package", "model", null]
+        },
+        "path": {
+          "description": "Pfad im Content-Repository.",
+          "type": "string",
+          "pattern": "^(prompts|datasets|models)/[^/]+$"
+        },
+        "declared_status": {
+          "enum": ["draft", "bronze_candidate", "bronze", "silver_candidate", "silver", "gold_candidate", "gold", null]
+        },
+        "data_risk": {
+          "description": "Aus metadata.yml uebernommen. Steuert die Prueftiefe: green = Peer Review genuegt, yellow = Trust Review Pflicht, red = Trust Review plus zweite Freigabe der Kursleitung.",
+          "enum": ["green", "yellow", "red", null]
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "repository": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+            "pull_request_number": { "type": "integer", "minimum": 1 },
+            "head_sha": { "type": "string", "pattern": "^[a-f0-9]{7,40}$" },
+            "trigger": { "enum": ["label", "manual", "scheduled"] },
+            "trigger_label": { "type": "string" },
+            "intake_path": {
+              "description": "Nur gesetzt, wenn der Beitrag aus review/intake/ gelesen wurde statt aus dem Content-Ordner. artifact.path nennt dann den kuenftigen Zielpfad, dieses Feld den tatsaechlichen Fundort.",
+              "type": "string"
+            }
+          }
+        },
+        "files": {
+          "description": "Die tatsaechlich geprueften Dateien mit Hash. Macht den Lauf reproduzierbar und veraltete Ergebnisse erkennbar.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+              "size_bytes": { "type": "integer", "minimum": 0 },
+              "sent_to_agent": {
+                "description": "Ob der Dateiinhalt an das Sprachmodell uebertragen wurde. Bei Hard Stop in Phase 0 muss dies bei allen Dateien false sein.",
+                "type": "boolean"
+              },
+              "redaction_count": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+
+    "reviewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code"],
+      "properties": {
+        "code": {
+          "description": "Teilnehmercode, kein Klarname. Der Wert 'agent' bedeutet, dass der Lauf automatisch erzeugt wurde und noch kein Mensch zugewiesen ist.",
+          "type": "string",
+          "pattern": "^p[0-9]{2}$|^maintainer$|^dozent$|^agent$"
+        },
+        "role": { "enum": ["peer_reviewer", "trust_reviewer", "maintainer"] }
+      }
+    },
+
+    "phases": {
+      "description": "Die sieben Phasen des Review-Prozesses. Jede Phase endet mit einem Gate.",
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": { "$ref": "#/$defs/phase" }
+    },
+
+    "overall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_signal", "handoff"],
+      "properties": {
+        "review_signal": {
+          "description": "Gesamtampel. Bewusst nicht data_risk genannt, um Verwechslung mit dem Metadatenfeld auszuschliessen.",
+          "$ref": "#/$defs/signal"
+        },
+        "handoff": { "$ref": "#/$defs/handoff_status" },
+        "status_suggestion": {
+          "description": "Empfehlung, keine Vergabe. Ein finaler Status wird ausschliesslich vom Maintainer gesetzt.",
+          "enum": ["draft", "bronze_candidate", "bronze_ready_for_human_decision", "post_mvp"]
+        },
+        "post_mvp_recommended": { "type": "boolean" },
+        "blocking_findings": { "type": "integer", "minimum": 0 },
+        "open_human_decisions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "summary": {
+          "description": "Kurzfazit in wenigen Saetzen. Bewertet das Artefakt, nicht die beitragende Person.",
+          "type": "string",
+          "maxLength": 2000
+        }
+      }
+    },
+
+    "reports": {
+      "description": "Pfade der erzeugten Klartextberichte, relativ zum Ergebnisordner.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "agent_report": { "type": "string" },
+        "contributor_feedback": { "type": "string" },
+        "maintainer_handoff": { "type": "string" }
+      }
+    },
+
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["human_decision_required"],
+      "properties": {
+        "human_decision_required": {
+          "description": "Immer true. Ein Review-Lauf ersetzt keine menschliche Entscheidung.",
+          "const": true
+        },
+        "agent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "provider": { "type": "string" },
+            "model_id": { "type": "string" },
+            "prompt_version": { "type": "string" },
+            "started_at": { "type": "string", "format": "date-time" },
+            "finished_at": { "type": "string", "format": "date-time" },
+            "tokens_in": { "type": "integer", "minimum": 0 },
+            "tokens_out": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "stage1a": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "validators": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "exit_code"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "exit_code": { "type": "integer" },
+                  "findings": { "type": "integer", "minimum": 0 }
+                }
+              }
+            },
+            "hard_stop_triggered": { "type": "boolean" },
+            "hard_stop_reason": { "$ref": "#/$defs/hard_stop" }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+
+  "$defs": {
+
+    "signal": {
+      "description": "Ampel. green oeffnet ein Gate, gelb und rot halten es geschlossen. green bedeutet nicht freigegeben, sondern bereit zur menschlichen Freigabe.",
+      "enum": ["green", "yellow", "red"]
+    },
+
+    "severity": {
+      "description": "P0 stoppt sofort. P1 muss vor Freigabe geloest sein. P2 sollte geklaert werden. P3 ist ein Hinweis.",
+      "enum": ["P0", "P1", "P2", "P3"]
+    },
+
+    "handoff_status": {
+      "enum": [
+        "return_to_contributor",
+        "start_peer_review",
+        "start_trust_review",
+        "ready_for_human_eval",
+        "post_mvp_recommended"
+      ]
+    },
+
+    "hard_stop": {
+      "description": "Harte Stopps aus openclaw-agent.yml und dem Standard-Review-Paket. Loesen immer P0 und Signal rot aus.",
+      "enum": [
+        "real_personal_data",
+        "real_customer_data",
+        "health_data",
+        "confidential_finance_data",
+        "real_hr_or_application_documents",
+        "internal_company_documents",
+        "unclear_full_text_copyright",
+        "unclear_local_file_uploads",
+        "invented_sources_for_strong_claims",
+        "legal_or_audit_claims",
+        "automated_decisions_about_people",
+        "final_publication_claim_without_human_review"
+      ]
+    },
+
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "signal", "gate", "checks"],
+      "properties": {
+        "id": {
+          "enum": ["phase-0", "phase-1", "phase-2", "phase-3", "phase-4", "phase-5", "phase-6"]
+        },
+        "name": { "type": "string" },
+        "skipped": {
+          "description": "Phasen duerfen risikoabhaengig entfallen, etwa Trust-Pruefungen bei data_risk green. Der Grund gehoert dokumentiert.",
+          "type": "boolean"
+        },
+        "skip_reason": { "type": "string" },
+        "signal": { "$ref": "#/$defs/signal" },
+        "checks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/check" }
+        },
+        "gate": { "$ref": "#/$defs/gate" },
+        "narrative": {
+          "description": "Freitext des Agenten zu dieser Phase, etwa Scope-Lock in Phase 0 oder Failure Map in Phase 1.",
+          "type": "string",
+          "maxLength": 8000
+        }
+      }
+    },
+
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "result", "produced_by"],
+      "properties": {
+        "id": {
+          "description": "Stabile Kennung aus review/policy/review-checks.yml.",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "label": { "type": "string" },
+        "category": {
+          "description": "Pruefkategorie aus dem Standard-Review-Paket.",
+          "enum": [
+            "scope",
+            "file_consistency",
+            "required_files",
+            "contradictions",
+            "sources",
+            "data_risk",
+            "false_assurance",
+            "recency_risk",
+            "usage_risk",
+            "human_review",
+            "usability",
+            "examples",
+            "scenario_triad",
+            "trust_layer",
+            "license",
+            "companion_artifact",
+            "potential"
+          ]
+        },
+        "result": {
+          "description": "not_assessable bedeutet, dass der Agent den Punkt mit dem vorliegenden Material nicht entscheiden kann. Das ist ein zulaessiges Ergebnis und erzwingt menschliche Pruefung.",
+          "enum": ["pass", "warn", "fail", "block", "not_applicable", "not_assessable"]
+        },
+        "severity": { "$ref": "#/$defs/severity" },
+        "produced_by": {
+          "description": "Wer den Befund erzeugt hat. Deterministische Befunde sind in End-to-End-Tests exakt pruefbar, Agentenbefunde nur grob.",
+          "enum": ["validator", "agent", "human"]
+        },
+        "confidence": {
+          "description": "Nur bei produced_by=agent aussagekraeftig.",
+          "enum": ["high", "medium", "low"]
+        },
+        "human_mandatory": {
+          "description": "Wenn true, muss ein Mensch diesen Punkt bestaetigen, bevor das Gate oeffnet. Pflicht bei Quellen- und Trust-Pruefungen mit data_risk yellow oder red.",
+          "type": "boolean"
+        },
+        "human_ack": {
+          "description": "Vom Reviewer im Cockpit gesetzt.",
+          "type": "boolean"
+        },
+        "finding": { "type": "string", "maxLength": 2000 },
+        "recommendation": { "type": "string", "maxLength": 2000 },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["file"],
+            "properties": {
+              "file": { "type": "string" },
+              "line": { "type": "integer", "minimum": 1 },
+              "quote": { "type": "string", "maxLength": 500 }
+            }
+          }
+        },
+        "override": {
+          "description": "Der Reviewer darf jeden Agentenbefund uebersteuern. Eine Begruendung ist Pflicht.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["result", "reason", "by", "at"],
+          "properties": {
+            "result": { "enum": ["pass", "warn", "fail", "block", "not_applicable"] },
+            "reason": { "type": "string", "minLength": 10, "maxLength": 2000 },
+            "by": { "type": "string" },
+            "at": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    },
+
+    "gate": {
+      "description": "Ein Gate oeffnet nur unter deterministisch pruefbaren Bedingungen. Die Bewertung des Agenten ist Eingabe, niemals das Gate selbst.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "description": "closed = Bedingungen nicht erfuellt. open = Bedingungen erfuellt, Unterschrift steht aus. passed = Reviewer hat freigegeben. blocked = harter Stopp, ohne Contributor-Nacharbeit nicht loesbar.",
+          "enum": ["closed", "open", "passed", "blocked"]
+        },
+        "conditions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "no_blocking_results": { "type": "boolean" },
+            "no_p0_findings": { "type": "boolean" },
+            "all_human_mandatory_acked": { "type": "boolean" },
+            "reviewer_signed": { "type": "boolean" }
+          }
+        },
+        "signed_by": { "type": "string" },
+        "signed_at": { "type": "string", "format": "date-time" },
+        "comment": { "type": "string", "maxLength": 2000 }
+      }
+    }
+  }
+}

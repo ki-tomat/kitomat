@@ -1,0 +1,15 @@
+id: demo-kundenmails-auswerten
+artifact_type: prompt_package
+title: "Kundenmails auswerten und beantworten"
+category: service
+status: bronze
+language: de
+version: "0.1.0"
+maintainer: p13
+license: CC-BY-4.0
+license_status: declared
+data_risk: green
+human_review_required: false
+ai_act_proximity: none
+legal_disclaimer: "Hilft beim Beantworten von Kundenanfragen."
+sources_status: not_required

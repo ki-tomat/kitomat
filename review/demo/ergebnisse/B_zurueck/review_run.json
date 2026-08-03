@@ -1,0 +1,295 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "rev-20260803-001",
+  "created_at": "2026-08-03T09:50:17Z",
+  "ruleset_version": "1.0.0",
+  "artifact": {
+    "id": "demo-kundenmails-auswerten",
+    "title": "Kundenmails auswerten und beantworten",
+    "artifact_type": "prompt_package",
+    "artifact_type_declared": "prompt_package",
+    "path": "prompts/demo-kundenmails-auswerten",
+    "declared_status": "bronze",
+    "data_risk": "green",
+    "source": {
+      "repository": "ki-tomat/kitomat",
+      "trigger": "manual"
+    },
+    "files": [
+      {
+        "path": "examples/input-01.md",
+        "sha256": "faa15b1dc80b0d98165a0e91b4ea4070dcc7d36f60dd2c463607ade4c0253e85",
+        "size_bytes": 465,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "examples/output-01.md",
+        "sha256": "2540fd65169c0a6401c4b72d8fb6f374a5ee9357bfa14ac5e20046c67e24da70",
+        "size_bytes": 251,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "metadata.yml",
+        "sha256": "cda0437512295265ff62eeb572a8cccf4ac3e5df133efdcff9944bca6f195ece",
+        "size_bytes": 392,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "prompt.md",
+        "sha256": "b4ef47433584066eaeec131db1d112b2c05dff2f3440d301c9ef38fa3c244daa",
+        "size_bytes": 222,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "README.md",
+        "sha256": "26313d29f07779a1caba535ff83b570831752a49ecb1cc68f812b255e863023c",
+        "size_bytes": 353,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      }
+    ]
+  },
+  "reviewer": {
+    "code": "p04",
+    "role": "peer_reviewer"
+  },
+  "phases": [
+    {
+      "id": "phase-0",
+      "name": "Orientierung und Sicherheits-Gate",
+      "signal": "red",
+      "narrative": "Deterministische Vorpruefung von prompts/demo-kundenmails-auswerten. 5 Dateien erfasst und gehasht. PII-Vorfilter entfernte 0 Falschtreffer (Datum, DOI, Zahlenspanne) vor dem Abgleich.",
+      "checks": [
+        {
+          "id": "artifact.located",
+          "label": "Artefaktordner gefunden und eindeutig",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "artifact.type_detected",
+          "label": "Artefakttyp erkannt",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Erkannter Typ: prompt_package."
+        },
+        {
+          "id": "artifact.scope_lock",
+          "label": "Scope-Sperre gesetzt",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "5 Dateien mit SHA-256 eingefroren."
+        },
+        {
+          "id": "safety.pii_scan",
+          "label": "Keine eindeutigen PII-Treffer im Beitrag",
+          "category": "data_risk",
+          "result": "block",
+          "produced_by": "validator",
+          "severity": "P0",
+          "finding": "3 Rohtreffer, 0 vom Vorfilter entfernt, 2 blockierend.",
+          "evidence": [
+            {
+              "file": "examples/input-01.md",
+              "line": 7,
+              "quote": "t.wagner@muster-elektro.example"
+            },
+            {
+              "file": "examples/input-01.md",
+              "line": 8,
+              "quote": "service@beispielfirma.example"
+            }
+          ]
+        },
+        {
+          "id": "safety.forbidden_file_types",
+          "label": "Keine unklaren lokalen Datei-Uploads",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "safety.no_real_names",
+          "label": "Kein Klarname statt Teilnehmercode",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "maintainer='p13'"
+        },
+        {
+          "id": "safety.number_pattern_notice",
+          "label": "Auffaellige Zahlenfolgen zur menschlichen Sichtung",
+          "category": "data_risk",
+          "result": "warn",
+          "produced_by": "validator",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": false,
+          "finding": "1 telefonaehnliche Zahlenfolgen gefunden. Erfahrungsgemaess DOIs, Kennnummern oder Zahlenspannen.",
+          "recommendation": "Im Cockpit bestaetigen, dass keine echten Kontaktdaten enthalten sind.",
+          "evidence": [
+            {
+              "file": "examples/input-01.md",
+              "line": 14,
+              "quote": "0221 4455667"
+            }
+          ]
+        }
+      ],
+      "gate": {
+        "status": "blocked",
+        "conditions": {
+          "no_blocking_results": false,
+          "no_p0_findings": false,
+          "all_human_mandatory_acked": false,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-1",
+      "name": "Potenzial, Grenzfaelle und blinde Flecken",
+      "signal": "red",
+      "skipped": true,
+      "skip_reason": "Sicherheits-Gate in Phase 0 blockiert. Keine Uebertragung an den Provider.",
+      "checks": [],
+      "gate": {
+        "status": "blocked",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-2",
+      "name": "Pflichtdateien und Struktur",
+      "signal": "red",
+      "skipped": true,
+      "skip_reason": "Sicherheits-Gate in Phase 0 blockiert. Keine Uebertragung an den Provider.",
+      "checks": [],
+      "gate": {
+        "status": "blocked",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-3",
+      "name": "Metadaten, Lizenz und Trust Layer",
+      "signal": "red",
+      "skipped": true,
+      "skip_reason": "Sicherheits-Gate in Phase 0 blockiert. Keine Uebertragung an den Provider.",
+      "checks": [],
+      "gate": {
+        "status": "blocked",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-4",
+      "name": "Peer Review",
+      "signal": "red",
+      "skipped": true,
+      "skip_reason": "Sicherheits-Gate in Phase 0 blockiert. Keine Uebertragung an den Provider.",
+      "checks": [],
+      "gate": {
+        "status": "blocked",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-5",
+      "name": "Szenario-Triade und Tests",
+      "signal": "red",
+      "skipped": true,
+      "skip_reason": "Sicherheits-Gate in Phase 0 blockiert. Keine Uebertragung an den Provider.",
+      "checks": [],
+      "gate": {
+        "status": "blocked",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-6",
+      "name": "Rueckmeldung und Statusvorschlag",
+      "signal": "red",
+      "skipped": true,
+      "skip_reason": "Sicherheits-Gate in Phase 0 blockiert. Keine Uebertragung an den Provider.",
+      "checks": [],
+      "gate": {
+        "status": "blocked",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    }
+  ],
+  "overall": {
+    "review_signal": "red",
+    "handoff": "return_to_contributor",
+    "summary": "Das Sicherheits-Gate in Phase 0 hat den Lauf gestoppt. Der Beitrag enthaelt Muster, die auf personenbezogene Daten hindeuten. Es wurde nichts an ein Sprachmodell uebertragen. Der Beitrag geht zurueck an die beitragende Person.",
+    "blocking_findings": 1,
+    "open_human_decisions": [
+      "Auffaellige Zahlenfolgen zur menschlichen Sichtung (phase-0)"
+    ],
+    "status_suggestion": "draft"
+  },
+  "reports": {
+    "agent_report": "agent_report.md",
+    "contributor_feedback": "contributor_feedback.md",
+    "maintainer_handoff": "maintainer_handoff.md"
+  },
+  "audit": {
+    "human_decision_required": true,
+    "agent": {
+      "provider": "none",
+      "model_id": "none",
+      "prompt_version": "review-checks-1.0.0",
+      "started_at": "2026-08-03T09:50:17Z",
+      "finished_at": "2026-08-03T09:50:17Z"
+    },
+    "stage1a": {
+      "validators": [
+        {
+          "name": "stage1a_scan",
+          "exit_code": 1,
+          "findings": 2
+        }
+      ],
+      "hard_stop_triggered": true
+    },
+    "notes": "Vorfilter entfernte 0 Falschtreffer."
+  }
+}

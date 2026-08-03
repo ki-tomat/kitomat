@@ -1,0 +1,15 @@
+id: tf-clean-must-pass
+artifact_type: model
+title: "Testfixture - korrekter Beitrag"
+category: test
+status: bronze_candidate
+language: de
+version: "0.1.0"
+maintainer: p07
+license: CC-BY-4.0
+license_status: declared
+data_risk: green
+human_review_required: true
+ai_act_proximity: none
+legal_disclaimer: "Testfixture fuer die Testsuite. Arbeits- und Orientierungshilfe, keine Rechtsberatung."
+sources_status: provided

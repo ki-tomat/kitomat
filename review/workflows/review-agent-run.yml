@@ -1,0 +1,189 @@
+# ---------------------------------------------------------------------------
+# KItomat Review-Agent - Workflow 2 von 2: Pruefen
+#
+# Wird ueber workflow_run gestartet, sobald der Sammel-Workflow durchgelaufen
+# ist. Laeuft im Kontext des Zielrepositorys und hat damit Zugriff auf Secrets.
+#
+# Sicherheitsregeln, die hier nicht verhandelbar sind:
+#
+#   1. Der Code des Pull Requests wird NIEMALS ausgefuehrt. Er wird nur als
+#      Datei gelesen. Ausgefuehrt wird ausschliesslich Code aus der
+#      vertrauenswuerdigen Review-Branch.
+#   2. Stufe 1a laeuft vor jedem Modellaufruf. Bei einem Hard Stop endet der
+#      Lauf, ohne dass ein Byte das Projekt verlaesst.
+#   3. Der Agent schreibt nur nach review/, niemals nach main, prompts,
+#      datasets oder models.
+#   4. Kein Merge, kein Label im Hauptrepository, kein Statuswechsel.
+#
+# Ablage: .github/workflows/review-agent-run.yml
+# ---------------------------------------------------------------------------
+name: Review-Agent - Pruefen
+
+on:
+  workflow_run:
+    workflows: ["Review-Agent - Sammeln"]
+    types: [completed]
+
+permissions:
+  contents: write        # nur fuer die Ergebnisablage in der Review-Branch
+  pull-requests: write   # nur fuer den sanitisierten Kurzstatus als Kommentar
+
+env:
+  REVIEW_BRANCH: review/pre-review-wizard
+  # Provider bleibt der Mock, solange kein Anbieter freigegeben ist.
+  # Umstellen ueber die Repository-Variable KITOMAT_REVIEW_PROVIDER.
+  KITOMAT_REVIEW_PROVIDER: ${{ vars.KITOMAT_REVIEW_PROVIDER || 'mock' }}
+
+jobs:
+  review:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Review-Branch auschecken (vertrauenswuerdiger Code)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.REVIEW_BRANCH }}
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Abhaengigkeiten
+        run: python -m pip install --quiet pyyaml jsonschema
+
+      - name: Payload des Sammel-Workflows holen
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: review-payload-*
+          path: incoming
+          merge-multiple: true
+
+      - name: Kontext einlesen
+        id: ctx
+        run: |
+          set -euo pipefail
+          test -f incoming/context.json || { echo "Kein Kontext gefunden."; exit 1; }
+          PR=$(python -c "import json;print(json.load(open('incoming/context.json'))['pull_request_number'])")
+          SHA=$(python -c "import json;print(json.load(open('incoming/context.json'))['head_sha'])")
+          echo "pr=$PR"   >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "Pull Request #$PR, Commit $SHA"
+
+      - name: Review-Agent ausfuehren
+        id: run
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          mkdir -p review/results
+          EXIT=0
+          while read -r artifact; do
+            echo "::group::$artifact"
+            python3 review/tools/run_review.py \
+              incoming/content "$artifact" \
+              --provider "$KITOMAT_REVIEW_PROVIDER" \
+              --reviewer agent \
+              --out "review/results/$(basename "$artifact")/${{ github.run_id }}" || EXIT=$?
+            echo "::endgroup::"
+          done < incoming/artifacts.txt
+          echo "exit=$EXIT" >> "$GITHUB_OUTPUT"
+
+      - name: Kurzstatus ermitteln
+        id: status
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, glob, os
+          runs = sorted(glob.glob("review/results/*/*/review_run.json"))
+          if not runs:
+              print("signal=unknown"); print("summary=Kein Ergebnis erzeugt."); raise SystemExit
+          order = {"green": 0, "yellow": 1, "red": 2}
+          worst, lines = "green", []
+          for path in runs:
+              d = json.load(open(path, encoding="utf-8"))
+              o = d["overall"]
+              if order[o["review_signal"]] > order[worst]:
+                  worst = o["review_signal"]
+              lines.append(f"{d['artifact']['path']}|{o['review_signal']}|"
+                           f"{o['handoff']}|{o.get('blocking_findings',0)}|{d['run_id']}")
+          print(f"signal={worst}")
+          print(f"rows={chr(10).join(lines)}".replace(chr(10), "%0A"))
+          PY
+
+      - name: Ergebnisse in die Review-Branch schreiben
+        run: |
+          set -euo pipefail
+          git config user.name  "kitomat-review-agent"
+          git config user.email "review-agent@users.noreply.github.com"
+          git add review/results
+          if git diff --cached --quiet; then
+            echo "Keine neuen Ergebnisse."
+          else
+            git commit -m "chore(review): Ergebnis fuer PR #${{ steps.ctx.outputs.pr }} (${{ steps.ctx.outputs.sha }})"
+            git push origin HEAD:${{ env.REVIEW_BRANCH }}
+          fi
+
+      - name: Kurzstatus als PR-Kommentar
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const signal = '${{ steps.status.outputs.signal }}';
+            const rows = `${{ steps.status.outputs.rows }}`.split('\n').filter(Boolean);
+            const label = { green: 'GRÜN', yellow: 'GELB', red: 'ROT', unknown: 'UNBEKANNT' }[signal];
+
+            let body = `### Review-Agent: ${label}\n\n`;
+            body += '| Artefakt | Ampel | Empfehlung | Blocker | Lauf |\n|---|---|---|---|---|\n';
+            for (const r of rows) {
+              const [path, sig, handoff, blockers, runId] = r.split('|');
+              body += `| \`${path}\` | ${sig} | ${handoff} | ${blockers} | \`${runId}\` |\n`;
+            }
+            body += '\nDer vollständige Bericht liegt unter `review/results/`.\n';
+            body += 'Öffnen Sie ihn im Reviewer-Cockpit: `review/wizard/KItomat_Review_Wizard_v2.html`.\n\n';
+            body += '> Dies ist eine Empfehlung, keine Freigabe. Merge, Status und ';
+            body += 'Veröffentlichung entscheidet ausschließlich der Maintainer.\n';
+
+            await github.rest.issues.createComment({
+              issue_number: ${{ steps.ctx.outputs.pr }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
+
+      - name: Reviewer-Gruppe benachrichtigen
+        # Laeuft nur, wenn die Zugangsdaten hinterlegt sind. Ohne sie wird der
+        # Schritt uebersprungen und der Lauf gilt trotzdem als erfolgreich.
+        if: env.MAIL_SERVER != '' && steps.status.outputs.signal != 'unknown'
+        env:
+          MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: 587
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          from: KItomat Review-Agent
+          to: ${{ secrets.REVIEWER_MAIL_GROUP }}
+          subject: "[KItomat] Review bereit — PR #${{ steps.ctx.outputs.pr }} (${{ steps.status.outputs.signal }})"
+          # Bewusst knapp. Befundtexte gehoeren nicht in eine E-Mail.
+          body: |
+            Ein Beitrag wurde vom Review-Agenten geprüft und wartet auf einen Reviewer.
+
+            Pull Request : #${{ steps.ctx.outputs.pr }}
+            Ampel        : ${{ steps.status.outputs.signal }}
+            Repository   : ${{ github.repository }}
+
+            Pull Request öffnen:
+            ${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.ctx.outputs.pr }}
+
+            Ergebnisse liegen in der Branch ${{ env.REVIEW_BRANCH }} unter review/results/.
+            Zum Prüfen das Reviewer-Cockpit öffnen und die review_run.json laden.
+
+            Diese Nachricht ist automatisch erzeugt. Der Agent entscheidet nichts.
+
+      - name: Lauf abschliessen
+        run: |
+          if [ "${{ steps.run.outputs.exit }}" = "2" ]; then
+            echo "::warning::Mindestens ein Beitrag wurde vom Sicherheits-Gate gestoppt."
+          fi
+          echo "Fertig. Ampel: ${{ steps.status.outputs.signal }}"
