@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zusammenfassung der Modellerstellung | KI-Online-Marketing-Beratungsmodell</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1e2430;
+      --muted: #5d6678;
+      --accent: #355caa;
+      --accent-light: #e8eefc;
+      --border: #dce2ee;
+      --success: #1f7a4d;
+      --warning: #9a6500;
+      --danger: #a33a3a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .page {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 36px 22px 56px;
+    }
+    header {
+      background: linear-gradient(135deg, #1f3f88, #4c7bd9);
+      color: white;
+      border-radius: 22px;
+      padding: 34px 34px 30px;
+      box-shadow: 0 18px 40px rgba(31, 63, 136, .18);
+    }
+    header h1 {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.15;
+    }
+    header p {
+      margin: 0;
+      max-width: 850px;
+      font-size: 18px;
+      opacity: .96;
+    }
+    .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+    .pill {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    main { margin-top: 28px; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 26px 28px;
+      margin: 18px 0;
+      box-shadow: 0 10px 28px rgba(28, 42, 70, .06);
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 25px;
+      color: #18336e;
+    }
+    h3 {
+      margin: 22px 0 8px;
+      font-size: 19px;
+      color: #24395f;
+    }
+    p { margin: 10px 0; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 6px 0; }
+    .lead {
+      font-size: 18px;
+      color: #2c3546;
+    }
+    .highlight {
+      background: var(--accent-light);
+      border-left: 5px solid var(--accent);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin: 18px 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .box {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      background: #fbfcff;
+    }
+    .box strong {
+      display: block;
+      color: #17366f;
+      margin-bottom: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 15px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: #eef3ff;
+      color: #18336e;
+    }
+    code {
+      background: #f0f3f8;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 90%;
+    }
+    .phase-list {
+      counter-reset: phase;
+      list-style: none;
+      padding-left: 0;
+    }
+    .phase-list li {
+      counter-increment: phase;
+      position: relative;
+      padding: 14px 16px 14px 58px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin: 10px 0;
+      background: #fbfcff;
+    }
+    .phase-list li::before {
+      content: counter(phase);
+      position: absolute;
+      left: 16px;
+      top: 14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+    .status-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .status {
+      border-radius: 12px;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      background: #fbfcff;
+      min-width: 180px;
+    }
+    .status b { display: block; }
+    .ok { color: var(--success); }
+    .warn { color: var(--warning); }
+    .danger { color: var(--danger); }
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      section { padding: 22px 18px; }
+      header { padding: 28px 22px; }
+      table { font-size: 14px; }
+    }
+    @media print {
+      body { background: white; }
+      .page { max-width: none; padding: 0; }
+      header, section { box-shadow: none; }
+      header { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Zusammenfassung der Modellerstellung</h1>
+      <p>KI-Online-Marketing-Beratungsmodell für Kleinstunternehmen als praxisnahes Beratungs- und Workbook-Framework.</p>
+      <div class="meta">
+        <span class="pill">Zielgruppe: KMU bis 10 Mitarbeitende</span>
+        <span class="pill">Fokus: Online-Marketing</span>
+        <span class="pill">Format: Praxis-Workbook</span>
+        <span class="pill">Status: bronze_candidate</span>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>1. Ausgangspunkt</h2>
+        <p class="lead">Wir wollten kein allgemeines KI-Konzept erstellen, sondern ein praktisch nutzbares Beratungsmodell für kleine Unternehmen, die ihr Online-Marketing mit KI verbessern möchten.</p>
+        <p>Die Zielgruppe wurde bewusst eng gefasst: Kleinstunternehmen mit bis zu 10 Mitarbeitenden, branchenübergreifend, meist ohne eigene Marketingabteilung und mit begrenztem Zeit- und Budgetrahmen.</p>
+        <div class="highlight">
+          <strong>Zentrale Zielformulierung:</strong><br>
+          Das Modell hilft kleinen Unternehmen, ihr vorhandenes Wissen, ihre bestehenden Marketingkanäle und wiederkehrenden Kommunikationsaufgaben so zu strukturieren, dass KI daraus konkrete, kostengünstige, datenschutzbewusste und überprüfbare Online-Marketing-Routinen entwickeln kann.
+        </div>
+      </section>
+
+      <section>
+        <h2>2. Fachliche Orientierung</h2>
+        <p>Als passendste Grundlage wurde das Sakizli-Konsultationsmodell gewählt, weil es auf Praxisnähe, Beratung, Handlungsempfehlungen, Evaluation und verantwortungsbewusste KI-Nutzung ausgerichtet ist.</p>
+        <p>Ergänzend wurden zwei weitere Sakizli-Bausteine eingebunden:</p>
+        <div class="grid">
+          <div class="box">
+            <strong>Sakizli-Konsultationsmodell</strong>
+            Hauptorientierung für praxisnahe Beratung, Reflexion, Umsetzung und Evaluation.
+          </div>
+          <div class="box">
+            <strong>Sakizli 5-Phasen-Beratungsmodell</strong>
+            Strukturhilfe für Anamnese, Analyse, Lösungsentwicklung, Umsetzung und Nachbereitung.
+          </div>
+          <div class="box">
+            <strong>Sakizli-Fragenmodell</strong>
+            Grundlage für Leitfragen, Zielklärung, GROW-Logik und Workbook-Fragen.
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>3. Modellentscheidung: Praxis-Workbook statt Theoriepapier</h2>
+        <p>Wir haben das Modell nicht als abstrakten Theorieaufsatz aufgebaut, sondern als ausfüllbares Praxis-Workbook. Dadurch kann es im Erstgespräch, in der Analyse, in der Use-Case-Auswahl und im Pilot-Test konkret genutzt werden.</p>
+        <p>Der Gedanke dahinter: Kleine Unternehmen brauchen keine riesige KI-Strategie als Einstieg, sondern einen klaren Ablauf, der mit wenig Risiko und überschaubarem Aufwand erste nützliche Routinen erzeugt.</p>
+      </section>
+
+      <section>
+        <h2>4. Die sechs Phasen des Modells</h2>
+        <ol class="phase-list">
+          <li><strong>Orientierung & Anamnese:</strong> Unternehmen, Zielgruppe, aktuelle Kanäle, Probleme, Ziele und Grenzen verstehen.</li>
+          <li><strong>Daten- & Wissenssammlung:</strong> vorhandenes Unternehmenswissen, Marketingmaterial und Erfahrungswissen KI-nutzbar strukturieren.</li>
+          <li><strong>Potenzial- & Risikoanalyse:</strong> mögliche KI-Use-Cases nach Nutzen, Aufwand, Kosten, Datenrisiko und Kontrollbedarf bewerten.</li>
+          <li><strong>Lösungsdesign & KI-Routine:</strong> aus priorisierten Use Cases wiederholbare, einfache Marketingroutinen entwickeln.</li>
+          <li><strong>Pilot & Szenario-Test:</strong> die Routine an realitätsnahen, synthetischen Szenarien testen und bewerten.</li>
+          <li><strong>Umsetzung, Kontrolle & Weiterentwicklung:</strong> geprüfte Routinen in den Alltag übernehmen, menschlich freigeben und anhand einfacher KPIs verbessern.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>5. Warum sechs statt fünf Phasen?</h2>
+        <p>Das klassische Sakizli-5-Phasen-Modell wurde für diesen speziellen Anwendungsfall erweitert. Die zusätzliche Phase <strong>Daten- & Wissenssammlung</strong> wurde bewusst eigenständig eingeführt.</p>
+        <p>Grund: Bei kleinen Unternehmen liegt das entscheidende Wissen oft nicht sauber dokumentiert vor. Es steckt in der Geschäftsführung, im Support, in alten Website-Texten, in häufigen Kundenfragen, in Bewertungen oder in wiederkehrenden Angeboten. Ohne diese strukturierte Wissenssammlung würde die KI zu generisch arbeiten.</p>
+      </section>
+
+      <section>
+        <h2>6. Workbook-Bausteine</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Datei / Baustein</th>
+              <th>Funktion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>model.md</code></td>
+              <td>Beschreibt das eigentliche 6-Phasen-Modell, Zielgruppe, Grundprinzipien, Rollen und Abgrenzung.</td>
+            </tr>
+            <tr>
+              <td><code>application-guide.md</code></td>
+              <td>Erklärt, wie das Modell praktisch im Beratungsprozess angewendet wird.</td>
+            </tr>
+            <tr>
+              <td><code>worksheet/01-erstgespraech-anamnese.md</code></td>
+              <td>Erfasst Unternehmensprofil, Zielgruppe, Ist-Stand, Probleme, Ziele und erlaubte Materialien.</td>
+            </tr>
+            <tr>
+              <td><code>worksheet/02-use-case-auswahl.md</code></td>
+              <td>Bewertet mögliche KI-Anwendungsfälle nach Nutzen, Aufwand, Kosten, Datenrisiko und Kontrollbedarf.</td>
+            </tr>
+            <tr>
+              <td><code>worksheet/03-pilot-testprotokoll.md</code></td>
+              <td>Dokumentiert Pilot, Test, Bewertung und menschliche Freigabe.</td>
+            </tr>
+            <tr>
+              <td><code>canvas/ki-marketing-routine-canvas.md</code></td>
+              <td>Kompakte Ein-Seiten-Arbeitsfläche für eine konkrete KI-Marketing-Routine.</td>
+            </tr>
+            <tr>
+              <td><code>examples/</code></td>
+              <td>Enthält drei ausgearbeitete Szenarien: Bäckerei, Medienunternehmen und E-Mail-Folge mit Leadmagnet.</td>
+            </tr>
+            <tr>
+              <td><code>failure-modes.md</code></td>
+              <td>Beschreibt typische Fehler, Risiken und Gegenmaßnahmen.</td>
+            </tr>
+            <tr>
+              <td><code>sources.md</code></td>
+              <td>Dokumentiert verwendete Projektvorgaben, Sakizli-Modelle und eigene Synthese.</td>
+            </tr>
+            <tr>
+              <td><code>metadata.yml</code></td>
+              <td>Macht das Modell maschinenlesbar und repository-kompatibel.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>7. Szenario-basierte Validierung</h2>
+        <p>Ein wichtiger Arbeitsschritt war, das Modell nicht nur theoretisch zu beschreiben, sondern mit praxisnahen Beispielen zu testen.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Szenario</th>
+              <th>Lernwert für das Modell</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Lokale Bäckerei</td>
+              <td>Einfacher, risikoarmer Einstieg in Google-Beiträge und Social-Media-Entwürfe.</td>
+            </tr>
+            <tr>
+              <td>Medienunternehmen</td>
+              <td>Zeigt, wie Supportwissen in Blogartikel-Ideen, Briefings und Entwürfe überführt werden kann.</td>
+            </tr>
+            <tr>
+              <td>E-Mail-Folge mit Leadmagnet</td>
+              <td>Zeigt einen strategischeren Use Case mit höherem Review- und Compliance-Bedarf.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Die Bewertung folgt der Logik: <strong>positiv validierbar</strong>, <strong>nachbearbeitbar</strong> oder <strong>negativ / nicht nutzbar</strong>.</p>
+      </section>
+
+      <section>
+        <h2>8. Trust Layer und Datenschutz</h2>
+        <p>Von Anfang an wurde berücksichtigt, dass Online-Marketing schnell mit personenbezogenen Daten in Berührung kommen kann: Bewertungen, Newsletter-Anmeldungen, Kommentare, Kontaktanfragen oder Supportprobleme.</p>
+        <div class="status-row">
+          <div class="status"><b>Datenrisiko</b><span class="warn">yellow</span></div>
+          <div class="status"><b>Human Review</b><span class="ok">true</span></div>
+          <div class="status"><b>AI-Act-Nähe</b><span class="warn">transparency</span></div>
+          <div class="status"><b>Review-Level</b><span class="warn">trust_review</span></div>
+        </div>
+        <p>Deshalb wurde festgelegt: keine echten Kundendaten, keine personenbezogenen E-Mails, keine Gesundheitsdaten, keine Bewerbungsdaten, keine vertraulichen Finanzdaten und keine internen Kundendokumente. Die Beispiele bleiben synthetisch oder abstrahiert.</p>
+      </section>
+
+      <section>
+        <h2>9. Ergebnis der Modellerstellung</h2>
+        <p>Am Ende ist ein vollständiges Abgabe-Paket entstanden, das als KMU-/Branchenmodell im Repository-Kontext nutzbar ist.</p>
+        <p>Das Modell wurde nach Peer Review und Trust Review auf <code>bronze_candidate</code> angehoben. <code>bronze</code> bleibt gesperrt, bis Quellenfreigabe und Maintainer-Freigabe erfolgt sind.</p>
+        <div class="highlight">
+          <strong>Kurz gesagt:</strong><br>
+          Wir haben aus einer groben Idee ein strukturiertes, datenschutzbewusstes, szenariogestütztes und reviewfähiges Praxis-Workbook gemacht, das kleinen Unternehmen hilft, KI im Online-Marketing nicht unkontrolliert, sondern schrittweise und überprüfbar einzusetzen.
+        </div>
+      </section>
+
+      <section>
+        <h2>10. Nächste sinnvolle Schritte</h2>
+        <ol>
+          <li>Quellenfreigabe für Kursmaterialien, Transkripte und Sakizli-Referenzen klären.</li>
+          <li>Maintainer-Freigabe für eine spätere <code>bronze</code>-Einstufung dokumentieren.</li>
+          <li>Weitere Testläufe ergänzen, wenn eine spätere Silber-Prüfung vorbereitet werden soll.</li>
+          <li>Später konkrete Prompt-Pakete und Datensatz-/Quellenpakete ergänzen.</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>
+      Erstellt als Zusammenfassung des Modellerstellungsprozesses für das KI-Online-Marketing-Beratungsmodell für Kleinstunternehmen.
+    </footer>
+  </div>
+</body>
+</html>

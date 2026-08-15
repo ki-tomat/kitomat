@@ -1,0 +1,52 @@
+id: ki-stakeholder-archetypen-quellenpaket
+artifact_type: dataset_package
+title: "Gegenüber kennen — 12 Stakeholder-Profile für KI-Projekte in KMU"
+category: consulting
+status: bronze_candidate
+language: de
+version: "0.1.0"
+maintainer: jk
+license: CC-BY-4.0
+license_status: declared
+data_risk: green
+human_review_required: true
+ai_act_proximity: none
+legal_disclaimer: "Orientierungshilfe fuer Kommunikationsvorbereitung und Stakeholder-Analyse. Kein psychologisches Gutachten, keine Rechts- oder Fachberatung. Fachliche Entscheidungen bleiben beim Menschen."
+sources_status: provided
+model_type: source_pack
+target_users:
+  - "KI-Berater:innen und Consultants"
+  - "Prompt-Engineers im DACH-Raum"
+  - "Projektleitungen in KI-Einfuehrungsprojekten"
+use_case: "Entscheidungslogik, Kommunikationspraeferenzen, KI-Adoptionshaltung und Prompt-Empfehlungen je Stakeholder-Archetyp fuer KMU-Kontext"
+required_inputs: []
+output_format: "12 Markdown-Profile je Archetyp mit Quellenangaben"
+application_scope: "KI-Adoption in KMU, Stakeholder-Analyse, Change-Management-Kommunikation, Pitch-Vorbereitung"
+linked_artifacts:
+  - "ki-stakeholder-persona-framework"
+framework_references:
+  - "Organisationspsychologie (Upper Echelons, Issue Selling, Algorithm Aversion)"
+  - "KI-Adoptionsforschung (AI Readiness, Task-Technology Fit, TAM)"
+  - "Rechtsnormen (EU AI Act 2024, BetrVG, DSGVO)"
+  - "Managementliteratur (Stage-Gate, VC Decision Making, Corporate Finance)"
+required_review_level: peer_review
+personal_data_possible: false
+data_origin: synthetic
+contains_personal_data: false
+contains_sensitive_data: false
+sources_date: "2026-05"
+usage_scope: "Stakeholder-Archetypen fuer KI-Beratung und Pitch-Vorbereitung in KMU"
+profile_count: 12
+profiles:
+  - CEO / Geschaeftsfuehrer
+  - CFO / Finanzvorstand
+  - HR-Leitung / Personalleitung
+  - Legal / Datenschutz
+  - Produktmanagement
+  - IT-Leitung / CTO
+  - Vertrieb / Sales
+  - Controlling
+  - Investor (VC / Private Equity)
+  - Advisory Board / Beiratsmitglied
+  - Betriebsrat
+  - Mitarbeiter:in im Service / Sachbearbeitung
