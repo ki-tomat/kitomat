@@ -1,0 +1,75 @@
+/* Print-specific overrides for KItomat */
+
+/* In-browser preview look — segment-separated views */
+body { background: var(--bg-2); }
+.print-section {
+  background: var(--bg);
+  margin: 0 auto 28px;
+  max-width: 1280px;
+  box-shadow: 0 6px 24px -8px rgba(26,25,22,.10);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.print-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-3); padding: 18px 32px 0;
+}
+
+/* Disable sticky header inside each print section */
+.print-section header { position: static !important; }
+.print-section .stepper-step { /* keep stepper non-sticky */ }
+.print-section aside[style*="sticky"] { position: static !important; top: auto !important; }
+
+/* Print rules */
+@media print {
+  :root { --bg: #FFFFFF; }
+  html, body { background: white !important; }
+  body { font-size: 11pt; }
+  @page { size: A4 landscape; margin: 12mm; }
+
+  .print-section {
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+    break-after: page;
+    page-break-after: always;
+  }
+  .print-section:last-child { break-after: auto; page-break-after: auto; }
+
+  .print-section-label { color: #847F77; padding: 0 0 8mm; }
+
+  .container { max-width: none !important; padding: 0 !important; }
+  .page { padding: 0 !important; }
+
+  /* Force print colors */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  /* Allow long sections to flow across pages but keep cards together */
+  .card, .kanban-col, .stepper-step, .acc-item {
+    break-inside: avoid; page-break-inside: avoid;
+  }
+
+  /* Sticky aside in contribution center → static for print */
+  aside[style*="sticky"] { position: static !important; }
+
+  /* Hide header CTA-area decorations that don't print well */
+  header { border-bottom: 1px solid var(--line) !important; }
+
+  /* Open all FAQ accordion items in print */
+  .acc-item { break-inside: avoid; }
+  .acc-body { display: block !important; }
+
+  /* Hide the sticky behaviour & header search interactivity hint */
+  .nav-link { pointer-events: none; }
+  button { pointer-events: none; }
+
+  /* Ensure kanban stays one row if possible by making columns flexible */
+  .kanban { grid-template-columns: repeat(5, 1fr) !important; gap: 8px !important; }
+  .kanban-card { font-size: 10pt; }
+
+  /* Slight scale for the hero title so it doesn't dominate */
+  .h1 { font-size: 32pt !important; }
+  .h2 { font-size: 18pt !important; }
+  .h3 { font-size: 13pt !important; }
+}

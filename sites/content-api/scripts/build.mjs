@@ -1,0 +1,23 @@
+import { build } from "esbuild";
+import { cp, mkdir, copyFile } from "node:fs/promises";
+import path from "node:path";
+
+const root = process.cwd();
+const dist = process.env.SITES_DIST_DIR || path.join(root, "dist");
+
+await mkdir(path.join(dist, "server"), { recursive: true });
+await mkdir(path.join(dist, ".openai"), { recursive: true });
+
+await build({
+  entryPoints: [path.join(root, "src", "worker.js")],
+  outfile: path.join(dist, "server", "index.js"),
+  bundle: true,
+  format: "esm",
+  platform: "browser",
+  target: "es2022",
+});
+
+await copyFile(path.join(root, ".openai", "hosting.json"), path.join(dist, ".openai", "hosting.json"));
+await cp(path.join(root, "db"), path.join(dist, ".openai", "db"), { recursive: true });
+
+console.log(`Built Sites content API artifact in ${dist}`);
