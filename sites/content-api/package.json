@@ -1,0 +1,19 @@
+{
+  "name": "kitomat-sites-content-api",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only Sites API for KI-tomat content (AP9).",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "miniflare": "^3.20240909.0",
+    "vitest": "^2.1.0"
+  }
+}
