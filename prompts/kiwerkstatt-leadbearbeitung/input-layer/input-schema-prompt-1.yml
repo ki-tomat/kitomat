@@ -1,0 +1,82 @@
+schema_id: input_schema_prompt_1_lead_scoring
+prompt_id: prompt_1_lead_scoring
+title: "Input-Karte für Prompt 1: Lead-Qualifizierung & Scoring"
+version: "1.1"
+status: integration_ready
+
+purpose: >
+  Standardisierte Eingabe für die strukturierte Vorbewertung von B2B-Leads
+  anhand des Ideal Customer Profile der KIWerkstatt Hamburg GmbH.
+
+required_fields:
+  - unternehmen
+  - branche
+  - unternehmensgroesse
+  - ansprechpartner_rolle
+  - leadquelle.wert
+  - ausgangssituation
+  - pain_points
+  - datenschutz_check.personenbezogene_daten_enthalten
+  - datenschutz_check.sensible_daten_enthalten
+  - datenschutz_check.datenfreigabe_status
+  - human_review_required
+
+optional_fields:
+  - ansprechpartner_name
+  - entscheidungsbefugnis.wert
+  - positive_kaufsignale
+  - negative_signale
+  - risiken_und_unsicherheiten
+  - budgethinweis
+  - genannte_tools
+  - zusatznotizen
+  - input_source
+
+allowed_unknown_values:
+  - unbekannt
+  - nicht genannt
+  - nicht vorhanden
+  - noch zu klären
+
+input_card:
+  prompt_id: prompt_1_lead_scoring
+  unternehmen:
+  branche:
+  unternehmensgroesse:
+  ansprechpartner_name:
+  ansprechpartner_rolle:
+  entscheidungsbefugnis:
+    wert: "ja | nein | unklar | unbekannt"
+  leadquelle:
+    wert: "inbound | outbound | empfehlung | messe | linkedin | kaltakquise | unbekannt"
+  ausgangssituation:
+  pain_points:
+    -
+  positive_kaufsignale:
+    -
+  negative_signale:
+    -
+  risiken_und_unsicherheiten:
+    -
+  budgethinweis:
+  genannte_tools:
+    -
+  datenschutz_check:
+    personenbezogene_daten_enthalten: "ja | nein | unbekannt"
+    sensible_daten_enthalten: "ja | nein | unbekannt"
+    datenfreigabe_status: "synthetisch | anonymisiert | freigegeben | unbekannt"
+  input_source:
+    typ: "manuell | crm | formular | email | transkript | csv | recherche | unbekannt"
+    system:
+    record_id:
+    imported_at:
+    mapped_by: "manuell | automation | unbekannt"
+    mapping_confidence: "hoch | mittel | niedrig | unbekannt"
+  zusatznotizen:
+  human_review_required: true
+
+preflight_rules:
+  empty_required_field: "Analyse stoppen und fehlende Pflichtinformationen ausgeben."
+  unknown_required_field: "Analyse fortsetzen, aber Unsicherheit im Ergebnis markieren."
+  outbound_budget_rule: "Fehlender Budgetrahmen bei Outbound-Leads nicht automatisch als Ausschlusskriterium werten."
+  no_final_decision: "Keine finale Leadentscheidung treffen."
