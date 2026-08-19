@@ -36,6 +36,7 @@ contains_personal_data: false
 contains_sensitive_data: false
 sources_date: "2026-05"
 usage_scope: "Stakeholder-Archetypen fuer KI-Beratung und Pitch-Vorbereitung in KMU"
+release_asset_required: false
 profile_count: 12
 profiles:
   - CEO / Geschaeftsfuehrer
