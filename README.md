@@ -14,7 +14,7 @@ KItomat startet mit drei Artefakttypen:
 2. Datensatz-/Quellenpakete
 3. KMU-/Branchenmodelle
 
-Website, SDK, MCP, Obsidian, komplexe Integrationen und automatisierte Distribution sind Post-MVP oder Stretch.
+Die erste Website-Stufe ist ein statischer GitHub Pages Katalog. SDK, MCP, Obsidian, komplexe Integrationen, Logins, Datenbanken und automatisierte Distribution sind Post-MVP oder Stretch.
 
 ## Qualitaetsprinzip
 
@@ -61,6 +61,16 @@ Maintainer-Setup: [docs/admin-github-setup.md](docs/admin-github-setup.md). Open
 
 Community Flow: [docs/community-contribution-flow.md](docs/community-contribution-flow.md).
 
+Wichtige Guides:
+
+- [Teilnehmer-Step-by-Step](docs/guides/participant-step-by-step.md)
+- [Externe Beitraege](docs/guides/external-contributor-step-by-step.md)
+- [Import-Batches](docs/guides/import-batch-step-by-step.md)
+- [Download-Assets](docs/guides/download-assets-step-by-step.md)
+- [GitHub Pages Katalog](docs/guides/github-pages-catalog-plan.md)
+- [Projektstatus und Gap-Analyse](docs/operations/project-status-and-gap-analysis.md)
+- [Release Readiness v0.1-rc](docs/operations/release-readiness-v0.1-rc.md)
+
 ## Statusmodell
 
 Im Kurs/MVP regulaer erlaubt:
@@ -84,3 +94,7 @@ Codex und andere agentische KI-Tools duerfen Struktur, Syntax und formale Readin
 ## Reviewed-only Regel
 
 Direkte Veroeffentlichung ueber `main` ist nicht der normale Beitragsweg. Beitraege laufen ueber Pull Request, Validatoren und mindestens eine menschliche Review. Maintainer entscheiden Merge, Status und Release-Aufnahme.
+
+## Downloads
+
+Kleine Beispiele, Quellenlisten, Templates und Metadaten bleiben im Repo. Groessere Datensatz- oder Quellenpakete werden als GitHub Release Assets bereitgestellt und im GitHub Pages Katalog verlinkt. Jedes Download-Paket braucht Version, Groesse, SHA-256-Pruefsumme, Lizenzstatus, Quellenstatus, Datenrisiko und menschliche Review.
