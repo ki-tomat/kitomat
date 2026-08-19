@@ -43,7 +43,7 @@ Vorliegend danach:
 
 **Kriterien — „Woran wird das Endergebnis gemessen?"**  
 - **Qualität:** mind. 3 Konzepte mit Sponsor + schriftlichem Next-Step-Plan
-- **Ressourcen:** Budget [X EUR], max. 2 externe Facilitatoren
+- **Ressourcen:** Budget maximal 15.000 EUR, max. 2 externe Facilitatoren
 - **Zeit:** 1 Tag, 8 Stunden inkl. Vor- und Nachbereitung
 - **Gestaltung:** Kein Top-down-Format, offene Methoden (z.B. Design Thinking oder Lean Canvas), Pitches vor Management-Vertretern am Nachmittag
 
@@ -54,7 +54,7 @@ Vorliegend danach:
 **Identifizierte Lücke:** Die Bereichsleiter sind als Stakeholder benannt (Gatekeeper für Freistellung), erscheinen aber nicht in den Kriterien. Ohne deren explizite Zustimmung zur Freistellung der Mitarbeitenden kann der Tag nicht in der geplanten Größe stattfinden.
 
 **Empfohlene Ergänzung in Kriterien:**  
-→ „Freistellung von 80–100 Mitarbeitenden durch Bereichsleiter ist bis [Datum -4 Wochen] schriftlich bestätigt."
+→ „Freistellung von 80–100 Mitarbeitenden durch Bereichsleiter ist bis 2. September 2026 schriftlich bestätigt."
 
 **Absicherungsfrage:**  
 Sind die Bereichsleiter über Ziel und Format informiert — und haben sie aktiv zugestimmt oder nur nicht widersprochen?
