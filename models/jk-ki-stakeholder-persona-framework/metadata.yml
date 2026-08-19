@@ -1,0 +1,34 @@
+id: ki-stakeholder-persona-framework
+artifact_type: model
+title: "Perspektive wechseln — Stakeholder simulieren und Gespräche vorbereiten"
+category: consulting
+status: bronze_candidate
+language: de
+version: "0.1.0"
+maintainer: jk
+license: CC-BY-4.0
+license_status: declared
+data_risk: yellow
+human_review_required: true
+ai_act_proximity: high_risk_adjacent
+legal_disclaimer: "Orientierungshilfe fuer Kommunikationsvorbereitung. Kein psychologisches Gutachten, keine Rechts- oder Therapieberatung. Fachliche Entscheidungen bleiben beim Menschen."
+sources_status: provided
+model_type: framework
+target_users:
+  - "Angestellte und Fuehrungskraefte die Ideen intern pitchen"
+  - "KI-Beraterinnen und -Berater"
+  - "Selbststaendige in Verhandlungs- oder Konfliktsituationen"
+use_case: "Komplementaere Stakeholder-Perspektiven fuer interne Pitch-, Verhandlungs- und Vorbereitungssituationen entwickeln und simulieren"
+required_inputs:
+  - "Eigenes Kommunikationsprofil oder Antworten auf Selbstprofil-Worksheet"
+  - "Beschreibung der Ziel-Person oder Wahl eines Archetyps"
+  - "Kontext und gewuenschter Anwendungsmodus"
+output_format: "Kalibrierte Persona fuer Lese-, Test- oder Dialogmodus — mit optionalem Debrief und exportierbarem Persona-Profil"
+application_scope: "Vorbereitung auf Pitches, Verhandlungen, schwierige Gespraeche, strategische Entscheidungen"
+framework_references:
+  - "Sakizli-Modell (interdisziplinaeres Beratungsframework)"
+  - "Sakizli 5-Phasen-Beratungsmodell"
+  - "GROW-Modell (Goal, Reality, Options, Will)"
+  - "Komplementaritaetsprinzip in der Teampsychologie"
+required_review_level: peer_review
+personal_data_possible: conditional

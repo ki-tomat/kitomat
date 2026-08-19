@@ -1,0 +1,86 @@
+schema_id: input_schema_prompt_3_budget_objection
+prompt_id: prompt_3_budget_objection
+title: "Input-Karte für Prompt 3: Umgang mit Budget-, Preis- und Prioritätseinwänden"
+version: "1.1"
+status: integration_ready
+
+purpose: >
+  Standardisierte Eingabe für die Vorbereitung auf Budget-, Preis-, Timing-,
+  Prioritäts-, Vertrauens- oder Entscheidungsfreigabe-Einwände im B2B-Vertrieb.
+
+required_fields:
+  - unternehmen
+  - branche
+  - ansprechpartner_rolle
+  - bisheriger_gespraechskontext
+  - genannter_einwand
+  - gespraechsphase.wert
+  - ziel_des_vertriebsmitarbeiters
+  - erlaubte_angebote
+  - nicht_erlaubt
+  - datenschutz_check.personenbezogene_daten_enthalten
+  - datenschutz_check.sensible_daten_enthalten
+  - datenschutz_check.datenfreigabe_status
+  - human_review_required
+
+optional_fields:
+  - lead_status
+  - bisheriger_score
+  - budgethinweis
+  - datenschutz_oder_it_bedenken
+  - zusatznotizen
+  - input_source
+
+allowed_unknown_values:
+  - unbekannt
+  - nicht genannt
+  - nicht vorhanden
+  - noch zu klären
+
+input_card:
+  prompt_id: prompt_3_budget_objection
+  unternehmen:
+  branche:
+  ansprechpartner_rolle:
+  lead_status:
+  bisheriger_score:
+  bisheriger_gespraechskontext:
+  genannter_einwand:
+  gespraechsphase:
+    wert: "erstgespraech | follow_up | angebot | kurz_vor_abschluss | nach_interner_ruecksprache | unbekannt"
+  ziel_des_vertriebsmitarbeiters:
+  budgethinweis:
+  erlaubte_angebote:
+    - 4-wochen-ki-einstiegspaket
+    - klaerungsgespraech
+    - follow-up
+    - respektvoller_rueckzug
+  nicht_erlaubt:
+    - rabatt_erfinden
+    - roi_zahlen_erfinden
+    - referenzen_erfinden
+    - fallstudien_erfinden
+    - druck_aufbauen
+    - kuenstlichen_zeitdruck_erzeugen
+    - datenschutz_oder_it_bedenken_kleinreden
+  datenschutz_oder_it_bedenken:
+  datenschutz_check:
+    personenbezogene_daten_enthalten: "ja | nein | unbekannt"
+    sensible_daten_enthalten: "ja | nein | unbekannt"
+    datenfreigabe_status: "synthetisch | anonymisiert | freigegeben | unbekannt"
+  input_source:
+    typ: "manuell | crm | formular | email | transkript | csv | unbekannt"
+    system:
+    record_id:
+    imported_at:
+    mapped_by: "manuell | automation | unbekannt"
+    mapping_confidence: "hoch | mittel | niedrig | unbekannt"
+  zusatznotizen:
+  human_review_required: true
+
+preflight_rules:
+  empty_required_field: "Analyse stoppen und fehlende Pflichtinformationen ausgeben."
+  unknown_required_field: "Analyse fortsetzen, aber Unsicherheit im Ergebnis markieren."
+  no_invention_rule: "Keine Rabatte, ROI-Zahlen, Referenzen, Fallstudien oder Paketvarianten erfinden."
+  no_pressure_rule: "Keine manipulativen oder drängenden Formulierungen erzeugen."
+  withdrawal_rule: "Respektvoller Rückzug muss als echte Option möglich bleiben."
