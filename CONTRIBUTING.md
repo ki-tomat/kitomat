@@ -1,202 +1,99 @@
-# Beitragen zum KItomat Prompt-Repository
+# Contributing
 
-Danke für dein Interesse, zu diesem Projekt beizutragen! Dieses Dokument gibt dir eine Übersicht über den Beitragsprozess.
+Danke, dass du zu KItomat beitragen moechtest. Beitraege sollen klein, nachvollziehbar und reviewfaehig sein.
 
-## Code of Conduct
+## Grundregeln
 
-Dieses Projekt und alle seine Teilnehmer unterliegen unserem [Code of Conduct](CODE_OF_CONDUCT.md). Durch die Teilnahme erklärst du dich damit einverstanden, diesen einzuhalten.
+- Genau ein Hauptartefakt pro Person oder Beitrag, bis es mindestens `bronze_candidate`-faehig ist.
+- Keine echten personenbezogenen Daten.
+- Keine echten Kundendaten.
+- Keine internen Unternehmensdokumente.
+- Keine erfundenen Quellen.
+- Keine Rechtsberatung, kein Audit, keine automatisierte Entscheidung ueber Menschen behaupten.
+- Keine Status-Upgrades auf `bronze` ohne Review- und Trust-Gate.
 
----
+## Artefakt waehlen
 
-## Arten von Beiträgen
+Nutze einen dieser Typen:
 
-### 1. **Neue Prompt-Pakete**
-Wenn du ein neues Prompt-Paket einreichen möchtest:
+- Prompt-Paket: `prompts/`
+- Datensatz-/Quellenpaket: `datasets/`
+- KMU-/Branchenmodell: `models/`
 
-1. Lese das [Teilnehmerpaket](docs/teilnehmerpaket/README.md)
-2. Bestimme deinen Artefakttyp: Prompt-Paket, Datensatz-Paket oder KMU-Modell
-3. Erfülle alle Pflichtdateien
-4. Führe interne Tests durch
-5. Reiche einen Pull Request ein
+Kopiere den passenden `_template`-Ordner und benenne ihn nach deiner Artefakt-ID.
 
-### 2. **Verbesserungen bestehender Pakete**
-- Fehler beheben (Typos, logische Fehler in Prompts)
-- Beispiele erweitern
-- Dokumentation präzisieren
-- Failure-Modes aktualisieren
+## Branch-Naming
 
-### 3. **Datensatz- oder Quellenergänzungen**
-- Synthetische Testdaten
-- Quellenlisten
-- Checklisten
-- Vorlagen
+Fuer Teilnehmer:
 
-### 4. **Dokumentation & Meta**
-- README oder Workflow-Verbesserungen
-- Neue Use Cases dokumentieren
-- Community-Erfahrungen teilen
-
----
-
-## Schritt-für-Schritt Beitragsprozess
-
-### Schritt 1: Fork und Branch
-
-```bash
-git clone https://github.com/kitomat/prompts.git
-cd prompts
-git checkout -b feature/dein-paketname
+```text
+participant/p01-<artifact-id>
+participant/p02-<artifact-id>
+...
+participant/p20-<artifact-id>
 ```
 
-**Branch-Naming:**
-- Neue Pakete: `feature/paketname-kategorie`
-- Verbesserungen: `improve/paketname-kurzbeschreibung`
-- Fehler: `fix/paketname-fehlerdescription`
+Weitere Branches:
 
-### Schritt 2: Arbeit durchführen
-
-Wenn du ein neues Paket erstellst:
-
-```
-prompts/sales/dein-paket/
-├── README.md
-├── metadata.yml
-├── prompt.md (oder prompt-1.md, prompt-2.md, ...)
-├── examples/
-│   ├── input-01.md
-│   └── output-01.md
-├── evaluation.md
-├── failure-modes.md
-├── workflow.md (optional)
-└── datasets/ (optional)
+```text
+prompt/<category>-<artifact-id>
+dataset/<dataset-id>
+model/<model-id>
+docs/<topic>
 ```
 
-**Checkliste vor dem Commit:**
+Keine Klarnamen in Branches, Beispielen oder Metadaten, ausser es gibt ein ausdrueckliches Opt-in.
 
-- [ ] Alle Pflichtdateien vorhanden
-- [ ] metadata.yml vollständig (keine "tbd" außer bei gemeinsamen Entscheidungen)
-- [ ] README ist verständlich
-- [ ] Mindestens ein Beispielinput + Output pro Prompt
-- [ ] Failure-Modes dokumentiert
-- [ ] Keine echten Kundendaten, personenbezogenen Daten oder Geheimnisse
-- [ ] Quellen dokumentiert
-- [ ] Lizenzstatus klar
-- [ ] Datenrisiko klassifiziert (green/yellow/red)
+## Pull Requests
 
-### Schritt 3: Commit & Push
+Ein Pull Request sollte enthalten:
 
-```bash
-git add .
-git commit -m "Add: neue Prompt-Paket 'dein-paket' für Kategorie"
-```
+- Artefakttyp und Pfad
+- Statusvorschlag: `draft` oder `bronze_candidate`
+- Hinweis auf Daten-/Quellenrisiken
+- Hinweis, ob Peer Review und Trust Review noetig sind
+- kurze Liste automatischer Syntax- oder Struktur-Fixes, falls Codex geholfen hat
 
-**Commit-Message-Konvention:**
+## Externe Beitraege
 
-```
-[TYPE]: Kurzbeschreibung
+Externe Community-Beitraege laufen bevorzugt ueber Fork plus Pull Request.
 
-TYPE kann sein:
-- Add: Neues Paket/Feature
-- Improve: Verbesserung existierender Inhalte
-- Fix: Fehlerbeseitigung
-- Docs: Dokumentation
-- Refactor: Umstrukturierung ohne Funktionsänderung
-```
+Regeln:
 
-Beispiele:
-```
-Add: Neues Prompt-Paket für Email-Marketing
-Improve: Failure-Modes in kiwerkstatt-leadbearbeitung erweitert
-Fix: Tippfehler in sales/customer-research/README.md
-```
+- kein direkter Push auf `main`
+- ein Pull Request pro Hauptartefakt oder klar begrenztem Fix
+- keine Klarnamen in Beispieldaten oder Metadaten
+- keine echten Kunden-, Personen-, HR-, Gesundheits- oder vertraulichen Finanzdaten
+- Quellen mit Herkunft, Lizenzstatus und Abrufdatum dokumentieren
+- Status maximal `draft` oder `bronze_candidate` vorschlagen
+- OpenClaw/Codex-Vorfeedback ist kein Merge- oder Release-Approval
 
-### Schritt 4: Pull Request erstellen
+## Review
 
-1. Push deinen Branch
-2. Öffne einen Pull Request auf GitHub
-3. Nutze das PR-Template (wird automatisch vorgeschlagen)
-4. Beschreibe:
-   - Was machst du?
-   - Warum ist es wichtig?
-   - Welche Standards erfüllst du?
-   - Gibt es offene Fragen?
+Peer Review prueft:
 
-### Schritt 5: Review-Prozess
+- Verstaendlichkeit
+- Nutzbarkeit
+- Zielgruppe
+- Beispielqualitaet
+- Szenario-Triade
+- offensichtliche Fachfehler
+- offene Fragen
 
-Dein PR durchläuft:
+Trust Review prueft nach Risiko:
 
-**a) Automatische Checks**
-- Strukturvalidation (Dateien vorhanden?)
-- Metadata-Validierung (YAML korrekt?)
-- Lizenzprüfung
+- Datenschutz
+- Quellen
+- Lizenz
+- sensible Bereiche
+- lokale Datei-Uploads
 
-**b) Peer Review**
-- Mindestens 1 Community Reviewer
-- Fokus: Klarheit, Nützlichkeit, Qualität
+## Maintainer Gate
 
-**c) Trust Review** (falls data_risk: yellow oder red)
-- Datenschutz-Prüfung
-- Sicherheitsaspekte
-- Human-in-the-Loop-Dokumentation
+Nur Maintainer entscheiden:
 
-**d) Finale Freigabe**
-- Merge durch Maintainer
-
----
-
-## Standards & Best Practices
-
-### Sprache
-- **Primär:** Deutsch
-- Englische Varianten in separaten Dateien (z.B. `prompt.de.md` / `prompt.en.md`)
-
-### Formatierung
-- Markdown für Dokumentation
-- YAML für Konfiguration und Input-Schemata
-- Konsistente Struktur für Lesbarkeit
-
-### Datenqualität
-- ✅ Synthetische/anonymisierte Beispiele
-- ✅ Quellenangaben wo relevant
-- ❌ Keine echten Kundendaten
-- ❌ Keine Betriebsgeheimnisse
-- ❌ Keine personenbezogenen Daten
-
-### Dokumentation
-- Jedes Paket muss eine README haben
-- Failure-Modes müssen dokumentiert sein
-- Grenzen und Risiken müssen explizit genannt werden
-- Human-Review-Anforderungen müssen klar sein
-
----
-
-## Häufig gestellte Fragen (FAQ)
-
-**F: Kann ich ein Paket mehrmals überarbeiten?**
-A: Ja! Nach dem Merge kannst du Verbesserungen via neuer PRs einreichen.
-
-**F: Wie lange dauert der Review?**
-A: Typisch 5-10 Werktage für Peer Review, +5-10 Tage für Trust Review wenn nötig.
-
-**F: Was ist der Unterschied zwischen bronze_candidate und bronze?**
-A: `bronze_candidate` = eingereicht, wartet auf Review. `bronze` = bestätigt und merged.
-
-**F: Kann ich ein Paket als draft einreichen?**
-A: Ja, mit `status: draft`. Aber für Merge ist mindestens `bronze_candidate` erforderlich.
-
-**F: Wer darf Trust Review durchführen?**
-A: Maintainer des Projekts. Für komplexe Fälle können externe Experten hinzugezogen werden.
-
----
-
-## Fragen oder Probleme?
-
-- **Dokumentation:** Siehe [docs/](docs/) Ordner
-- **Issues:** Öffne ein GitHub Issue mit dem Label `question` oder `help`
-- **Diskussionen:** Nutze GitHub Discussions für offene Fragen
-
----
-
-## Danke!
-
-Danke für deine Zeit und Energie, dieses Projekt zu verbessern! 🙏
+- Merge nach `main`
+- finaler Status `bronze`
+- Aufnahme in `v0.1-rc`
+- Rueckstellung auf `post_mvp`
+- oeffentliche Kommunikation

@@ -1,0 +1,44 @@
+id: product-message-support-alignment
+artifact_type: prompt_package
+title: Product Message and Support Alignment Prompt
+category: product_marketing_support
+status: bronze_candidate
+language: de
+version: 0.1.0
+maintainer: dAIvid-lehmann
+license: CC-BY-4.0
+license_status: declared
+data_risk: yellow
+human_review_required: true
+ai_act_proximity: none
+legal_disclaimer: Arbeits- und Orientierungshilfe fuer Produktkommunikation und Support-Vorbereitung. Keine technische Freigabe, keine Sicherheitspruefung, keine Normenpruefung und keine Rechtsberatung. Technische Angaben, Grenzen, Kompatibilitaeten, Leistungsangaben, Normen-, Sicherheits- und Anwendungshinweise muessen vor Veroeffentlichung durch fachkundige Personen geprueft werden.
+sources_status: provided
+target_users:
+- KMU-Shopbetreiber
+- Produktmanager
+- Support-Teams
+- Online-Marketing-Verantwortliche
+- technische Fachhaendler
+use_case: Aus Herstellerangaben, technischen Produktdaten, Praxiswissen und synthetischen Supportfaellen eine verstaendliche Produktbotschaft, strukturierte Produkteigenschaften, Shopbeschreibung, FAQ und Support-Antworten erstellen
+required_inputs:
+- Produktdokumente oder strukturierte Produktdaten
+- Quellenvertrauensstufe pro Dokument
+- Produktkategorie
+- Produktmerkmale
+- Zielgruppe
+- Einsatzsituationen
+- Grenzen und Nicht-Einsatzbereiche
+- Kompatibilitaeten
+- technische Angaben und Leistungsangaben
+- Protokolle und Anschluesse
+- Dokumente und Herstellerressourcen
+- typische Kundenfragen
+- Support-Erfahrungen oder synthetische Supportfaelle
+- Quellenbasis
+output_format: Dokumentenaufnahme, strukturierte Produktdatenvorlage, CMS-/PIM-Feldvorschlag, Produktseite, FAQ, Support-Antworten, Claim-Check, Widerspruchspruefung und Nicht-veroeffentlichen-ohne-Pruefung-Block
+personal_data_possible: false
+evaluation_criteria: Siehe evaluation.md
+known_open_todos:
+- Herstellerlinks in sources.md vor Peer Review auf Aktualitaet pruefen
+- Keine externen Hersteller-Volltexte ins oeffentliche Repo uebernehmen
+- Peer Review, Trust Review und Maintainer-Freigabe einholen
