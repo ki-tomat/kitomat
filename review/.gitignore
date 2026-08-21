@@ -1,0 +1,9 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Zwischenergebnisse lokaler Laeufe
+stage1a_result.json
+
+# Ergebnisse bleiben im Repository, aber nicht die Ordner leerer Laeufe
+results/**/.DS_Store

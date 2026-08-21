@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KItomat Review-Agent 2.0 — Übergabe</title>
+<style>
+  @page { size: A4; margin: 14mm 15mm; }
+  :root {
+    --ink:#1A1916; --ink-2:#4A4742; --ink-3:#847F77;
+    --line:#E8E4DC; --line-2:#D9D3C7;
+    --tomato:#E63329; --tomato-dark:#B82318;
+    --green:#3E9B54; --yellow:#EFB000; --red:#E0362A;
+    --bg-2:#F1EEE6; --surface-2:#FAF7F1;
+  }
+  * { box-sizing:border-box; }
+  body {
+    font-family:'Manrope',-apple-system,'Segoe UI',Roboto,sans-serif;
+    color:var(--ink); font-size:9.3pt; line-height:1.5;
+    max-width:190mm; margin:0 auto; padding:8mm 4mm 20mm;
+    -webkit-font-smoothing:antialiased;
+  }
+  code { font-family:'JetBrains Mono',Consolas,monospace; font-size:.85em;
+         background:var(--surface-2); padding:1px 3px; border-radius:2px;
+         color:#7A2B12; }
+  h1 { font-size:19pt; color:var(--tomato-dark); margin:0 0 1mm;
+       letter-spacing:-.4px; line-height:1.15; }
+  .sub { color:var(--ink-3); font-size:9pt; margin:0 0 2mm;
+         padding-bottom:3mm; border-bottom:2.5pt solid var(--tomato); }
+  h2 { font-size:11pt; color:var(--tomato-dark); margin:6mm 0 2mm;
+       padding-bottom:1mm; border-bottom:.6pt solid var(--line);
+       page-break-after:avoid; }
+  h3 { font-size:9.6pt; margin:4mm 0 1.5mm; page-break-after:avoid; }
+  p { margin:0 0 2mm; }
+  table { width:100%; border-collapse:collapse; margin:0 0 3mm;
+          font-size:8.5pt; page-break-inside:avoid; }
+  th { background:var(--bg-2); text-align:left; font-weight:700;
+       padding:1.8mm 2mm; border-bottom:1pt solid var(--line-2); font-size:8.3pt; }
+  td { padding:1.7mm 2mm; border-bottom:.6pt solid var(--line); vertical-align:top; }
+  .lead { background:var(--surface-2); border-left:3pt solid var(--tomato);
+          padding:3mm 4mm; margin:0 0 4mm; font-size:10pt; }
+  .lead b { color:var(--tomato-dark); }
+  .flow { font-family:'JetBrains Mono',Consolas,monospace; font-size:7.6pt;
+          line-height:1.55; background:var(--surface-2);
+          border:.6pt solid var(--line); border-radius:3px;
+          padding:3mm 4mm; margin:0 0 3mm; white-space:pre; page-break-inside:avoid; }
+  .cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm; margin:0 0 3mm; }
+  .card { border:.8pt solid var(--line-2); border-radius:3px; padding:2.5mm 3mm;
+          background:#fff; }
+  .card b { display:block; color:var(--tomato-dark); font-size:8.8pt; margin-bottom:1mm; }
+  .card span { font-size:8.2pt; color:var(--ink-2); }
+  .dot { display:inline-block; width:7pt; height:7pt; border-radius:50%;
+         vertical-align:-.5pt; margin-right:1.5mm; border:.5pt solid rgba(0,0,0,.2); }
+  .g{background:var(--green);} .y{background:var(--yellow);} .r{background:var(--red);}
+  .status-ok   { color:var(--green); font-weight:700; }
+  .status-warn { color:#9A7400; font-weight:700; }
+  .foot { margin-top:5mm; padding-top:2.5mm; border-top:.6pt solid var(--line);
+          font-size:8pt; color:var(--ink-3); }
+  .noprint { margin-bottom:6mm; padding:2.5mm 3mm; background:#FFF8E1;
+             border:.8pt dashed var(--yellow); border-radius:3px; font-size:8.5pt; }
+  @media print { .noprint { display:none; } body { padding-top:0; } }
+</style>
+</head>
+<body>
+
+<div class="noprint">
+  <b>Als PDF speichern:</b> Strg+P → Ziel „Als PDF speichern" → Ränder „Standard" →
+  Hintergrundgrafiken aktivieren. Dieser Hinweis wird nicht mitgedruckt.
+</div>
+
+<h1>KItomat Review-Agent 2.0</h1>
+<p class="sub">Übergabe am 3. August 2026 · Review-Team · Branch <code>review/pre-review-wizard</code></p>
+
+<div class="lead">
+Ein KI-Agent prüft eingereichte Beiträge automatisch in sieben Phasen, vergibt einen
+Ampelstatus und legt das Ergebnis einem menschlichen Reviewer vor — <b>entscheiden darf er nichts.</b>
+</div>
+
+<h2>Anforderung und Umsetzung</h2>
+<table>
+<tr><th style="width:31%">Verlangt</th><th style="width:43%">Umgesetzt als</th><th>Belegt durch</th></tr>
+<tr><td>KI-Agent macht die komplette Prüfung</td><td>7 Phasen, 55 Prüfpunkte, jeder mit Quellenangabe aus den Projektunterlagen</td><td>Prüfkatalog <code>review-checks.yml</code></td></tr>
+<tr><td>Agent vergibt einen Ampelstatus</td><td>rot / gelb / grün, abgeleitet aus den bereits im Repo definierten Status</td><td>53 Tests, alle grün</td></tr>
+<tr><td>Mensch passt an und gibt frei</td><td>Cockpit: jeder Befund übersteuerbar, jedes Gate einzeln freizugeben</td><td>Vorführung</td></tr>
+<tr><td>Harte Gates mit End-to-End-Tests</td><td>Gate öffnet nur über 4 nachprüfbare Bedingungen — nie über eine KI-Bewertung</td><td>17 Tests der Gate-Logik</td></tr>
+<tr><td>Trigger über Label, Mail an Reviewer</td><td>Zwei GitHub-Workflows, fork-sicher, mit E-Mail-Benachrichtigung</td><td><span class="status-warn">geschrieben, nicht erprobt</span></td></tr>
+</table>
+
+<h2>Der Ablauf</h2>
+<p style="margin-bottom:2mm"><b>Zwei Wege in den Review.</b> Manuell über <code>review/intake/</code> —
+funktioniert sofort, ohne Workflows, ohne Label. Oder automatisch über das Label
+<code>review-required</code> an einem Pull Request.</p>
+<div class="flow">Beitrag aus review/intake/  oder  Pull Request mit Label
+   │
+   ├─ PHASE 0    Sicherheitsprüfung, rein lokal auf dem Server
+   │             Findet sie personenbezogene Daten → STOPP.
+   │             Es wird nichts an eine KI übertragen.
+   │
+   ├─ PHASE 1-6  Potenzial und blinde Flecken · Pflichtdateien ·
+   │             Metadaten und Trust Layer · Peer Review ·
+   │             Szenario-Triade · Rückmeldung
+   │
+   ├─ Ampel + drei Berichte + E-Mail an die Reviewer-Gruppe
+   │
+   ├─ REVIEWER   prüft im Cockpit, übersteuert bei Bedarf,
+   │             gibt jedes Gate einzeln frei
+   │
+   └─ MAINTAINER entscheidet über Merge und Status</div>
+
+<h2>Drei Zusagen — technisch erzwungen, nicht nur versprochen</h2>
+<div class="cards">
+  <div class="card"><b>1 · Der Agent entscheidet nichts</b><span>
+    Kein Status, kein Merge, keine Veröffentlichung. In jedem Ergebnis steht
+    <code>human_decision_required: true</code>. Erlaubt sind nur drei Empfehlungen.</span></div>
+  <div class="card"><b>2 · Kein Gate durch eine KI</b><span>
+    Vier Bedingungen: kein Blocker, kein P0, alle Pflichtbestätigungen, Unterschrift
+    des Reviewers. Diese Prüfung enthält keinen Modellaufruf.</span></div>
+  <div class="card"><b>3 · Keine Daten ungeprüft nach draußen</b><span>
+    Die Sicherheitsprüfung läuft lokal, bevor eine KI den Beitrag sieht. Bei einem
+    Treffer endet der Lauf nachweisbar ohne Übertragung.</span></div>
+</div>
+
+<h2>Die Ampel</h2>
+<table>
+<tr><th style="width:14%">Farbe</th><th style="width:43%">Bedeutung</th><th>Nächster Schritt</th></tr>
+<tr><td><span class="dot r"></span><b>Rot</b></td><td>Blockierender Befund oder P0</td><td>Zurück an die beitragende Person</td></tr>
+<tr><td><span class="dot y"></span><b>Gelb</b></td><td>Nachbesserung oder Trust Review nötig</td><td>Je nach Befund</td></tr>
+<tr><td><span class="dot g"></span><b>Grün</b></td><td>Nichts Blockierendes gefunden</td><td>Reviewer kann freigeben</td></tr>
+</table>
+<p><b>Grün heißt nicht „freigegeben".</b> Grün heißt: bereit, dass ein Mensch freigibt.
+Diese Formulierung stammt wörtlich aus den bestehenden KItomat-Unterlagen.</p>
+
+<h2>Vier Fehler, die das Testen gefunden hat</h2>
+<table>
+<tr><th style="width:47%">Fehler</th><th>Wirkung ohne Korrektur</th></tr>
+<tr><td>Abrufdaten als Telefonnummern erkannt</td><td>3 von 7 korrekten Beiträgen wären blockiert worden</td></tr>
+<tr><td>„Weiß ich nicht" als Blocker gewertet</td><td>Jeder Lauf hätte blockiert</td></tr>
+<tr><td>Disclaimer „ersetzt keine Rechtsberatung" als Rechtsberatung gewertet</td><td>Sorgfältige Beiträge wären durchgefallen, nachlässige nicht</td></tr>
+<tr><td>Cockpit rechnete anders als der Bericht</td><td>Reviewer hätte eine falsche Ampel gesehen</td></tr>
+</table>
+<p>Alle vier waren formal korrekt und inhaltlich falsch. Keiner wäre ohne Lauf an
+echtem Material aufgefallen.</p>
+
+<h2>Stand</h2>
+<table>
+<tr><th style="width:31%">Bereich</th><th>Zustand</th></tr>
+<tr><td><span class="status-ok">Läuft und ist getestet</span></td><td>Sicherheitsprüfung, Gate-Engine, Orchestrator, Berichte, Cockpit — 53 Tests grün, davon eine Regression gegen alle 7 echten Beiträge im Repo</td></tr>
+<tr><td><span class="status-ok">Ohne API-Schlüssel nutzbar</span></td><td>Platzhalter-Provider — das Paket ist sofort ausprobierbar, ohne Kosten und ohne Anbieterentscheidung</td></tr>
+<tr><td><span class="status-ok">Sprachmodell anschließbar</span></td><td>Vier Provider eingebaut: Platzhalter, <b>Ollama lokal</b> (kostenlos, keine Datenübertragung), OpenRouter, beliebiger OpenAI-kompatibler Dienst. Umschalten über eine Umgebungsvariable, kein Code.</td></tr>
+<tr><td><span class="status-warn">Nicht erprobt</span></td><td>Die beiden GitHub-Workflows und die Modell-Adapter gegen einen laufenden Dienst</td></tr>
+<tr><td><span class="status-warn">Offen</span></td><td>Anbieterentscheidung, Budget, Reviewer-Verteiler, Umgang mit Fork-Beiträgen</td></tr>
+</table>
+<p>Von 55 Prüfpunkten sind 15 deterministisch und exakt getestet. Die übrigen 40 laufen
+durch die Kette, liefern aber erst mit einem echten Sprachmodell ein fachliches Urteil.</p>
+
+<h2>Was übergeben wird</h2>
+<div class="flow">review/
+  README.md      Einstieg
+  docs/          Architektur · Schnittstellen · Betrieb · Übergabe
+  policy/        der Prüfkatalog — hier ändert man Regeln, nicht im Code
+  schemas/       das Ergebnisformat
+  tools/         Agent · Gates · Berichte · Provider-Anbindung
+  wizard/        das Reviewer-Cockpit (eine HTML-Datei, kein Server)
+  tests/         53 Prüfungen mit Testbeiträgen
+  demo/          zwei Vorführbeiträge, ein Befehl
+  workflows/     GitHub Actions zum Einspielen</div>
+
+<p><code>docs/UEBERGABE.md</code> nennt Stand, Lücken und nächste Schritte — samt fertigem
+Einstiegsprompt, damit jemand anderes mit seiner eigenen KI weiterarbeiten kann.</p>
+
+<div class="foot">
+<b>Kein Eingriff in KItomat.</b> <code>main</code>, <code>prompts/</code>,
+<code>datasets/</code> und <code>models/</code> bleiben unverändert. Alles Neue liegt
+unter <code>review/</code> in der Branch <code>review/pre-review-wizard</code>.
+Wo wir strenger sein wollten als das Hauptprojekt — die PII-Prüfung blockiert bei uns,
+dort warnt sie nur — gilt das ausschließlich im Review-Prozess.
+</div>
+
+</body>
+</html>

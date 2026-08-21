@@ -1,0 +1,24 @@
+id: demo-angebotstexte-handwerk
+artifact_type: prompt_package
+title: "Angebotstexte fuer Handwerksbetriebe"
+category: vertrieb
+status: bronze_candidate
+language: de
+version: "0.1.0"
+maintainer: p12
+license: CC-BY-4.0
+license_status: declared
+data_risk: green
+human_review_required: true
+ai_act_proximity: none
+legal_disclaimer: "Arbeits- und Orientierungshilfe. Ersetzt keine fachliche oder rechtliche Pruefung. Preise und Leistungen sind vor Versand zu pruefen."
+sources_status: not_required
+target_users:
+  - "Handwerksbetriebe mit 5 bis 30 Mitarbeitenden"
+use_case: "Aus Stichpunkten eines Kundengespraechs einen verstaendlichen Angebotstext erstellen"
+required_inputs:
+  - "Leistungsbeschreibung"
+  - "Kundensituation"
+output_format: "Angebotstext mit Einleitung, Leistungsblock und Hinweis auf Rueckfragen"
+personal_data_possible: false
+evaluation_criteria: "Siehe evaluation.md"

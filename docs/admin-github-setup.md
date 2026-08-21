@@ -120,3 +120,19 @@ If contributors cannot push directly:
 7. maintainer decides merge or changes
 
 This path has the same quality standard as direct pull requests.
+
+## Large download files
+
+Large dataset/source files should not be committed directly to Git.
+
+Use GitHub Release Assets for multi-MB files. Each asset needs:
+
+- version
+- file size
+- checksum
+- license status
+- source status
+- data risk
+- human review status
+
+See `docs/guides/download-assets-step-by-step.md`.

@@ -1,0 +1,15 @@
+id: tf-missing-files
+artifact_type: prompt_package
+title: "Testfixture - unvollstaendiges Prompt-Paket"
+category: test
+status: draft
+language: de
+version: "0.1.0"
+maintainer: p08
+license: CC-BY-4.0
+license_status: declared
+data_risk: green
+human_review_required: true
+ai_act_proximity: none
+legal_disclaimer: "Testfixture fuer die Testsuite. Keine Rechtsberatung."
+sources_status: not_required

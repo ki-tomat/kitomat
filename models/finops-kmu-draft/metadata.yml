@@ -1,0 +1,85 @@
+id: "finops-kmu-draft"
+title: "FinOps-Einfuehrungsmodell fuer KMU und technologiegetriebene Organisationen"
+artifact_type: "model"
+category: "kmu_branchenmodell"
+subcategory: "consulting"
+path: "models/finops-kmu-draft"
+status: "draft"
+language: "de"
+maintainer: "IG"
+team: "solo"
+version: "0.1.0"
+license: "CC-BY-4.0"
+
+summary: >
+  Beratungsmodell zur strukturierten Einfuehrung von FinOps als Operating Model
+  fuer Technologie-Wertsteuerung, Kostenallokation, Forecasting, Governance,
+  Optimierung und Enablement.
+
+target_users:
+  - "KI- und Digitalisierungsberater"
+  - "CIO / CTO / Head of IT"
+  - "Finance / Controlling"
+  - "Cloud- und Plattformteams"
+  - "Product Owner"
+  - "Procurement / Einkauf"
+
+use_cases:
+  - "FinOps-Ersteinfuehrung"
+  - "Cloud-Kostentransparenz herstellen"
+  - "Target Operating Model fuer FinOps entwickeln"
+  - "KPI- und Reporting-Modell aufbauen"
+  - "Optimierungsroadmap priorisieren"
+  - "Governance- und Enablement-Struktur etablieren"
+
+model_type: "consulting_framework"
+use_case: >
+  FinOps als gemeinsames Operating Model fuer Kostenallokation, Forecasting,
+  Governance, Optimierung und Enablement in KMU einfuehren.
+required_inputs:
+  - "Technologie- und Kostenbereiche im Scope"
+  - "beteiligte Teams und Rollen"
+  - "aktueller Budget- und Forecast-Prozess"
+  - "vorhandene Kosten-, Nutzungs- und Reportingdaten"
+  - "bekannte Kosten-, Governance- und Ownership-Probleme"
+output_format: >
+  Beratungsmodell mit Assessment, Charter, Rollenmodell, KPI-Katalog,
+  Allocation Model, priorisiertem Backlog und Einfuehrungsroadmap.
+application_scope: >
+  Workshops, Vorpruefung und strukturierte Einfuehrungsplanung fuer Cloud-,
+  SaaS-, Lizenz-, AI-, Kubernetes- und weitere Technologiekosten.
+framework_references:
+  - "FinOps als Operating Model"
+  - "Sakizli 5-Phasen-Beratungsmodell"
+required_review_level: "trust_review"
+
+data_risk: "yellow"
+human_review_required: true
+ai_act_proximity: "unclear"
+legal_disclaimer: >
+  Dieses Modell ist eine Orientierungshilfe fuer Beratung, Strukturierung und
+  Managemententscheidungen. Es ersetzt keine Rechts-, Steuer-, Finanz-,
+  Datenschutz- oder Architekturberatung. Ergebnisse muessen von fachkundigen
+  Rollen geprueft werden.
+
+sources_status: "provided"
+license_status: "declared"
+contains_synthetic_examples: true
+contains_real_personal_data: false
+contains_customer_data: false
+contains_confidential_financial_data: false
+
+review_notes:
+  - "FinOps beruehrt Finance/Controlling und potenziell vertrauliche Unternehmensdaten."
+  - "Keine echten Cloud-Rechnungen, Kundendaten oder internen Finanzdaten im Beispiel verwenden."
+  - "Bei echter Anwendung muessen Quellen, Tool-Daten und Accounting-Regeln fachlich validiert werden."
+
+linked_artifacts_note: >
+  Die folgenden Quellen wurden bei der Erstellung verwendet, sind aber nicht
+  oeffentlich Bestandteil dieses Repositories. Sie dienen ausschliesslich der
+  Nachvollziehbarkeit fuer interne Reviewer und sind nicht ueber das Repo abrufbar.
+
+linked_artifacts:
+  - "deep-research-report _FINOPS.md (intern, nicht im Repo)"
+  - "sakizli-5-phasen-beratungsmodell (1).pdf (intern, nicht im Repo)"
+  - "Community_Projekt_Starterprompts.pdf (KItomat-Projektquelle, nicht im Repo)"

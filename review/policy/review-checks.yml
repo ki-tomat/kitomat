@@ -1,0 +1,787 @@
+# KItomat Review-Pruefkatalog
+#
+# Verbindliche Liste aller Pruefpunkte des Review-Agenten, nach Phasen geordnet.
+# Jeder Punkt nennt seine Quelle im Projektbestand. Es wurde nichts hinzuerfunden.
+#
+# produced_by:
+#   validator = deterministisch, in End-to-End-Tests exakt pruefbar
+#   agent     = sprachmodellgestuetzt, nur grob pruefbar, immer mit confidence
+#   human     = ausschliesslich menschlich entscheidbar
+#
+# Gate-Regel: Ein Gate oeffnet nur, wenn kein Ergebnis "block" ist, kein P0-Befund
+# vorliegt und alle human_mandatory-Punkte bestaetigt sind. Die Freigabe selbst
+# gibt immer ein Mensch.
+
+ruleset_version: "1.0.0"
+language: de
+
+sources:
+  repo_policy: agents/openclaw-precheck/openclaw-agent.yml
+  repo_review_policy: agents/openclaw-precheck/review-policy.md
+  repo_handoff: agents/openclaw-precheck/handoff-flow.md
+  repo_schema: schemas/metadata.schema.json
+  repo_validators: tools/validators/
+  course_prereview: STANDARD_REVIEW_PAKET_COMMUNITY/01_PRE_REVIEW_KRITISCHE_ANALYSE_POTENZIAL.md
+  course_quality: STANDARD_REVIEW_PAKET_COMMUNITY/02_PEER_REVIEW_TRUST_LAYER_QUALITAET.md
+  course_workflow: 04_GITHUB_KURS_WORKFLOW.md
+  course_scope: 00_ZIELBILD_UND_SCOPE.md
+  course_validation: VALIDIERUNG_UND_KONTROLLE.md
+  peer_review_prompt: "PROMPT Codex fuer Peereview Durchfuehrung"
+
+# ---------------------------------------------------------------------------
+# Risikosteuerung
+# ---------------------------------------------------------------------------
+# Quelle: 04_GITHUB_KURS_WORKFLOW, Abschnitt 9
+risk_policy:
+  green:
+    description: Self-Declaration plus Peer Review genuegt, sofern keine Rechts-,
+      Compliance-, HR-, Finance-, Gesundheits- oder Bildungsentscheidung beruehrt ist.
+    trust_review_required: false
+    second_approval_required: false
+  yellow:
+    description: Trust Review ist Pflicht.
+    trust_review_required: true
+    second_approval_required: false
+  red:
+    description: Trust Review plus zweite Freigabe durch die Kursleitung. Darf fuer
+      v0.1-rc auf post_mvp verschoben werden.
+    trust_review_required: true
+    second_approval_required: true
+
+# Quelle: openclaw-agent.yml (hard_stops) und course_prereview Abschnitt 9
+hard_stops:
+  - real_personal_data
+  - real_customer_data
+  - health_data
+  - confidential_finance_data
+  - real_hr_or_application_documents
+  - internal_company_documents
+  - unclear_full_text_copyright
+  - unclear_local_file_uploads
+  - invented_sources_for_strong_claims
+  - legal_or_audit_claims
+  - automated_decisions_about_people
+  - final_publication_claim_without_human_review
+
+# Quelle: course_prereview Abschnitt 8
+limits:
+  max_critical_findings: 5
+  max_potential_findings: 3
+  max_contributor_next_steps: 3
+
+# Quelle: 04_GITHUB_KURS_WORKFLOW, Abschnitt 6 (Syntax-Resilienz)
+tone_rules:
+  - Befunde bewerten Artefakte, niemals Personen.
+  - Reine Syntaxfehler in YAML oder Markdown blockieren nicht, wenn die fachliche
+    Substanz erkennbar ist. Sie werden als P3 gemeldet.
+  - Keine kuenstliche Kritik erzeugen, damit ein Bericht voll wirkt.
+  - Keine Scope-Erweiterung, keine neuen Produktideen, keine neue Version des Beitrags.
+
+# ===========================================================================
+# PHASE 0 - Orientierung und Sicherheits-Gate
+# ===========================================================================
+# Vollstaendig deterministisch. Laeuft lokal, ohne Datenuebertragung.
+# Erst wenn dieses Gate oeffnet, sieht ein Sprachmodell den Beitrag.
+phases:
+  - id: phase-0
+    name: Orientierung und Sicherheits-Gate
+    purpose: Beitrag erfassen, Scope fixieren, verbotene Inhalte vor jeder
+      Uebertragung abfangen.
+    agent_involved: false
+    checks:
+
+      - id: artifact.located
+        label: Artefaktordner gefunden und eindeutig
+        category: scope
+        produced_by: validator
+        severity_if_failed: P0
+        rule: Genau ein Ordner unterhalb prompts/, datasets/ oder models/ ist betroffen.
+        source: peer_review_prompt (PHASE 0)
+
+      - id: artifact.type_detected
+        label: Artefakttyp erkannt
+        category: scope
+        produced_by: validator
+        severity_if_failed: P1
+        rule: Typ aus Pfad und metadata.yml ableiten. Widerspruch zwischen Pfad,
+          artifact_type und tatsaechlichem Inhalt ist ein Befund.
+        source: course_prereview (Schritt 1)
+
+      - id: artifact.scope_lock
+        label: Scope-Sperre gesetzt
+        category: scope
+        produced_by: validator
+        severity_if_failed: P2
+        rule: Dateiliste einfrieren und hashen. Was nicht in der Liste steht, wird
+          nicht bewertet.
+        source: course_prereview (Schritt 2)
+
+      # -------------------------------------------------------------------
+      # Messung vom 2026-08-01 an allen 7 echten Beitraegen im Repository:
+      #
+      #   Muster               Treffer   betroffene Beitraege
+      #   email                      0    0 von 7
+      #   iban_like                  0    0 von 7
+      #   german_tax_id_like         0    0 von 7
+      #   phone_like                85    3 von 7   <- alle falsch positiv
+      #
+      # Die 85 phone_like-Treffer waren: Abrufdaten (JJJJ-MM-TT), DOI-Fragmente
+      # in Quellenverzeichnissen (z.B. 020-00676-7, 2024.102733), Zahlenspannen
+      # wie 30/60/90 und eine synthetische EAN. Kein einziger echter Treffer.
+      #
+      # Konsequenz: phone_like ist als blockierendes Muster unbrauchbar. Es
+      # wuerde 3 von 7 korrekten Beitraegen faelschlich stoppen und das Gate
+      # binnen kurzer Zeit unglaubwuerdig machen. Es bleibt als Hinweis mit
+      # menschlicher Bestaetigung erhalten.
+      # -------------------------------------------------------------------
+      - id: safety.pii_scan
+        label: Keine eindeutigen PII-Treffer im Beitrag
+        category: data_risk
+        produced_by: validator
+        severity_if_failed: P0
+        blocking: true
+        blocking_patterns: [email, iban_like, german_tax_id_like]
+        rule: Muster aus tools/validators/pii_heuristic.py, eingegrenzt auf den
+          Artefaktordner. Ein Treffer stoppt den Lauf. Der Beitrag wird NICHT an
+          ein Sprachmodell uebertragen.
+        note: Im Hauptrepo warnt dieser Validator nur. Im Review-Prozess blockiert er.
+        exclude_before_matching:
+          - name: iso_date
+            pattern: '\b\d{4}-\d{2}-\d{2}\b'
+          - name: german_date
+            pattern: '\b\d{1,2}\.\d{1,2}\.\d{4}\b'
+          - name: semver
+            pattern: '\bv?\d+\.\d+\.\d+\b'
+          - name: date_range
+            pattern: '\b\d{4}\s?[-–]\s?\d{4}\b'
+          - name: doi
+            pattern: '\b10\.\d{4,9}/[^\s]+'
+          - name: numeric_range
+            pattern: '\b\d{1,3}(?:/\d{1,3}){1,3}\b'
+        source: openclaw-agent.yml (hard_stops), repo_validators
+
+      - id: safety.number_pattern_notice
+        label: Auffaellige Zahlenfolgen zur menschlichen Sichtung
+        category: data_risk
+        produced_by: validator
+        severity_if_failed: P2
+        blocking: false
+        human_mandatory: true
+        patterns: [phone_like]
+        rule: Telefonaehnliche Zahlenfolgen werden gemeldet, blockieren aber
+          nicht. Der Reviewer bestaetigt im Cockpit, dass es sich nicht um echte
+          Kontaktdaten handelt. Erfahrungswert - die grosse Mehrheit sind DOIs,
+          Kennnummern oder Zahlenspannen.
+        source: Messung 2026-08-01, siehe Kommentar oben
+
+      - id: safety.forbidden_file_types
+        label: Keine unklaren lokalen Datei-Uploads
+        category: data_risk
+        produced_by: validator
+        severity_if_failed: P0
+        blocking: true
+        rule: CSV, PDF, XLSX und DOCX ohne dokumentierte Herkunft, Lizenz und Zweck
+          werden restriktiv behandelt.
+        source: course_scope (Abschnitt 8)
+
+      - id: safety.no_real_names
+        label: Kein Klarname statt Teilnehmercode
+        category: data_risk
+        produced_by: validator
+        severity_if_failed: P1
+        rule: Feld maintainer muss dem Muster p01 bis p20 entsprechen.
+        source: course_workflow (Abschnitt 7), ABGABE_CHECKLISTE
+
+# ===========================================================================
+# PHASE 1 - Potenzial, Grenzfaelle und blinde Flecken
+# ===========================================================================
+# Bewusst vor der Formalpruefung. Zuerst die Substanz beurteilen, dann die Formalien.
+  - id: phase-1
+    name: Potenzial, Grenzfaelle und blinde Flecken
+    purpose: Belastbarkeit des bestehenden Beitrags realistisch einschaetzen,
+      ohne ihn zu erweitern.
+    agent_involved: true
+    guardrails:
+      - Keine neuen Bausteine, Features oder Zielgruppen erfinden.
+      - Grenzen sichtbar machen, aber nicht beheben.
+      - Maximal 3 Potenzialbefunde.
+    checks:
+
+      - id: potential.purpose_derivable
+        label: Zweck und Einsatzgrenzen aus dem Material ableitbar
+        category: potential
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Zweck, Zielgruppe, benoetigte Eingaben und versprochene Outputs sind
+          aus den vorhandenen Dateien erkennbar.
+        source: peer_review_prompt (PHASE 1.1)
+
+      - id: potential.realistic_scope
+        label: Realistisches Potenzial benannt
+        category: potential
+        produced_by: agent
+        severity_if_failed: P3
+        rule: Welche Aufgaben unterstuetzt der Beitrag im aktuellen Stand gut,
+          welche nur eingeschraenkt?
+        source: peer_review_prompt (PHASE 1.2)
+
+      - id: potential.blind_spots
+        label: Blinde Flecken geprueft
+        category: potential
+        produced_by: agent
+        severity_if_failed: P2
+        rule: Unsichtbare Annahmen, vorausgesetzte aber nicht abgefragte Eingaben,
+          fehlende Abbruchkriterien, unklare Verantwortung zwischen KI, Nutzer und
+          Review.
+        source: peer_review_prompt (PHASE 1.3)
+
+      - id: potential.edge_cases
+        label: Grenzfaelle durchgespielt
+        category: potential
+        produced_by: agent
+        severity_if_failed: P2
+        confidence_required: true
+        rule: Sieben Faelle pruefen - Normalfall, unvollstaendiger Input,
+          widerspruechlicher Input, risikobehafteter Input, Scope-Missbrauch,
+          Quellen-/Datenproblem, Ueberforderungsfall.
+        source: peer_review_prompt (PHASE 1.4)
+
+      - id: potential.failure_map
+        label: Failure Map erstellt
+        category: potential
+        produced_by: agent
+        severity_if_failed: P2
+        rule: Einordnung in - funktioniert gut, funktioniert mit Nachbearbeitung,
+          nur unter klaren Bedingungen, kritisch/Human Review noetig, ungeeignet,
+          nicht beurteilbar.
+        source: peer_review_prompt (PHASE 1.5)
+
+      - id: potential.overconfidence
+        label: Beitrag klingt nicht zu sicher
+        category: false_assurance
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Wirkung, Compliance, ROI oder Machbarkeit duerfen nicht als gesichert
+          formuliert sein. Annahmen muessen als Annahmen erkennbar bleiben.
+        source: course_prereview (Scheinsicherheit), peer_review_prompt (PHASE 4)
+
+# ===========================================================================
+# PHASE 2 - Pflichtdateien und Struktur
+# ===========================================================================
+  - id: phase-2
+    name: Pflichtdateien und Struktur
+    purpose: Formale Vollstaendigkeit gegen den Artefaktstandard pruefen.
+    agent_involved: true
+    required_files:
+      # Quelle: tools/validators/validate_completeness.py, deckungsgleich mit
+      # 00_ZIELBILD_UND_SCOPE und 04_GITHUB_KURS_WORKFLOW
+      prompt_package:
+        files:
+          - prompt.md
+          - README.md
+          - metadata.yml
+          - examples/input-01.md
+          - examples/output-01.md
+          - evaluation.md
+          - failure-modes.md
+      dataset_package:
+        files:
+          - README.md
+          - metadata.yml
+          - sources.md
+          - license.md
+          - usage.md
+      model:
+        files:
+          - model.md
+          - README.md
+          - metadata.yml
+          - application-guide.md
+          - examples/example-01.md
+          - sources.md
+          - failure-modes.md
+        one_of:
+          - canvas/
+          - worksheet/
+    checks:
+
+      - id: files.required_present
+        label: Alle Pflichtdateien vorhanden
+        category: required_files
+        produced_by: validator
+        severity_if_failed: P1
+        rule: Abgleich gegen required_files des erkannten Typs. Fehlende Datei ist
+          ein Blocker fuer bronze, nicht fuer den Reviewstart.
+        source: repo_validators (validate_completeness.py)
+
+      - id: files.no_placeholders
+        label: Keine Platzhalter im Inhalt
+        category: required_files
+        produced_by: validator
+        severity_if_failed: P1
+        rule: Verbotene Zeichenketten - TODO, TBD, lorem ipsum, "Replace with",
+          "replace-with", pXX.
+        source: repo_validators (validate_completeness.py), course_validation
+
+      - id: files.extension_convention
+        label: Metadatendatei heisst metadata.yml
+        category: file_consistency
+        produced_by: validator
+        severity_if_failed: P2
+        rule: metadata.yaml statt metadata.yml wird vom Validator nicht gefunden.
+          Haeufiger und leicht behebbarer Fehler.
+        source: repo_validators, schemas/
+
+      - id: files.declared_vs_actual
+        label: Dateiliste, Verweise und Metadaten stimmen ueberein
+        category: file_consistency
+        produced_by: agent
+        severity_if_failed: P2
+        rule: Verweisen README oder FileIndex auf Pfade, die es nicht gibt? Liegen
+          Dateien im Ordner, die nirgends erwaehnt werden?
+        source: course_quality (Abschnitt 8), course_prereview (Dateikonsistenz)
+
+      - id: files.foreign_content
+        label: Keine fachfremden oder versehentlich mitgelieferten Dateien
+        category: file_consistency
+        produced_by: agent
+        severity_if_failed: P2
+        rule: Demo-Reste, fremde Exporte oder thematisch nicht zugehoerige Dateien
+          markieren.
+        source: course_quality (Abschnitt 8 und 9)
+
+      - id: files.companion_artifacts
+        label: Begleitartefakte eingeordnet
+        category: companion_artifact
+        produced_by: agent
+        severity_if_failed: P2
+        rule: HTML-Dashboards, Worksheets, Skills und Agentenkonfigurationen muessen
+          im README benannt sein, duerfen dem Hauptartefakt nicht widersprechen und
+          keine hoehere Freigabe behaupten als das Hauptartefakt.
+        escalate_to: P0
+        escalate_when: Begleitartefakt enthaelt riskante Logik, fremde Daten oder
+          falsche Freigabesignale.
+        source: course_quality (Abschnitt 9)
+
+# ===========================================================================
+# PHASE 3 - Metadaten, Lizenz und Trust Layer
+# ===========================================================================
+  - id: phase-3
+    name: Metadaten, Lizenz und Trust Layer
+    purpose: Trust Layer auf Vollstaendigkeit und Plausibilitaet pruefen.
+    agent_involved: true
+    required_metadata_fields:
+      # Quelle: schemas/metadata.schema.json (15 Pflichtfelder)
+      - id
+      - artifact_type
+      - title
+      - category
+      - status
+      - language
+      - version
+      - maintainer
+      - license
+      - license_status
+      - data_risk
+      - human_review_required
+      - ai_act_proximity
+      - legal_disclaimer
+      - sources_status
+    enums:
+      status: [draft, bronze_candidate, bronze, silver_candidate, silver, gold_candidate, gold]
+      status_allowed_in_course: [draft, bronze_candidate, bronze]
+      status_conditional: [silver_candidate]   # nur bei echten dokumentierten Tests
+      license_status: [declared, unclear, not_applicable]
+      data_risk: [green, yellow, red]
+      ai_act_proximity: [none, transparency, high_risk_adjacent, prohibited_check, unclear]
+      sources_status: [not_required, missing, provided, checked, unverified]
+      # Achtung: die folgende Liste bewertet die Qualitaet EINZELNER Quellen in
+      # sources.md und ist NICHT das Metadatenfeld sources_status.
+      source_quality: [official, primary, secondary, community, unverified]
+    checks:
+
+      - id: meta.fields_present
+        label: Alle 15 Pflichtfelder vorhanden
+        category: trust_layer
+        produced_by: validator
+        severity_if_failed: P1
+        source: repo_schema
+
+      - id: meta.enums_valid
+        label: Feldwerte innerhalb der erlaubten Enums
+        category: trust_layer
+        produced_by: validator
+        severity_if_failed: P1
+        source: repo_schema
+
+      - id: meta.status_allowed
+        label: Status im Kurs zulaessig
+        category: trust_layer
+        produced_by: validator
+        severity_if_failed: P1
+        rule: silver, gold_candidate und gold sind gesperrt. silver_candidate nur
+          bei echten dokumentierten Tests.
+        source: course_scope (Abschnitt 7)
+
+      - id: meta.status_not_overclaimed
+        label: Kein zu hoch behaupteter Status
+        category: trust_layer
+        produced_by: agent
+        severity_if_failed: P1
+        rule: bronze setzt Pflichtdateien, Beispiel, Szenario-Triade, Trust Layer,
+          Peer Review und Maintainer-Freigabe voraus. Fehlt davon etwas, ist der
+          Status zu hoch.
+        source: course_quality (Abschnitt 2), course_validation
+
+      - id: trust.data_risk_plausible
+        label: data_risk plausibel
+        category: data_risk
+        produced_by: agent
+        severity_if_failed: P1
+        human_mandatory_when: data_risk in [yellow, red]
+        rule: Bei moeglichen personenbezogenen oder vertraulichen Daten mindestens
+          yellow. Bei sensiblen, rechtlichen, finanziellen, HR- oder Gesundheitsdaten
+          red.
+        source: course_quality (Abschnitt 3)
+
+      - id: trust.human_review_correct
+        label: human_review_required korrekt gesetzt
+        category: human_review
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Pflicht auf true, wenn data_risk gelb oder rot, wenn Ergebnisse in
+          Entscheidungen ueber Menschen einfliessen, bei Compliance, HR, Finance,
+          Gesundheit, Bildungschancen oder Versicherung, bei externer Kommunikation
+          oder bei kritischen Quellen.
+        source: course_quality (Abschnitt 3)
+
+      - id: trust.ai_act_plausible
+        label: ai_act_proximity plausibel
+        category: trust_layer
+        produced_by: agent
+        severity_if_failed: P2
+        rule: Im Zweifel unclear und menschliche Pruefung.
+        source: course_quality (Abschnitt 3)
+
+      - id: trust.disclaimer_present
+        label: Passender Disclaimer vorhanden
+        category: trust_layer
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Standard-, Compliance- oder Datensatz-Disclaimer je nach Artefakt.
+        source: course_quality (Abschnitt 4)
+
+      - id: trust.sensitive_domain
+        label: Sensible Bereiche erkannt und eingeordnet
+        category: data_risk
+        produced_by: agent
+        severity_if_failed: P0
+        human_mandatory: true
+        rule: Recht, Compliance, Datenschutz, EU AI Act, HR und Recruiting, Finance
+          und Versicherung, Gesundheit, Bildungschancen. Solche Artefakte sind im
+          MVP nur Orientierungshilfen.
+        source: course_quality, 05_REVIEW_TRUST_UND_QUALITAET
+
+      - id: license.status_honest
+        label: Lizenzstatus ehrlich
+        category: license
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Unklare Lizenz blockiert Merge und geht auf post_mvp.
+        source: 07_GO_ENTSCHEIDUNGSVORLAGE (Abschnitt 4)
+
+      - id: sources.declared
+        label: Quellen mit Herkunft und Abrufdatum
+        category: sources
+        produced_by: agent
+        severity_if_failed: P1
+        human_mandatory: true
+        rule: Der Agent kann NICHT pruefen, ob eine Quelle existiert oder das
+          aussagt, was behauptet wird. Er prueft nur Form und Vollstaendigkeit.
+          Die inhaltliche Pruefung bleibt menschlich.
+        source: course_quality (Abschnitt 6), ABGABE_CHECKLISTE
+
+      - id: sources.strong_claims_backed
+        label: Starke Behauptungen offiziell oder primaer belegt
+        category: sources
+        produced_by: agent
+        severity_if_failed: P0
+        human_mandatory: true
+        rule: Rechts-, Compliance- und Sicherheitsbehauptungen brauchen offizielle
+          oder primaere Quellen. Erfundene Quellen fuer starke Behauptungen sind
+          ein harter Stopp.
+        source: course_quality (Abschnitt 6), hard_stops
+
+      - id: sources.no_full_text
+        label: Keine urheberrechtlich unklaren Volltexte
+        category: license
+        produced_by: agent
+        severity_if_failed: P0
+        source: course_scope (Abschnitt 8)
+
+# ===========================================================================
+# PHASE 4 - Peer Review
+# ===========================================================================
+  - id: phase-4
+    name: Peer Review
+    purpose: Fachliche Nutzbarkeit aus Sicht einer fremden, fachkundigen Person.
+    agent_involved: true
+    checks:
+
+      - id: use.problem_concrete
+        label: Problem ist konkret
+        category: usability
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Eine Formulierung wie "Mach Marketing" ist zu schwach. Eine konkrete
+          Aufgabe mit benanntem Kontext ist ausreichend.
+        source: QUALITAETSSTANDARD_PLATTFORM (Abschnitt 1)
+
+      - id: use.target_group_clear
+        label: Zielgruppe klar benannt
+        category: usability
+        produced_by: agent
+        severity_if_failed: P1
+        source: QUALITAETSSTANDARD_PLATTFORM (Abschnitt 2)
+
+      - id: use.instructions_usable
+        label: Anleitung fuer Fremde nutzbar
+        category: usability
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Wann nutze ich es, welche Eingaben brauche ich, was bekomme ich,
+          was muss ich danach pruefen?
+        source: QUALITAETSSTANDARD_PLATTFORM (Abschnitt 3)
+
+      - id: use.two_minute_test
+        label: Nutzen in zwei Minuten verstaendlich
+        category: usability
+        produced_by: agent
+        severity_if_failed: P2
+        source: course_validation (Peer-Review-Check)
+
+      - id: examples.present_and_synthetic
+        label: Beispiele vorhanden, realistisch und synthetisch
+        category: examples
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Keine echten Namen, Kunden, E-Mails oder internen Dokumente.
+        source: QUALITAETSSTANDARD_PLATTFORM (Abschnitt 4)
+
+      - id: examples.input_output_match
+        label: Beispielinput und Beispieloutput passen zusammen
+        category: examples
+        produced_by: agent
+        severity_if_failed: P2
+        source: course_quality (Abschnitt 7)
+
+      - id: model.logic_sound
+        label: Modelllogik nachvollziehbar
+        category: usability
+        produced_by: agent
+        severity_if_failed: P1
+        applies_to: [model]
+        rule: Schritte und Felder logisch, Zielgruppe kann es anwenden,
+          Beispielanwendung vollstaendig, Grenzen und Nicht-Ziele benannt.
+        source: course_quality (Abschnitt 8), peer_review_prompt (PHASE 4)
+
+      - id: model.worksheet_present
+        label: Canvas oder Worksheet vorhanden und anwendbar
+        category: usability
+        produced_by: agent
+        severity_if_failed: P1
+        applies_to: [model]
+        source: course_workflow (Abschnitt 3C)
+
+      - id: prompt.structure_complete
+        label: Master Prompts vollstaendig strukturiert
+        category: usability
+        produced_by: agent
+        severity_if_failed: P2
+        applies_to: [prompt_package, model]
+        rule: Rolle, Ziel, Input, Output, Grenzen und Review-Kriterien klar.
+          Verbotene Datenarten genannt. Trennung von Fakten, Annahmen und
+          Hypothesen gefordert. Abbruchkriterien vorhanden. Human Review eingebaut.
+        source: peer_review_prompt (PHASE 4, Master Prompts)
+
+      - id: dataset.linked
+        label: Datensaetze mit Prompt oder Modell verknuepft
+        category: sources
+        produced_by: agent
+        severity_if_failed: P2
+        applies_to: [dataset_package]
+        source: course_workflow (Abschnitt 3B), course_quality (Abschnitt 5)
+
+      - id: limits.failure_modes_concrete
+        label: Failure Modes konkret
+        category: usage_risk
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Typische Fehler benennen, nicht allgemeine Floskeln.
+        source: QUALITAETSSTANDARD_PLATTFORM (Abschnitt 5)
+
+      - id: limits.no_legal_advice
+        label: Keine Rechts-, Audit- oder Beratungssprache
+        category: false_assurance
+        produced_by: agent
+        severity_if_failed: P0
+        rule: Der Beitrag darf keine rechtliche, medizinische, HR- oder
+          Finanzfreigabe behaupten.
+        source: hard_stops, course_validation (Red Flags)
+
+      - id: limits.recency_risk
+        label: Aktualitaetsrisiko markiert
+        category: recency_risk
+        produced_by: agent
+        severity_if_failed: P2
+        rule: Preise, Releases, Hardwaredaten und Rechtslagen duerfen nicht als
+          stabil behandelt werden.
+        source: course_prereview (Aktualitaetsrisiko)
+
+      - id: limits.no_automated_decisions
+        label: Keine automatisierte Entscheidung ueber Menschen
+        category: usage_risk
+        produced_by: agent
+        severity_if_failed: P0
+        source: hard_stops
+
+# ===========================================================================
+# PHASE 5 - Szenario-Triade und Tests
+# ===========================================================================
+# Kern des Projekts. Aus Tag 6: Vertrauen entsteht durch validierte Szenarien,
+# nicht durch glatte Formulierungen.
+  - id: phase-5
+    name: Szenario-Triade und Tests
+    purpose: Pruefen, ob implizites Expertenwissen sichtbar gemacht wurde.
+    agent_involved: true
+    checks:
+
+      - id: scenario.positive_present
+        label: Positives Szenario vorhanden
+        category: scenario_triad
+        produced_by: validator
+        severity_if_failed: P1
+        rule: Der Begriff "positiv" muss in den Markdown-Dateien vorkommen
+          (Validator). Inhaltliche Pruefung durch den Agenten.
+        source: repo_validators (SCENARIO_TERMS)
+
+      - id: scenario.reworkable_present
+        label: Nachbearbeitbares Szenario vorhanden
+        category: scenario_triad
+        produced_by: validator
+        severity_if_failed: P1
+        source: repo_validators (SCENARIO_TERMS)
+
+      - id: scenario.negative_present
+        label: Negatives Szenario vorhanden
+        category: scenario_triad
+        produced_by: validator
+        severity_if_failed: P1
+        source: repo_validators (SCENARIO_TERMS)
+
+      - id: scenario.expert_feedback
+        label: Expertenfeedback zu den Szenarien dokumentiert
+        category: scenario_triad
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Ist erkennbar, was ein Fachmensch besser beurteilt als ein
+          generisches Sprachmodell? Ohne diesen Punkt bleibt der Beitrag draft
+          oder hoechstens bronze_candidate.
+        source: course_validation (Szenario-Check), ZUSAMMENFASSUNG_TAG6
+
+      - id: scenario.honest
+        label: Szenarien sind ehrlich und pruefbar
+        category: scenario_triad
+        produced_by: agent
+        severity_if_failed: P2
+        confidence_required: true
+        rule: Das negative Szenario muss wirklich zeigen, wo der Einsatz falsch
+          oder unzulaessig waere. Ein beschoenigtes Negativszenario ist ein Befund.
+        source: QUALITAETSSTANDARD_PLATTFORM (Abschnitt 4a)
+
+      - id: scenario.synthetic_only
+        label: Alle Testdaten synthetisch
+        category: data_risk
+        produced_by: agent
+        severity_if_failed: P0
+        source: peer_review_prompt (PHASE 5)
+
+      - id: tests.documented_if_claimed
+        label: Behauptete Tests sind dokumentiert
+        category: scenario_triad
+        produced_by: agent
+        severity_if_failed: P1
+        rule: silver_candidate nur bei wirklich durchgefuehrten Tests. Nicht
+          durchgefuehrte Tests gehoeren in test-plan.md, nicht in ein
+          Ergebnisdokument.
+        source: course_quality (Abschnitt 2 und 10)
+
+# ===========================================================================
+# PHASE 6 - Rueckmeldung und Statusvorschlag
+# ===========================================================================
+  - id: phase-6
+    name: Rueckmeldung und Statusvorschlag
+    purpose: Ergebnisse zu Contributor-Feedback und Maintainer-Handoff verdichten.
+    agent_involved: true
+    outputs:
+      - contributor_feedback.md
+      - maintainer_handoff.md
+      - agent_report.md
+    checks:
+
+      - id: report.contributor_feedback
+        label: Contributor-Feedback erzeugt
+        category: scope
+        produced_by: agent
+        severity_if_failed: P2
+        rule: Kurz, sachlich, hoechstens 3 konkrete naechste Schritte. Keine
+          abwertende Sprache. Keine Komplettumschreibung anbieten. Bewertet das
+          Artefakt, nicht die Person - der Bericht liegt oeffentlich im Repository.
+        source: course_prereview (Abschnitt 11)
+
+      - id: report.maintainer_handoff
+        label: Maintainer-Handoff erzeugt
+        category: scope
+        produced_by: agent
+        severity_if_failed: P2
+        rule: Entscheidungsorientiert - Blocker, Trust-Relevanz, Quellen- und
+          Lizenzrisiko, Datenrisiko, empfohlener naechster Schritt, noetige
+          menschliche Entscheidung.
+        source: course_prereview (Abschnitt 12)
+
+      - id: report.status_suggestion
+        label: Statusvorschlag als Empfehlung markiert
+        category: scope
+        produced_by: agent
+        severity_if_failed: P0
+        human_mandatory: true
+        rule: Erlaubt sind nur draft, bronze_candidate und
+          bronze_ready_for_human_decision. Der Agent vergibt niemals einen
+          finalen Status.
+        source: peer_review_prompt (Grundregel 4 und 5), openclaw-agent.yml (not_allowed)
+
+      - id: report.human_decision_named
+        label: Noetige menschliche Entscheidung benannt
+        category: human_review
+        produced_by: agent
+        severity_if_failed: P1
+        rule: Welcher Mensch muss als naechstes was entscheiden?
+        source: course_prereview (Abschnitt 16)
+
+# ===========================================================================
+# Was der Agent unter keinen Umstaenden tut
+# ===========================================================================
+# Quelle: openclaw-agent.yml (not_allowed), course_prereview (Abschnitt 3),
+# peer_review_prompt (Grundregeln), course_scope (Abschnitt 11)
+not_allowed:
+  - approve_publication
+  - merge_pull_requests
+  - push_to_main
+  - assign_final_status
+  - create_releases
+  - provide_legal_advice
+  - claim_audit_completion
+  - rewrite_contribution
+  - expand_scope
+  - invent_new_target_groups
+  - introduce_unsourced_claims

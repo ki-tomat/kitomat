@@ -1,0 +1,802 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "rev-20260803-001",
+  "created_at": "2026-08-03T09:50:17Z",
+  "ruleset_version": "1.0.0",
+  "artifact": {
+    "id": "demo-angebotstexte-handwerk",
+    "title": "Angebotstexte fuer Handwerksbetriebe",
+    "artifact_type": "prompt_package",
+    "artifact_type_declared": "prompt_package",
+    "path": "prompts/demo-angebotstexte-handwerk",
+    "declared_status": "bronze_candidate",
+    "data_risk": "green",
+    "source": {
+      "repository": "ki-tomat/kitomat",
+      "trigger": "manual"
+    },
+    "files": [
+      {
+        "path": "evaluation.md",
+        "sha256": "1b57e05c5a36b9af0f7aee48a7391692b7ad89a8e31c9ed6206607f492bd3a98",
+        "size_bytes": 1233,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "examples/input-01.md",
+        "sha256": "d6b9fe6766b8b32838a71df38bc6483160bccd9f95025b0bc6c15fa9d6555f7a",
+        "size_bytes": 543,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "examples/output-01.md",
+        "sha256": "3540171d79f5c7446d3639b53befac7b1f3175c7aec0f6cf367286fe09688483",
+        "size_bytes": 950,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "failure-modes.md",
+        "sha256": "0fbebc02a59ac3614cbcefc92f2679f3a80eac9173751216c7ef56393093b10e",
+        "size_bytes": 600,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "metadata.yml",
+        "sha256": "5eb3bde6095d7aba3b2890e51be118d2a8670dfa82ff242291c130df57e379f3",
+        "size_bytes": 885,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "prompt.md",
+        "sha256": "444ffab4a007e41c8e19682c0cd58b49fd27e3a2125f5f218626c25f58ff43da",
+        "size_bytes": 1115,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "README.md",
+        "sha256": "16e0b2a0688534c6182f528223737af016b775af1c84bdf0ab17fd220e8505e9",
+        "size_bytes": 1135,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      }
+    ]
+  },
+  "reviewer": {
+    "code": "p04",
+    "role": "peer_reviewer"
+  },
+  "phases": [
+    {
+      "id": "phase-0",
+      "name": "Orientierung und Sicherheits-Gate",
+      "signal": "green",
+      "narrative": "Deterministische Vorpruefung von prompts/demo-angebotstexte-handwerk. 7 Dateien erfasst und gehasht. PII-Vorfilter entfernte 0 Falschtreffer (Datum, DOI, Zahlenspanne) vor dem Abgleich.",
+      "checks": [
+        {
+          "id": "artifact.located",
+          "label": "Artefaktordner gefunden und eindeutig",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "artifact.type_detected",
+          "label": "Artefakttyp erkannt",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Erkannter Typ: prompt_package."
+        },
+        {
+          "id": "artifact.scope_lock",
+          "label": "Scope-Sperre gesetzt",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "7 Dateien mit SHA-256 eingefroren."
+        },
+        {
+          "id": "safety.pii_scan",
+          "label": "Keine eindeutigen PII-Treffer im Beitrag",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "0 Rohtreffer, 0 vom Vorfilter entfernt, 0 blockierend.",
+          "evidence": []
+        },
+        {
+          "id": "safety.forbidden_file_types",
+          "label": "Keine unklaren lokalen Datei-Uploads",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "safety.no_real_names",
+          "label": "Kein Klarname statt Teilnehmercode",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "maintainer='p12'"
+        }
+      ],
+      "gate": {
+        "status": "passed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": true
+        },
+        "signed_by": "p04",
+        "signed_at": "2026-08-03T14:00:00Z",
+        "comment": "Vorfuehrung: Befunde gesichtet und bestaetigt."
+      }
+    },
+    {
+      "id": "phase-1",
+      "name": "Potenzial, Grenzfaelle und blinde Flecken",
+      "signal": "yellow",
+      "narrative": "[Mock-Provider] Phase phase-1 regelbasiert bearbeitet. 7 Dateien gelesen. Diese Befunde ersetzen keine inhaltliche Pruefung durch ein Sprachmodell.",
+      "checks": [
+        {
+          "id": "potential.purpose_derivable",
+          "label": "Zweck und Einsatzgrenzen aus dem Material ableitbar",
+          "category": "potential",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "potential.realistic_scope",
+          "label": "Realistisches Potenzial benannt",
+          "category": "potential",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P3",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "potential.blind_spots",
+          "label": "Blinde Flecken geprueft",
+          "category": "potential",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "potential.edge_cases",
+          "label": "Grenzfaelle durchgespielt",
+          "category": "potential",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "potential.failure_map",
+          "label": "Failure Map erstellt",
+          "category": "potential",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "potential.overconfidence",
+          "label": "Beitrag klingt nicht zu sicher",
+          "category": "false_assurance",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low",
+          "finding": "Keine auffaelligen Formulierungen im Stichwortabgleich."
+        }
+      ],
+      "gate": {
+        "status": "passed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": true
+        },
+        "signed_by": "p04",
+        "signed_at": "2026-08-03T14:00:00Z",
+        "comment": "Vorfuehrung: Befunde gesichtet und bestaetigt."
+      }
+    },
+    {
+      "id": "phase-2",
+      "name": "Pflichtdateien und Struktur",
+      "signal": "yellow",
+      "narrative": "[Mock-Provider] Phase phase-2 regelbasiert bearbeitet. 7 Dateien gelesen. Diese Befunde ersetzen keine inhaltliche Pruefung durch ein Sprachmodell.",
+      "checks": [
+        {
+          "id": "files.required_present",
+          "label": "Alle Pflichtdateien vorhanden",
+          "category": "required_files",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Alle Pflichtdateien vorhanden.",
+          "recommendation": ""
+        },
+        {
+          "id": "files.no_placeholders",
+          "label": "Keine Platzhalter im Inhalt",
+          "category": "required_files",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Keine Platzhalter gefunden.",
+          "evidence": []
+        },
+        {
+          "id": "files.extension_convention",
+          "label": "Metadatendatei heisst metadata.yml",
+          "category": "file_consistency",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Metadatendatei heisst korrekt metadata.yml.",
+          "recommendation": ""
+        },
+        {
+          "id": "files.declared_vs_actual",
+          "label": "Dateiliste, Verweise und Metadaten stimmen ueberein",
+          "category": "file_consistency",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "files.foreign_content",
+          "label": "Keine fachfremden oder versehentlich mitgelieferten Dateien",
+          "category": "file_consistency",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "files.companion_artifacts",
+          "label": "Begleitartefakte eingeordnet",
+          "category": "companion_artifact",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        }
+      ],
+      "gate": {
+        "status": "passed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": true
+        },
+        "signed_by": "p04",
+        "signed_at": "2026-08-03T14:00:00Z",
+        "comment": "Vorfuehrung: Befunde gesichtet und bestaetigt."
+      }
+    },
+    {
+      "id": "phase-3",
+      "name": "Metadaten, Lizenz und Trust Layer",
+      "signal": "yellow",
+      "narrative": "[Mock-Provider] Phase phase-3 regelbasiert bearbeitet. 7 Dateien gelesen. Diese Befunde ersetzen keine inhaltliche Pruefung durch ein Sprachmodell.",
+      "checks": [
+        {
+          "id": "meta.fields_present",
+          "label": "Alle 15 Pflichtfelder vorhanden",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Alle 15 Pflichtfelder vorhanden."
+        },
+        {
+          "id": "meta.enums_valid",
+          "label": "Feldwerte innerhalb der erlaubten Enums",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Alle Feldwerte innerhalb der erlaubten Enums."
+        },
+        {
+          "id": "meta.status_allowed",
+          "label": "Status im Kurs zulaessig",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Status 'bronze_candidate' ist im Kurs zulaessig."
+        },
+        {
+          "id": "meta.status_not_overclaimed",
+          "label": "Kein zu hoch behaupteter Status",
+          "category": "trust_layer",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "trust.data_risk_plausible",
+          "label": "data_risk plausibel",
+          "category": "data_risk",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "trust.human_review_correct",
+          "label": "human_review_required korrekt gesetzt",
+          "category": "human_review",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "trust.ai_act_plausible",
+          "label": "ai_act_proximity plausibel",
+          "category": "trust_layer",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "trust.disclaimer_present",
+          "label": "Passender Disclaimer vorhanden",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low",
+          "finding": "Stichwortpruefung erfolgreich (4 Treffer). Nur ein Formhinweis, keine inhaltliche Bewertung."
+        },
+        {
+          "id": "trust.sensitive_domain",
+          "label": "Sensible Bereiche erkannt und eingeordnet",
+          "category": "data_risk",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P0",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "license.status_honest",
+          "label": "Lizenzstatus ehrlich",
+          "category": "license",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "sources.declared",
+          "label": "Quellen mit Herkunft und Abrufdatum",
+          "category": "sources",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "sources.strong_claims_backed",
+          "label": "Starke Behauptungen offiziell oder primaer belegt",
+          "category": "sources",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P0",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "sources.no_full_text",
+          "label": "Keine urheberrechtlich unklaren Volltexte",
+          "category": "license",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P0",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        }
+      ],
+      "gate": {
+        "status": "passed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": true
+        },
+        "signed_by": "p04",
+        "signed_at": "2026-08-03T14:00:00Z",
+        "comment": "Vorfuehrung: Befunde gesichtet und bestaetigt."
+      }
+    },
+    {
+      "id": "phase-4",
+      "name": "Peer Review",
+      "signal": "yellow",
+      "narrative": "[Mock-Provider] Phase phase-4 regelbasiert bearbeitet. 7 Dateien gelesen. Diese Befunde ersetzen keine inhaltliche Pruefung durch ein Sprachmodell.",
+      "checks": [
+        {
+          "id": "use.problem_concrete",
+          "label": "Problem ist konkret",
+          "category": "usability",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "use.target_group_clear",
+          "label": "Zielgruppe klar benannt",
+          "category": "usability",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low",
+          "finding": "Stichwortpruefung erfolgreich (2 Treffer). Nur ein Formhinweis, keine inhaltliche Bewertung."
+        },
+        {
+          "id": "use.instructions_usable",
+          "label": "Anleitung fuer Fremde nutzbar",
+          "category": "usability",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low",
+          "finding": "Stichwortpruefung erfolgreich (1 Treffer). Nur ein Formhinweis, keine inhaltliche Bewertung."
+        },
+        {
+          "id": "use.two_minute_test",
+          "label": "Nutzen in zwei Minuten verstaendlich",
+          "category": "usability",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "examples.present_and_synthetic",
+          "label": "Beispiele vorhanden, realistisch und synthetisch",
+          "category": "examples",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "examples.input_output_match",
+          "label": "Beispielinput und Beispieloutput passen zusammen",
+          "category": "examples",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "prompt.structure_complete",
+          "label": "Master Prompts vollstaendig strukturiert",
+          "category": "usability",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low",
+          "finding": "Stichwortpruefung erfolgreich (2 Treffer). Nur ein Formhinweis, keine inhaltliche Bewertung."
+        },
+        {
+          "id": "limits.failure_modes_concrete",
+          "label": "Failure Modes konkret",
+          "category": "usage_risk",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low",
+          "finding": "Stichwortpruefung erfolgreich (2 Treffer). Nur ein Formhinweis, keine inhaltliche Bewertung."
+        },
+        {
+          "id": "limits.no_legal_advice",
+          "label": "Keine Rechts-, Audit- oder Beratungssprache",
+          "category": "false_assurance",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low",
+          "finding": "Keine auffaelligen Formulierungen im Stichwortabgleich."
+        },
+        {
+          "id": "limits.recency_risk",
+          "label": "Aktualitaetsrisiko markiert",
+          "category": "recency_risk",
+          "result": "warn",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "finding": "Keine der erwarteten Formulierungen gefunden. Menschliche Pruefung erforderlich."
+        },
+        {
+          "id": "limits.no_automated_decisions",
+          "label": "Keine automatisierte Entscheidung ueber Menschen",
+          "category": "usage_risk",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low",
+          "finding": "Keine auffaelligen Formulierungen im Stichwortabgleich."
+        }
+      ],
+      "gate": {
+        "status": "passed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": true
+        },
+        "signed_by": "p04",
+        "signed_at": "2026-08-03T14:00:00Z",
+        "comment": "Vorfuehrung: Befunde gesichtet und bestaetigt."
+      }
+    },
+    {
+      "id": "phase-5",
+      "name": "Szenario-Triade und Tests",
+      "signal": "yellow",
+      "narrative": "[Mock-Provider] Phase phase-5 regelbasiert bearbeitet. 7 Dateien gelesen. Diese Befunde ersetzen keine inhaltliche Pruefung durch ein Sprachmodell.",
+      "checks": [
+        {
+          "id": "scenario.positive_present",
+          "label": "Positives Szenario vorhanden",
+          "category": "scenario_triad",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Begriff 'positiv' in den Markdown-Dateien gefunden.",
+          "recommendation": ""
+        },
+        {
+          "id": "scenario.reworkable_present",
+          "label": "Nachbearbeitbares Szenario vorhanden",
+          "category": "scenario_triad",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Begriff 'nachbearbeitbar' in den Markdown-Dateien gefunden.",
+          "recommendation": ""
+        },
+        {
+          "id": "scenario.negative_present",
+          "label": "Negatives Szenario vorhanden",
+          "category": "scenario_triad",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Begriff 'negativ' in den Markdown-Dateien gefunden.",
+          "recommendation": ""
+        },
+        {
+          "id": "scenario.expert_feedback",
+          "label": "Expertenfeedback zu den Szenarien dokumentiert",
+          "category": "scenario_triad",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low",
+          "finding": "Stichwortpruefung erfolgreich (1 Treffer). Nur ein Formhinweis, keine inhaltliche Bewertung."
+        },
+        {
+          "id": "scenario.honest",
+          "label": "Szenarien sind ehrlich und pruefbar",
+          "category": "scenario_triad",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "scenario.synthetic_only",
+          "label": "Alle Testdaten synthetisch",
+          "category": "data_risk",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P0",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "tests.documented_if_claimed",
+          "label": "Behauptete Tests sind dokumentiert",
+          "category": "scenario_triad",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        }
+      ],
+      "gate": {
+        "status": "passed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": true
+        },
+        "signed_by": "p04",
+        "signed_at": "2026-08-03T14:00:00Z",
+        "comment": "Vorfuehrung: Befunde gesichtet und bestaetigt."
+      }
+    },
+    {
+      "id": "phase-6",
+      "name": "Rueckmeldung und Statusvorschlag",
+      "signal": "yellow",
+      "narrative": "[Mock-Provider] Phase phase-6 regelbasiert bearbeitet. 7 Dateien gelesen. Diese Befunde ersetzen keine inhaltliche Pruefung durch ein Sprachmodell.",
+      "checks": [
+        {
+          "id": "report.contributor_feedback",
+          "label": "Contributor-Feedback erzeugt",
+          "category": "scope",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "report.maintainer_handoff",
+          "label": "Maintainer-Handoff erzeugt",
+          "category": "scope",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P2",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "report.status_suggestion",
+          "label": "Statusvorschlag als Empfehlung markiert",
+          "category": "scope",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P0",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        },
+        {
+          "id": "report.human_decision_named",
+          "label": "Noetige menschliche Entscheidung benannt",
+          "category": "human_review",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "confidence": "low",
+          "severity": "P1",
+          "human_mandatory": true,
+          "human_ack": true,
+          "finding": "Der Mock-Provider kann diesen Punkt nicht beurteilen. Ein Sprachmodell oder ein Mensch muss ihn bewerten."
+        }
+      ],
+      "gate": {
+        "status": "passed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": true
+        },
+        "signed_by": "p04",
+        "signed_at": "2026-08-03T14:00:00Z",
+        "comment": "Vorfuehrung: Befunde gesichtet und bestaetigt."
+      }
+    }
+  ],
+  "overall": {
+    "review_signal": "yellow",
+    "handoff": "start_peer_review",
+    "summary": "Gesamtampel yellow. Ergebnisse: 28x not_assessable, 24x pass, 1x warn. 28 Punkte warten auf menschliche Bestaetigung.",
+    "blocking_findings": 0,
+    "open_human_decisions": [],
+    "status_suggestion": "bronze_candidate"
+  },
+  "reports": {
+    "agent_report": "agent_report.md",
+    "contributor_feedback": "contributor_feedback.md",
+    "maintainer_handoff": "maintainer_handoff.md"
+  },
+  "audit": {
+    "human_decision_required": true,
+    "agent": {
+      "provider": "mock",
+      "model_id": "mock-rules-v1",
+      "prompt_version": "review-checks-1.0.0",
+      "started_at": "2026-08-03T09:50:17Z",
+      "finished_at": "2026-08-03T09:50:17Z"
+    },
+    "stage1a": {
+      "validators": [
+        {
+          "name": "stage1a_scan",
+          "exit_code": 0,
+          "findings": 0
+        }
+      ],
+      "hard_stop_triggered": false
+    },
+    "notes": "Vorfilter entfernte 0 Falschtreffer."
+  }
+}

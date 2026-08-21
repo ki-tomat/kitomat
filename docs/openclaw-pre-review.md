@@ -2,6 +2,13 @@
 
 OpenClaw can be used as an optional pre-review assistant for incoming KItomat contributions.
 
+For step-by-step usage, see `agents/openclaw-precheck/openclaw-step-by-step.md`.
+
+For release, handover and communication preparation, use Hermes:
+
+- `agents/hermes-release/system-prompt.md`
+- `agents/hermes-release/hermes-step-by-step.md`
+
 ## Goal
 
 OpenClaw should give early feedback before a human maintainer spends review time. It may recommend a handoff status, but it must not approve, merge, publish or assign final `bronze`.
@@ -46,6 +53,10 @@ OpenClaw must not:
 - scenario triad is present
 - sources/license fields are not obviously missing
 - risk level is plausible enough for human review
+- release asset metadata is present when a download package is involved
 
 It does not mean the artifact is approved.
 
+## Hermes relation
+
+OpenClaw checks incoming contributions before human evaluation. Hermes prepares release notes, handover summaries and communication drafts after review facts exist. Both agents are advisory and both require human approval before publication.
