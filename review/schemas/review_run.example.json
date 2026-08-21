@@ -1,0 +1,805 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "rev-20260801-001",
+  "created_at": "2026-08-01T18:20:00Z",
+  "ruleset_version": "1.0.0",
+  "artifact": {
+    "id": "kmu-ki-online-marketing-workbook",
+    "title": "KI-Online-Marketing-Beratungsmodell für Kleinstunternehmen",
+    "artifact_type": "model",
+    "artifact_type_declared": "model",
+    "path": "models/kmu-ki-online-marketing-workbook",
+    "declared_status": "bronze_candidate",
+    "data_risk": "yellow",
+    "source": {
+      "repository": "ki-tomat/kitomat",
+      "trigger": "label",
+      "trigger_label": "review-required"
+    },
+    "files": [
+      {
+        "path": "FILELIST.md",
+        "sha256": "3f4c543217d6e4c101ea84a95d77c52d5941a70daf306db1de1c940b53b66997",
+        "size_bytes": 642,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "README.md",
+        "sha256": "0607ee1ddde42ed0d535705bde9e8f4d680bc3c79ecccb5ea3a2bb51ebb3c5c4",
+        "size_bytes": 8965,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "application-guide.md",
+        "sha256": "43b91a4dd39419d47ea5583a820c3f41d00d2149e873153a9fadda8faf7ed786",
+        "size_bytes": 6057,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "canvas/ki-marketing-routine-canvas.md",
+        "sha256": "3b80e42fe40820ff1b278367a8130fb80c06d816013c75f7e037af93e46f4c8c",
+        "size_bytes": 898,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "examples/example-01.md",
+        "sha256": "ec8da24e04813792c8d0cb4d7972b6dc7bf730c21cb2112a482e372bcbe35b06",
+        "size_bytes": 5936,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "examples/example-02-medienunternehmen-blogartikel.md",
+        "sha256": "c93fe1d32dda354057296543b4cfb6ca0cc2e0e8bdfbd03cef1cf6645fd9a3e7",
+        "size_bytes": 9530,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "examples/example-03-email-folge-leadmagnet.md",
+        "sha256": "e654046af2c551e76315442681d80204b0d0e555b6625c650b838f49ea105ade",
+        "size_bytes": 8828,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "failure-modes.md",
+        "sha256": "1049af344b9f286433dbd7eb287e471cf2017df093fb760c16ae7531dc225d8a",
+        "size_bytes": 12316,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "metadata.yml",
+        "sha256": "167ee0993f7ec6094d3d92f3e068ef295b7346f2c8a967e86ba6dbaf77c2520e",
+        "size_bytes": 1541,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "model.md",
+        "sha256": "5e0f7f89b2e375dabe2e3da353b4f83d995d113ff4e2a86a724034f22c53f083",
+        "size_bytes": 9745,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "peer-review-trust-review.md",
+        "sha256": "cc0de296dbbcdb2585cd17f2442135934bfee8d237d92e3f4621d424531ee7ca",
+        "size_bytes": 2307,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "praxisanleitung-anfaenger.html",
+        "sha256": "abe500fae93fd8a9c94e2a611103b3147c52f58b3e15408148ead6fac78544b2",
+        "size_bytes": 16090,
+        "sent_to_agent": false,
+        "redaction_count": 0
+      },
+      {
+        "path": "praxisanleitung-anfaenger.md",
+        "sha256": "4a66cc8e3ae53ae3ef0623d5564923baa8013637b7fe550add450080d6429cbc",
+        "size_bytes": 13353,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "review-checklist-model.md",
+        "sha256": "13da65aea8f02ac78c877da167ebbbca9b287bb72e6067049aa1fd811ad1483e",
+        "size_bytes": 3904,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "sources.md",
+        "sha256": "e4e6dd6a83d0929d514a9704e285d732ac29634ecd8a90b2477ccccbf127efe4",
+        "size_bytes": 12186,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "step-by-step-nachbau-guide.md",
+        "sha256": "ec56b4a65fa07634d0ba44449d900210bec749fe9ff6aab4f5ba71066ea32ae7",
+        "size_bytes": 14898,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "tests/testlauf-example-01-baeckerei-google-social.md",
+        "sha256": "012ecfbb0f9572aa16e74f5921524d7a7d9274db336930ad0ae353a99e7aec61",
+        "size_bytes": 3307,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "worksheet/01-erstgespraech-anamnese.md",
+        "sha256": "cc19db3b664a873fca97b88f5f2ed5bbe18fd665a29e0f9bb0c96de8abcb6017",
+        "size_bytes": 7669,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "worksheet/02-use-case-auswahl.md",
+        "sha256": "9a2dad65f3fcb37988f9fcc8025ca519e12a021668b72f46b2d25ea62b0d98cd",
+        "size_bytes": 6756,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "worksheet/03-pilot-testprotokoll.md",
+        "sha256": "fcee87b86ea57d70fdc0efd5ca04ad8c961f06f6cd9ac27c4de9be71c0e785f3",
+        "size_bytes": 6991,
+        "sent_to_agent": true,
+        "redaction_count": 0
+      },
+      {
+        "path": "zusammenfassung-modellerstellung-kmu-ki-online-marketing.html",
+        "sha256": "5802391c3426d847f850d9cfceca6a7525672dbf88c65583bbd7eb11be8590c1",
+        "size_bytes": 15238,
+        "sent_to_agent": false,
+        "redaction_count": 0
+      }
+    ]
+  },
+  "reviewer": {
+    "code": "p04",
+    "role": "peer_reviewer"
+  },
+  "phases": [
+    {
+      "id": "phase-0",
+      "name": "Orientierung und Sicherheits-Gate",
+      "signal": "green",
+      "narrative": "Genau ein Artefaktordner betroffen. Dateiliste eingefroren und gehasht. Der PII-Vorfilter entfernte Abrufdaten und DOI-Fragmente vor dem Abgleich.",
+      "checks": [
+        {
+          "id": "artifact.located",
+          "label": "Artefaktordner gefunden und eindeutig",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "artifact.type_detected",
+          "label": "Artefakttyp erkannt",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Pfad, artifact_type und Inhalt stimmen ueberein: model."
+        },
+        {
+          "id": "artifact.scope_lock",
+          "label": "Scope-Sperre gesetzt",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "21 Dateien mit SHA-256 eingefroren."
+        },
+        {
+          "id": "safety.pii_scan",
+          "label": "Keine eindeutigen PII-Treffer im Beitrag",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "12 Rohtreffer, davon 12 vom Vorfilter als Datum, DOI oder Zahlenspanne entfernt. 0 blockierende Treffer."
+        },
+        {
+          "id": "safety.forbidden_file_types",
+          "label": "Keine unklaren lokalen Datei-Uploads",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "safety.no_real_names",
+          "label": "Kein Klarname statt Teilnehmercode",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "validator",
+          "severity": "P1",
+          "finding": "maintainer='p99'"
+        }
+      ],
+      "gate": {
+        "status": "passed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": true
+        },
+        "signed_by": "p04",
+        "signed_at": "2026-08-01T18:20:00Z",
+        "comment": "Sicherheits-Gate offen. Uebertragung an den Agenten freigegeben."
+      }
+    },
+    {
+      "id": "phase-1",
+      "name": "Potenzial, Grenzfaelle und blinde Flecken",
+      "signal": "yellow",
+      "narrative": "Failure Map: Erstgespraech und Use-Case-Auswahl funktionieren gut. Der Pilot-Testteil funktioniert nur mit Nachbearbeitung, weil Abbruchkriterien fehlen.",
+      "checks": [
+        {
+          "id": "potential.purpose_derivable",
+          "label": "Zweck und Einsatzgrenzen ableitbar",
+          "category": "potential",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "potential.realistic_scope",
+          "label": "Realistisches Potenzial benannt",
+          "category": "potential",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "potential.blind_spots",
+          "label": "Blinde Flecken geprueft",
+          "category": "potential",
+          "result": "warn",
+          "produced_by": "agent",
+          "severity": "P2",
+          "confidence": "medium",
+          "finding": "Das Modell setzt voraus, dass ein Betrieb sein Marketingziel kennt, fragt es aber nicht ab.",
+          "recommendation": "Eine Zeile im Erstgespraech-Worksheet ergaenzen."
+        },
+        {
+          "id": "potential.edge_cases",
+          "label": "Grenzfaelle durchgespielt",
+          "category": "potential",
+          "result": "warn",
+          "produced_by": "agent",
+          "severity": "P2",
+          "confidence": "medium",
+          "finding": "Bei widerspruechlichem Input glaettet das Modell, statt den Widerspruch zu markieren."
+        },
+        {
+          "id": "potential.failure_map",
+          "label": "Failure Map erstellt",
+          "category": "potential",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "medium"
+        },
+        {
+          "id": "potential.overconfidence",
+          "label": "Beitrag klingt nicht zu sicher",
+          "category": "false_assurance",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "medium"
+        }
+      ],
+      "gate": {
+        "status": "open",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-2",
+      "name": "Pflichtdateien und Struktur",
+      "signal": "green",
+      "checks": [
+        {
+          "id": "files.required_present",
+          "label": "Alle Pflichtdateien vorhanden",
+          "category": "required_files",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "Vollstaendig, canvas/ vorhanden."
+        },
+        {
+          "id": "files.no_placeholders",
+          "label": "Keine Platzhalter im Inhalt",
+          "category": "required_files",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "files.extension_convention",
+          "label": "Metadatendatei heisst metadata.yml",
+          "category": "file_consistency",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "files.declared_vs_actual",
+          "label": "Dateiliste und Verweise stimmen ueberein",
+          "category": "file_consistency",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "files.foreign_content",
+          "label": "Keine fachfremden Dateien",
+          "category": "file_consistency",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "medium"
+        },
+        {
+          "id": "files.companion_artifacts",
+          "label": "Begleitartefakte eingeordnet",
+          "category": "companion_artifact",
+          "result": "warn",
+          "produced_by": "agent",
+          "severity": "P2",
+          "confidence": "medium",
+          "finding": "Zwei HTML-Dateien liegen im Paket. Eine ist im README benannt, die andere nicht.",
+          "recommendation": "Zweite HTML-Datei im README als Begleitartefakt benennen oder entfernen."
+        }
+      ],
+      "gate": {
+        "status": "closed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-3",
+      "name": "Metadaten, Lizenz und Trust Layer",
+      "signal": "yellow",
+      "checks": [
+        {
+          "id": "meta.fields_present",
+          "label": "Alle 15 Pflichtfelder vorhanden",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "meta.enums_valid",
+          "label": "Feldwerte innerhalb der Enums",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "meta.status_allowed",
+          "label": "Status im Kurs zulaessig",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "validator",
+          "finding": "status=bronze_candidate"
+        },
+        {
+          "id": "meta.status_not_overclaimed",
+          "label": "Kein zu hoch behaupteter Status",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "medium"
+        },
+        {
+          "id": "trust.data_risk_plausible",
+          "label": "data_risk plausibel",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "medium",
+          "human_mandatory": true,
+          "human_ack": false,
+          "finding": "data_risk=yellow ist plausibel."
+        },
+        {
+          "id": "trust.human_review_correct",
+          "label": "human_review_required korrekt",
+          "category": "human_review",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "trust.ai_act_plausible",
+          "label": "ai_act_proximity plausibel",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "medium"
+        },
+        {
+          "id": "trust.disclaimer_present",
+          "label": "Disclaimer vorhanden",
+          "category": "trust_layer",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "trust.sensitive_domain",
+          "label": "Sensible Bereiche eingeordnet",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "medium",
+          "human_mandatory": true,
+          "human_ack": false
+        },
+        {
+          "id": "license.status_honest",
+          "label": "Lizenzstatus ehrlich",
+          "category": "license",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high",
+          "finding": "license_status=declared"
+        },
+        {
+          "id": "sources.declared",
+          "label": "Quellen mit Herkunft und Abrufdatum",
+          "category": "sources",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "medium",
+          "human_mandatory": true,
+          "human_ack": false,
+          "finding": "Quellen mit Abrufdatum vorhanden. Der Agent kann nicht pruefen, ob sie existieren und das aussagen, was behauptet wird."
+        },
+        {
+          "id": "sources.strong_claims_backed",
+          "label": "Starke Behauptungen belegt",
+          "category": "sources",
+          "result": "not_assessable",
+          "produced_by": "agent",
+          "severity": "P2",
+          "confidence": "low",
+          "human_mandatory": true,
+          "human_ack": false,
+          "finding": "Nicht ohne Aufruf der Quellen entscheidbar. Menschliche Pruefung erforderlich."
+        },
+        {
+          "id": "sources.no_full_text",
+          "label": "Keine unklaren Volltexte",
+          "category": "license",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        }
+      ],
+      "gate": {
+        "status": "closed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": false,
+          "reviewer_signed": false
+        },
+        "comment": "Vier Punkte erfordern menschliche Bestaetigung, bevor dieses Gate oeffnen kann."
+      }
+    },
+    {
+      "id": "phase-4",
+      "name": "Peer Review",
+      "signal": "green",
+      "checks": [
+        {
+          "id": "use.problem_concrete",
+          "label": "Problem ist konkret",
+          "category": "usability",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "use.target_group_clear",
+          "label": "Zielgruppe klar",
+          "category": "usability",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "use.instructions_usable",
+          "label": "Anleitung nutzbar",
+          "category": "usability",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "use.two_minute_test",
+          "label": "Nutzen in zwei Minuten verstaendlich",
+          "category": "usability",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "medium"
+        },
+        {
+          "id": "examples.present_and_synthetic",
+          "label": "Beispiele synthetisch",
+          "category": "examples",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "examples.input_output_match",
+          "label": "Input und Output passen",
+          "category": "examples",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "model.logic_sound",
+          "label": "Modelllogik nachvollziehbar",
+          "category": "usability",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "model.worksheet_present",
+          "label": "Worksheet anwendbar",
+          "category": "usability",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "prompt.structure_complete",
+          "label": "Master Prompts strukturiert",
+          "category": "usability",
+          "result": "warn",
+          "produced_by": "agent",
+          "severity": "P2",
+          "confidence": "medium",
+          "finding": "Abbruchkriterien fehlen in den Prompts."
+        },
+        {
+          "id": "limits.failure_modes_concrete",
+          "label": "Failure Modes konkret",
+          "category": "usage_risk",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "limits.no_legal_advice",
+          "label": "Keine Rechtsberatungssprache",
+          "category": "false_assurance",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "limits.recency_risk",
+          "label": "Aktualitaetsrisiko markiert",
+          "category": "recency_risk",
+          "result": "warn",
+          "produced_by": "agent",
+          "severity": "P3",
+          "confidence": "medium",
+          "finding": "Plattformfunktionen aendern sich haeufig; im Beitrag fehlt ein Hinweis darauf."
+        },
+        {
+          "id": "limits.no_automated_decisions",
+          "label": "Keine automatisierte Entscheidung ueber Menschen",
+          "category": "usage_risk",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        }
+      ],
+      "gate": {
+        "status": "closed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-5",
+      "name": "Szenario-Triade und Tests",
+      "signal": "yellow",
+      "checks": [
+        {
+          "id": "scenario.positive_present",
+          "label": "Positives Szenario vorhanden",
+          "category": "scenario_triad",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "scenario.reworkable_present",
+          "label": "Nachbearbeitbares Szenario vorhanden",
+          "category": "scenario_triad",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "scenario.negative_present",
+          "label": "Negatives Szenario vorhanden",
+          "category": "scenario_triad",
+          "result": "pass",
+          "produced_by": "validator"
+        },
+        {
+          "id": "scenario.expert_feedback",
+          "label": "Expertenfeedback dokumentiert",
+          "category": "scenario_triad",
+          "result": "warn",
+          "produced_by": "agent",
+          "severity": "P1",
+          "confidence": "medium",
+          "finding": "Die Szenarien sind vorhanden, das Expertenfeedback bleibt aber knapp. Es wird nicht deutlich, was eine Fachperson besser beurteilt als ein Sprachmodell.",
+          "recommendation": "Zu jedem Szenario zwei Saetze ergaenzen: woran erkennt eine Fachperson Qualitaet?"
+        },
+        {
+          "id": "scenario.honest",
+          "label": "Szenarien ehrlich und pruefbar",
+          "category": "scenario_triad",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "low"
+        },
+        {
+          "id": "scenario.synthetic_only",
+          "label": "Testdaten synthetisch",
+          "category": "data_risk",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "tests.documented_if_claimed",
+          "label": "Behauptete Tests dokumentiert",
+          "category": "scenario_triad",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        }
+      ],
+      "gate": {
+        "status": "closed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": true,
+          "reviewer_signed": false
+        }
+      }
+    },
+    {
+      "id": "phase-6",
+      "name": "Rueckmeldung und Statusvorschlag",
+      "signal": "yellow",
+      "checks": [
+        {
+          "id": "report.contributor_feedback",
+          "label": "Contributor-Feedback erzeugt",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "report.maintainer_handoff",
+          "label": "Maintainer-Handoff erzeugt",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        },
+        {
+          "id": "report.status_suggestion",
+          "label": "Statusvorschlag als Empfehlung markiert",
+          "category": "scope",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high",
+          "human_mandatory": true,
+          "human_ack": false,
+          "finding": "Empfehlung: bronze_candidate halten. Kein finaler Status durch den Agenten."
+        },
+        {
+          "id": "report.human_decision_named",
+          "label": "Menschliche Entscheidung benannt",
+          "category": "human_review",
+          "result": "pass",
+          "produced_by": "agent",
+          "confidence": "high"
+        }
+      ],
+      "gate": {
+        "status": "closed",
+        "conditions": {
+          "no_blocking_results": true,
+          "no_p0_findings": true,
+          "all_human_mandatory_acked": false,
+          "reviewer_signed": false
+        }
+      }
+    }
+  ],
+  "overall": {
+    "review_signal": "yellow",
+    "handoff": "start_trust_review",
+    "status_suggestion": "bronze_candidate",
+    "post_mvp_recommended": false,
+    "blocking_findings": 0,
+    "open_human_decisions": [
+      "Existenz und Aussage der angegebenen Quellen pruefen",
+      "data_risk yellow bestaetigen",
+      "Trust Review durchfuehren"
+    ],
+    "summary": "Formal vollstaendig und gut nutzbar. Zwei Punkte halten das Ergebnis auf gelb: das Expertenfeedback zur Szenario-Triade bleibt zu knapp, und die Quellen sind maschinell nicht pruefbar."
+  },
+  "reports": {
+    "agent_report": "agent_report.md",
+    "contributor_feedback": "contributor_feedback.md",
+    "maintainer_handoff": "maintainer_handoff.md"
+  },
+  "audit": {
+    "human_decision_required": true,
+    "agent": {
+      "provider": "<konfigurierbar>",
+      "model_id": "<versioniert>",
+      "prompt_version": "pre_review_system_v1",
+      "started_at": "2026-08-01T18:20:00Z",
+      "finished_at": "2026-08-01T18:23:00Z"
+    },
+    "stage1a": {
+      "validators": [
+        {
+          "name": "validate_metadata",
+          "exit_code": 0,
+          "findings": 0
+        },
+        {
+          "name": "validate_completeness",
+          "exit_code": 0,
+          "findings": 0
+        },
+        {
+          "name": "pii_heuristic_scoped",
+          "exit_code": 0,
+          "findings": 0
+        }
+      ],
+      "hard_stop_triggered": false
+    },
+    "notes": "Vorfilter entfernte 12 Falschtreffer (Abrufdaten, DOI-Fragmente, Zahlenspannen) vor dem PII-Abgleich."
+  }
+}

@@ -1,0 +1,104 @@
+# ---------------------------------------------------------------------------
+# KItomat Review-Agent - Workflow 1 von 2: Sammeln
+#
+# Dieser Workflow laeuft OHNE Secrets und OHNE erhoehte Rechte. Er wird bei
+# jedem Pull Request ausgeloest, der einen Beitrag beruehrt, und legt nur die
+# geaenderten Dateien als Artefakt ab.
+#
+# Warum zwei Workflows?
+#   Bei Pull Requests aus einem Fork stellt GitHub keine Repository-Secrets
+#   bereit. Ein einziger Workflow mit API-Schluessel wuerde bei genau den
+#   Beitraegen nicht laufen, fuer die der Agent gedacht ist - den externen.
+#   Deshalb: Dieser Workflow sammelt nur Daten. Der zweite (review-agent-run)
+#   wird ueber workflow_run gestartet, laeuft im Kontext des Zielrepositorys
+#   und hat Zugriff auf Secrets. Er fuehrt Code aus dem Pull Request niemals
+#   aus, sondern liest ihn ausschliesslich als Daten.
+#
+# Ablage: .github/workflows/review-agent-collect.yml
+# ---------------------------------------------------------------------------
+name: Review-Agent - Sammeln
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    paths:
+      - 'prompts/**'
+      - 'datasets/**'
+      - 'models/**'
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    # Nur wenn das Label gesetzt ist. Ohne diese Bedingung liefe der Agent bei
+    # jedem Push und die Kosten waeren nicht steuerbar.
+    if: contains(github.event.pull_request.labels.*.name, 'review-required')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Request auschecken
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Betroffene Artefaktordner ermitteln
+        id: detect
+        run: |
+          set -euo pipefail
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+
+          # Alle geaenderten Dateien unterhalb der drei Inhaltsordner,
+          # daraus die eindeutigen Artefaktordner ableiten.
+          git diff --name-only "$BASE" "$HEAD" \
+            | grep -E '^(prompts|datasets|models)/[^/]+/' \
+            | cut -d/ -f1,2 \
+            | sort -u > artifacts.txt || true
+
+          COUNT=$(wc -l < artifacts.txt)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Betroffene Artefakte: $COUNT"
+          cat artifacts.txt
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "Kein Artefaktordner betroffen."
+          fi
+          if [ "$COUNT" -gt 3 ]; then
+            echo "::warning::$COUNT Artefakte in einem Pull Request. Empfohlen ist ein Beitrag je PR."
+          fi
+
+      - name: Kontext ablegen
+        if: steps.detect.outputs.count != '0'
+        run: |
+          set -euo pipefail
+          mkdir -p payload
+          cp artifacts.txt payload/
+
+          # Nur die betroffenen Ordner mitnehmen, nicht das ganze Repository.
+          while read -r dir; do
+            mkdir -p "payload/content/$dir"
+            cp -r "$dir/." "payload/content/$dir/"
+          done < artifacts.txt
+
+          cat > payload/context.json <<EOF
+          {
+            "pull_request_number": ${{ github.event.pull_request.number }},
+            "head_sha": "${{ github.event.pull_request.head.sha }}",
+            "base_sha": "${{ github.event.pull_request.base.sha }}",
+            "repository": "${{ github.repository }}",
+            "is_fork": ${{ github.event.pull_request.head.repo.fork }},
+            "trigger": "label",
+            "trigger_label": "review-required"
+          }
+          EOF
+          echo "Payload:"
+          find payload -maxdepth 3 -type d
+
+      - name: Artefakt hochladen
+        if: steps.detect.outputs.count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-payload-${{ github.event.pull_request.number }}
+          path: payload/
+          retention-days: 3

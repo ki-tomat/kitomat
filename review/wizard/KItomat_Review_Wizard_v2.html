@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KItomat Review Wizard v2 — Reviewer-Cockpit</title>
+<!--
+  KItomat Review Wizard v2 - Reviewer-Cockpit
+
+  Standalone. Keine externen Bibliotheken, keine Netzaufrufe, kein Build.
+  Einfach im Browser oeffnen.
+
+  Zweck
+    Der Agent prueft, dieses Cockpit zeigt das Ergebnis und der Mensch
+    entscheidet. Es laedt ein review_run.json, stellt die sieben Phasen mit
+    Ampeln dar, laesst Befunde uebersteuern und Gates freigeben.
+
+  No-Impact
+    Diese Datei veraendert nichts an der KItomat-Web-GUI und importiert nichts
+    daraus. Die Farbwelt wird ueber lokale CSS-Variablen gespiegelt, nicht
+    ueber global.css.
+
+  Bewusst kein localStorage
+    Die Uebergabedokumentation des Projekts weist localStorage als
+    ungeeigneten Audit-Speicher zurueck. Der Lauf bleibt im Arbeitsspeicher
+    und wird ausdruecklich exportiert. Beim Verlassen der Seite warnt der
+    Browser, falls es ungespeicherte Aenderungen gibt.
+
+  Gate-Logik
+    Die Bedingungen in gateConditions() spiegeln review/tools/gate_engine.py.
+    Wer eine davon aendert, muss die andere mitziehen. Die Testsuite prueft
+    beide gegen dieselben Fixtures.
+-->
+<style>
+  :root {
+    --bg:#FBF9F5; --bg-2:#F1EEE6; --surface:#FFFFFF; --surface-2:#FAF7F1; --surface-3:#F6F2EA;
+    --ink:#1A1916; --ink-2:#4A4742; --ink-3:#847F77;
+    --line:#E8E4DC; --line-2:#D9D3C7; --line-strong:#C7C0B0;
+    --tomato:#E63329; --tomato-dark:#B82318;
+    --green:#3E9B54; --green-bg:#F2F9F4;
+    --yellow:#EFB000; --yellow-bg:#FFFBF0;
+    --red:#E0362A; --red-bg:#FDF1F0;
+    --radius:10px; --radius-sm:6px;
+    --sans:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --shadow:0 1px 2px rgba(26,25,22,.05),0 4px 14px rgba(26,25,22,.06);
+  }
+  body.dark {
+    --bg:#0D0E11; --bg-2:#15171C; --surface:#1A1D23; --surface-2:#21242B; --surface-3:#272A32;
+    --ink:#F5F2EC; --ink-2:#D6D2CA; --ink-3:#ADA89E;
+    --line:rgba(255,255,255,.07); --line-2:rgba(255,255,255,.12); --line-strong:rgba(255,255,255,.22);
+    --green-bg:#16241A; --yellow-bg:#2A2312; --red-bg:#2A1614;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
+         font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  code, .mono { font-family:var(--mono); font-size:.86em; }
+  a { color:var(--tomato-dark); }
+
+  /* ---------- Kopfzeile ---------- */
+  header { background:var(--surface); border-bottom:1px solid var(--line);
+           padding:14px 22px; display:flex; align-items:center; gap:16px;
+           position:sticky; top:0; z-index:20; box-shadow:var(--shadow); flex-wrap:wrap; }
+  .brand { font-weight:800; font-size:17px; letter-spacing:-.2px; }
+  .brand span { color:var(--tomato); }
+  .sub { color:var(--ink-3); font-size:12.5px; }
+  .spacer { flex:1; }
+
+  button { font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer;
+           border-radius:var(--radius-sm); border:1px solid var(--line-2);
+           background:var(--surface-2); color:var(--ink); padding:8px 14px;
+           transition:background .12s, border-color .12s; }
+  button:hover:not(:disabled) { background:var(--surface-3); border-color:var(--line-strong); }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  button.primary { background:var(--tomato); border-color:var(--tomato); color:#fff; }
+  button.primary:hover:not(:disabled) { background:var(--tomato-dark); border-color:var(--tomato-dark); }
+  button.ghost { background:transparent; }
+  button.small { padding:5px 10px; font-size:12.5px; }
+
+  .layout { display:grid; grid-template-columns:290px 1fr; gap:0; min-height:calc(100vh - 61px); }
+  @media (max-width:900px) { .layout { grid-template-columns:1fr; } aside { border-right:none !important; } }
+
+  /* ---------- Seitenleiste ---------- */
+  aside { background:var(--surface); border-right:1px solid var(--line); padding:18px 14px; }
+  .artifact-card { background:var(--surface-2); border:1px solid var(--line);
+                   border-radius:var(--radius); padding:12px 14px; margin-bottom:16px; }
+  .artifact-card h3 { margin:0 0 4px; font-size:14px; }
+  .artifact-card .meta { font-size:12px; color:var(--ink-3); }
+  .kv { display:flex; justify-content:space-between; gap:8px; font-size:12px;
+        padding:3px 0; border-top:1px solid var(--line); margin-top:6px; }
+  .kv:first-of-type { border-top:none; margin-top:8px; }
+  .kv b { font-weight:600; color:var(--ink-2); }
+
+  .phase-nav { list-style:none; margin:0; padding:0; }
+  .phase-nav li { margin-bottom:5px; }
+  .phase-btn { width:100%; text-align:left; display:flex; align-items:center; gap:9px;
+               padding:9px 11px; background:transparent; border:1px solid transparent;
+               border-radius:var(--radius-sm); font-weight:500; font-size:13.5px; }
+  .phase-btn:hover { background:var(--surface-2); }
+  .phase-btn.active { background:var(--surface-3); border-color:var(--line-2); font-weight:700; }
+  .phase-btn .num { font-family:var(--mono); font-size:11px; color:var(--ink-3); width:16px; }
+  .phase-btn .name { flex:1; }
+  .gate-chip { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;
+               padding:2px 6px; border-radius:4px; border:1px solid var(--line-2);
+               color:var(--ink-3); background:var(--surface); white-space:nowrap; }
+  .gate-chip.passed { color:var(--green); border-color:var(--green); }
+  .gate-chip.open   { color:var(--tomato-dark); border-color:var(--tomato); }
+  .gate-chip.blocked{ color:var(--red); border-color:var(--red); }
+
+  .dot { width:10px; height:10px; border-radius:50%; flex-shrink:0;
+         border:1px solid rgba(0,0,0,.18); }
+  .dot.green{background:var(--green);} .dot.yellow{background:var(--yellow);} .dot.red{background:var(--red);}
+
+  /* ---------- Hauptbereich ---------- */
+  main { padding:24px 30px 60px; max-width:1000px; }
+  .empty { text-align:center; padding:80px 20px; color:var(--ink-3); }
+  .empty h2 { color:var(--ink); font-size:20px; margin-bottom:6px; }
+  .drop { margin:26px auto 0; max-width:460px; border:2px dashed var(--line-2);
+          border-radius:var(--radius); padding:28px; background:var(--surface-2); }
+  .drop.over { border-color:var(--tomato); background:var(--red-bg); }
+
+  .banner { border-radius:var(--radius); padding:14px 16px; margin-bottom:20px;
+            border:1px solid; font-size:13.5px; }
+  .banner.green { background:var(--green-bg); border-color:var(--green); }
+  .banner.yellow{ background:var(--yellow-bg); border-color:var(--yellow); }
+  .banner.red   { background:var(--red-bg); border-color:var(--red); }
+  .banner b { display:block; margin-bottom:3px; font-size:14.5px; }
+
+  h1.phase-title { font-size:21px; margin:0 0 4px; letter-spacing:-.3px; }
+  .phase-purpose { color:var(--ink-3); font-size:13.5px; margin:0 0 18px; }
+  .narrative { background:var(--surface-2); border-left:3px solid var(--line-strong);
+               border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+               padding:11px 14px; font-size:13.5px; color:var(--ink-2); margin-bottom:20px; }
+
+  .check { background:var(--surface); border:1px solid var(--line);
+           border-radius:var(--radius); margin-bottom:11px; overflow:hidden; }
+  .check.attention { border-color:var(--line-strong); }
+  .check-head { display:flex; align-items:flex-start; gap:11px; padding:12px 14px; }
+  .res { font-family:var(--mono); font-size:10.5px; font-weight:700; text-transform:uppercase;
+         padding:3px 7px; border-radius:4px; white-space:nowrap; letter-spacing:.3px; }
+  .res.pass{background:var(--green-bg);color:var(--green);border:1px solid var(--green);}
+  .res.warn,.res.not_assessable{background:var(--yellow-bg);color:#9A7400;border:1px solid var(--yellow);}
+  .res.fail{background:var(--red-bg);color:var(--red);border:1px solid var(--red);}
+  .res.block{background:var(--red);color:#fff;border:1px solid var(--red);}
+  .res.not_applicable{background:var(--surface-3);color:var(--ink-3);border:1px solid var(--line-2);}
+  .check-body { flex:1; min-width:0; }
+  .check-label { font-weight:650; font-size:14px; }
+  .check-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:5px; }
+  .tag { font-size:10.5px; padding:2px 6px; border-radius:4px; background:var(--surface-3);
+         color:var(--ink-3); border:1px solid var(--line); font-family:var(--mono); }
+  .tag.sev-P0{background:var(--red);color:#fff;border-color:var(--red);}
+  .tag.sev-P1{background:var(--red-bg);color:var(--red);border-color:var(--red);}
+  .tag.human{background:var(--yellow-bg);color:#9A7400;border-color:var(--yellow);}
+  .tag.acked{background:var(--green-bg);color:var(--green);border-color:var(--green);}
+  .finding { font-size:13.5px; color:var(--ink-2); margin-top:8px; }
+  .reco { font-size:13.5px; color:var(--ink-2); margin-top:5px; padding-left:12px;
+          border-left:2px solid var(--tomato); }
+  .evidence { margin-top:8px; font-size:12px; }
+  .evidence div { font-family:var(--mono); color:var(--ink-3); padding:2px 0; }
+  .check-actions { display:flex; gap:7px; flex-wrap:wrap; padding:0 14px 12px; }
+  .override-box { background:var(--surface-2); border-top:1px solid var(--line); padding:12px 14px; }
+  .override-box textarea, .override-box select, input[type=text] {
+      font-family:inherit; font-size:13px; width:100%; padding:7px 9px;
+      border:1px solid var(--line-2); border-radius:var(--radius-sm);
+      background:var(--surface); color:var(--ink); margin-top:5px; }
+  .override-box textarea { min-height:56px; resize:vertical; }
+  label.fld { font-size:12px; font-weight:600; color:var(--ink-2); display:block; margin-top:9px; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .overridden-note { font-size:12px; color:var(--tomato-dark); margin-top:6px; font-weight:600; }
+
+  /* ---------- Gate ---------- */
+  .gate { margin-top:26px; background:var(--surface); border:2px solid var(--line-2);
+          border-radius:var(--radius); padding:18px; }
+  .gate.open { border-color:var(--tomato); }
+  .gate.passed { border-color:var(--green); background:var(--green-bg); }
+  .gate.blocked { border-color:var(--red); background:var(--red-bg); }
+  .gate h3 { margin:0 0 10px; font-size:16px; }
+  .cond { display:flex; align-items:center; gap:8px; font-size:13px; padding:3px 0; }
+  .cond .mark { font-family:var(--mono); font-weight:700; width:16px; }
+  .cond.ok .mark { color:var(--green); }
+  .cond.no .mark { color:var(--red); }
+
+  footer { padding:16px 30px; color:var(--ink-3); font-size:12px;
+           border-top:1px solid var(--line); background:var(--surface); }
+  .toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+           background:var(--ink); color:var(--bg); padding:11px 20px; border-radius:var(--radius);
+           font-size:13.5px; font-weight:600; opacity:0; pointer-events:none;
+           transition:opacity .2s; z-index:60; }
+  .toast.show { opacity:1; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">KI<span>tomat</span> Review Wizard <span style="color:var(--ink-3);font-weight:600">v2</span></div>
+    <div class="sub">Reviewer-Cockpit — der Agent prüft, Sie entscheiden</div>
+  </div>
+  <div class="spacer"></div>
+  <input type="file" id="fileInput" accept=".json" class="hidden">
+  <input type="text" id="reviewerCode" placeholder="Reviewer-Code" style="width:130px" title="Teilnehmercode, z. B. p04">
+  <button id="loadBtn">Lauf laden</button>
+  <button id="exportBtn" class="primary" disabled>Exportieren</button>
+  <button id="themeBtn" class="ghost small" title="Hell/Dunkel">◐</button>
+</header>
+
+<div class="layout">
+  <aside>
+    <div id="artifactCard" class="artifact-card hidden"></div>
+    <ul class="phase-nav" id="phaseNav"></ul>
+  </aside>
+
+  <main>
+    <div id="emptyState" class="empty">
+      <h2>Kein Review-Lauf geladen</h2>
+      <p>Laden Sie eine <code>review_run.json</code>, die der Review-Agent erzeugt hat.</p>
+      <div class="drop" id="dropZone">
+        <p style="margin:0 0 12px"><b>Datei hierher ziehen</b><br>oder</p>
+        <button id="pickBtn" class="primary">Datei auswählen</button>
+      </div>
+      <p style="margin-top:26px;font-size:12.5px">
+        Erzeugen mit:<br>
+        <code>python3 review/tools/run_review.py . models/&lt;artefakt&gt;</code>
+      </p>
+    </div>
+    <div id="phaseView" class="hidden"></div>
+  </main>
+</div>
+
+<footer>
+  Dieses Cockpit trifft keine Entscheidung. Es zeigt Befunde und protokolliert Ihre Freigaben.
+  Merge, Status und Veröffentlichung bleiben beim Maintainer.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+/* =====================================================================
+   Zustand
+   ===================================================================== */
+let RUN = null;
+let ACTIVE = 0;
+let DIRTY = false;
+
+const SIGNAL_ORDER = { green:0, yellow:1, red:2 };
+const SIGNAL_LABEL = { green:'grün', yellow:'gelb', red:'rot' };
+const BLOCKING = new Set(['block']);
+const WARNING  = new Set(['warn','not_assessable']);
+const FAILING  = new Set(['fail']);
+
+const RESULT_CHOICES = [
+  ['pass','bestanden'],
+  ['warn','Hinweis'],
+  ['fail','Mangel'],
+  ['block','Blocker'],
+  ['not_applicable','nicht zutreffend']
+];
+
+const HANDOFF_TEXT = {
+  return_to_contributor:'Zurück an die beitragende Person',
+  start_peer_review:'Peer Review starten',
+  start_trust_review:'Trust Review starten',
+  ready_for_human_eval:'Bereit für die menschliche Bewertung',
+  post_mvp_recommended:'Für Post-MVP vormerken'
+};
+
+const $  = s => document.querySelector(s);
+const el = (t,c,x) => { const n=document.createElement(t); if(c) n.className=c; if(x!=null) n.textContent=x; return n; };
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+/* =====================================================================
+   Gate-Logik — spiegelt review/tools/gate_engine.py
+   Wer hier etwas ändert, muss die Python-Seite mitziehen.
+   ===================================================================== */
+function effectiveResult(check){
+  if (check.override && check.override.result) return check.override.result;
+  return check.result || 'not_assessable';
+}
+function checkSeverity(check){
+  // Der Katalog nennt das Feld severity_if_failed. Der Schweregrad gilt also
+  // nur, wenn ein Punkt wirklich durchfaellt — bei fail oder block.
+  // Nicht bei warn (ein Hinweis ist kein Mangel) und nicht bei
+  // not_assessable (Nichtwissen darf kein Blocker sein).
+  const r = effectiveResult(check);
+  if (FAILING.has(r) || BLOCKING.has(r)) return check.severity || null;
+  return null;
+}
+function phaseSignal(phase){
+  if (phase.skipped) return 'green';
+  let signal = 'green';
+  for (const c of phase.checks || []){
+    const r = effectiveResult(c), s = checkSeverity(c);
+    if (BLOCKING.has(r) || s === 'P0') return 'red';
+    if (FAILING.has(r) || WARNING.has(r) || s === 'P1') signal = 'yellow';
+  }
+  return signal;
+}
+function gateConditions(phase){
+  const checks = phase.checks || [];
+  return {
+    no_blocking_results: !checks.some(c => BLOCKING.has(effectiveResult(c))),
+    no_p0_findings:      !checks.some(c => checkSeverity(c) === 'P0'),
+    all_human_mandatory_acked: checks
+        .filter(c => c.human_mandatory && effectiveResult(c) !== 'not_applicable')
+        .every(c => c.human_ack === true),
+    reviewer_signed: !!(phase.gate && phase.gate.signed_by)
+  };
+}
+function gateStatus(phase){
+  if (phase.skipped) return 'passed';
+  const c = gateConditions(phase);
+  if (!c.no_blocking_results || !c.no_p0_findings) return 'blocked';
+  if (!c.all_human_mandatory_acked) return 'closed';
+  return c.reviewer_signed ? 'passed' : 'open';
+}
+function statusSuggestion(signal, blocking){
+  if (blocking || signal === 'red') return 'draft';
+  if (signal === 'yellow') return 'bronze_candidate';
+  return 'bronze_ready_for_human_decision';
+}
+function computeHandoff(run, signal, blocking){
+  if (blocking) return 'return_to_contributor';
+  const risk = run.artifact && run.artifact.data_risk;
+  if (risk === 'yellow' || risk === 'red') return 'start_trust_review';
+  if (signal === 'red') return 'return_to_contributor';
+  if (signal === 'yellow') return 'start_peer_review';
+  return 'ready_for_human_eval';
+}
+function recompute(){
+  let worst = 'green', blocking = 0;
+  const open = [];
+  for (const p of RUN.phases){
+    p.signal = phaseSignal(p);
+    p.gate = p.gate || {};
+    p.gate.conditions = gateConditions(p);
+    p.gate.status = gateStatus(p);
+    if (SIGNAL_ORDER[p.signal] > SIGNAL_ORDER[worst]) worst = p.signal;
+    for (const c of p.checks || []){
+      if (BLOCKING.has(effectiveResult(c)) || checkSeverity(c) === 'P0') blocking++;
+      if (c.human_mandatory && !c.human_ack) open.push(c.label + ' (' + p.id + ')');
+    }
+  }
+  RUN.overall = RUN.overall || {};
+  RUN.overall.review_signal = worst;
+  RUN.overall.blocking_findings = blocking;
+  RUN.overall.open_human_decisions = open;
+  RUN.overall.handoff = computeHandoff(RUN, worst, blocking);
+  RUN.overall.status_suggestion = statusSuggestion(worst, blocking);
+}
+
+/* =====================================================================
+   Laden
+   ===================================================================== */
+function loadRun(text){
+  let data;
+  try { data = JSON.parse(text); }
+  catch(e){ return toast('Keine gültige JSON-Datei.'); }
+  if (!data.phases || !Array.isArray(data.phases))
+    return toast('Das ist kein review_run.json — es fehlen die Phasen.');
+  if (data.schema_version !== '1.0.0')
+    toast('Achtung: Schema-Version ' + data.schema_version + ' abweichend.');
+
+  RUN = data;
+  ACTIVE = 0; DIRTY = false;
+  if (RUN.reviewer && RUN.reviewer.code && !$('#reviewerCode').value)
+    $('#reviewerCode').value = RUN.reviewer.code;
+  recompute();
+  $('#emptyState').classList.add('hidden');
+  $('#phaseView').classList.remove('hidden');
+  $('#exportBtn').disabled = false;
+  render();
+  toast('Lauf ' + RUN.run_id + ' geladen.');
+}
+
+/* =====================================================================
+   Darstellung
+   ===================================================================== */
+function render(){ renderSidebar(); renderPhase(); }
+
+function renderSidebar(){
+  const a = RUN.artifact || {};
+  const card = $('#artifactCard');
+  card.classList.remove('hidden');
+  card.innerHTML =
+    '<h3>' + esc(a.title || a.id || 'Artefakt') + '</h3>' +
+    '<div class="meta mono">' + esc(a.path || '') + '</div>' +
+    '<div class="kv"><b>Typ</b><span class="mono">' + esc(a.artifact_type||'-') + '</span></div>' +
+    '<div class="kv"><b>Status</b><span class="mono">' + esc(a.declared_status||'-') + '</span></div>' +
+    '<div class="kv"><b>Datenrisiko</b><span class="mono">' + esc(a.data_risk||'-') + '</span></div>' +
+    '<div class="kv"><b>Dateien</b><span class="mono">' + ((a.files||[]).length) + '</span></div>' +
+    '<div class="kv"><b>Lauf</b><span class="mono">' + esc(RUN.run_id||'-') + '</span></div>';
+
+  const nav = $('#phaseNav');
+  nav.innerHTML = '';
+  RUN.phases.forEach((p,i) => {
+    const li = el('li');
+    const b = el('button','phase-btn' + (i===ACTIVE?' active':''));
+    b.appendChild(el('span','num', String(i)));
+    b.appendChild(el('span','dot ' + p.signal));
+    b.appendChild(el('span','name', p.name));
+    const st = p.gate ? p.gate.status : 'closed';
+    b.appendChild(el('span','gate-chip ' + st, st === 'passed' ? 'frei' :
+                     st === 'open' ? 'bereit' : st === 'blocked' ? 'stop' : 'zu'));
+    b.onclick = () => { ACTIVE = i; render(); window.scrollTo(0,0); };
+    li.appendChild(b); nav.appendChild(li);
+  });
+}
+
+function renderPhase(){
+  const p = RUN.phases[ACTIVE];
+  const v = $('#phaseView');
+  v.innerHTML = '';
+
+  if (ACTIVE === 0) v.appendChild(overallBanner());
+
+  v.appendChild(el('h1','phase-title', p.name));
+  const gateBefore = ACTIVE > 0 ? RUN.phases[ACTIVE-1] : null;
+  if (gateBefore && gateBefore.gate.status !== 'passed'){
+    const w = el('div','banner yellow');
+    w.innerHTML = '<b>Vorheriges Gate noch nicht freigegeben</b>' +
+      'Die Befunde dieser Phase sind sichtbar, aber ' + esc(gateBefore.name) +
+      ' muss zuerst freigegeben werden.';
+    v.appendChild(w);
+  }
+
+  if (p.skipped){
+    const s = el('div','banner red');
+    s.innerHTML = '<b>Phase übersprungen</b>' + esc(p.skip_reason || '');
+    v.appendChild(s);
+    return;
+  }
+
+  if (p.narrative) v.appendChild(el('div','narrative', p.narrative));
+
+  (p.checks || []).forEach((c,idx) => v.appendChild(renderCheck(c, idx)));
+  if (!(p.checks||[]).length) v.appendChild(el('p','phase-purpose','Keine Prüfpunkte in dieser Phase.'));
+
+  v.appendChild(renderGate(p));
+}
+
+function overallBanner(){
+  const o = RUN.overall || {};
+  const b = el('div','banner ' + (o.review_signal || 'green'));
+  b.innerHTML =
+    '<b>Gesamtampel: ' + (SIGNAL_LABEL[o.review_signal]||'?').toUpperCase() + '</b>' +
+    esc(o.summary || '') +
+    '<div style="margin-top:8px;font-size:12.5px">' +
+    '<b style="display:inline">Empfehlung:</b> ' + esc(HANDOFF_TEXT[o.handoff] || o.handoff || '-') +
+    ' &nbsp;·&nbsp; <b style="display:inline">Statusvorschlag:</b> <code>' +
+    esc(o.status_suggestion || '-') + '</code> (Empfehlung, keine Vergabe)</div>';
+  return b;
+}
+
+function renderCheck(c, idx){
+  const r = effectiveResult(c);
+  const needsAttention = c.human_mandatory && !c.human_ack;
+  const box = el('div','check' + (needsAttention ? ' attention' : ''));
+
+  const head = el('div','check-head');
+  head.appendChild(el('span','res ' + r, r));
+
+  const body = el('div','check-body');
+  body.appendChild(el('div','check-label', c.label || c.id));
+
+  const tags = el('div','check-tags');
+  tags.appendChild(el('span','tag', c.id));
+  if (c.produced_by) tags.appendChild(el('span','tag', c.produced_by));
+  if (c.severity) tags.appendChild(el('span','tag sev-' + c.severity, c.severity));
+  if (c.confidence) tags.appendChild(el('span','tag','confidence: ' + c.confidence));
+  if (c.human_mandatory)
+    tags.appendChild(el('span','tag ' + (c.human_ack ? 'acked' : 'human'),
+                        c.human_ack ? 'bestätigt' : 'Bestätigung nötig'));
+  body.appendChild(tags);
+
+  if (c.finding) body.appendChild(el('div','finding', c.finding));
+  if (c.recommendation) body.appendChild(el('div','reco', c.recommendation));
+
+  if (c.evidence && c.evidence.length){
+    const ev = el('div','evidence');
+    c.evidence.forEach(e => ev.appendChild(el('div', null,
+      e.file + (e.line ? ':' + e.line : '') + (e.quote ? '  ' + e.quote : ''))));
+    body.appendChild(ev);
+  }
+  if (c.override){
+    body.appendChild(el('div','overridden-note',
+      'Übersteuert auf "' + c.override.result + '" von ' + (c.override.by||'?') +
+      ' — ' + c.override.reason));
+  }
+  head.appendChild(body);
+  box.appendChild(head);
+
+  const act = el('div','check-actions');
+  if (c.human_mandatory){
+    const ack = el('button', 'small' + (c.human_ack ? '' : ' primary'),
+                   c.human_ack ? 'Bestätigung zurücknehmen' : 'Geprüft und bestätigt');
+    ack.onclick = () => { c.human_ack = !c.human_ack; touch(); };
+    act.appendChild(ack);
+  }
+  const ovBtn = el('button','small ghost', c.override ? 'Übersteuerung ändern' : 'Übersteuern');
+  ovBtn.onclick = () => {
+    const open = box.querySelector('.override-box');
+    if (open) open.remove(); else box.appendChild(renderOverride(c));
+  };
+  act.appendChild(ovBtn);
+  if (c.override){
+    const rm = el('button','small ghost','Übersteuerung entfernen');
+    rm.onclick = () => { delete c.override; touch(); };
+    act.appendChild(rm);
+  }
+  box.appendChild(act);
+  return box;
+}
+
+function renderOverride(c){
+  const wrap = el('div','override-box');
+  wrap.innerHTML =
+    '<label class="fld">Neues Ergebnis</label>' +
+    '<select class="ov-res">' + RESULT_CHOICES.map(([v,l]) =>
+      '<option value="' + v + '"' + (c.override && c.override.result===v ? ' selected':'') +
+      '>' + l + ' (' + v + ')</option>').join('') + '</select>' +
+    '<label class="fld">Begründung (Pflicht, mindestens 10 Zeichen)</label>' +
+    '<textarea class="ov-reason" placeholder="Warum weicht Ihre Bewertung vom Agenten ab?">' +
+      esc(c.override ? c.override.reason : '') + '</textarea>';
+  const save = el('button','primary small','Übersteuerung speichern');
+  save.style.marginTop = '10px';
+  save.onclick = () => {
+    const res = wrap.querySelector('.ov-res').value;
+    const reason = wrap.querySelector('.ov-reason').value.trim();
+    if (reason.length < 10) return toast('Bitte begründen Sie die Übersteuerung.');
+    c.override = { result:res, reason:reason, by:reviewerCode(), at:new Date().toISOString() };
+    touch();
+  };
+  wrap.appendChild(save);
+  return wrap;
+}
+
+function renderGate(p){
+  const st = p.gate.status;
+  const cond = p.gate.conditions || {};
+  const g = el('div','gate ' + st);
+  g.appendChild(el('h3', null, 'Gate: ' + p.name));
+
+  const labels = {
+    no_blocking_results:'Kein blockierender Befund',
+    no_p0_findings:'Kein P0-Befund',
+    all_human_mandatory_acked:'Alle Pflichtbestätigungen erteilt',
+    reviewer_signed:'Vom Reviewer freigegeben'
+  };
+  Object.keys(labels).forEach(k => {
+    const ok = !!cond[k];
+    const row = el('div','cond ' + (ok?'ok':'no'));
+    row.appendChild(el('span','mark', ok ? '✓' : '✗'));
+    row.appendChild(el('span', null, labels[k]));
+    g.appendChild(row);
+  });
+
+  const note = el('p','phase-purpose');
+  note.style.marginTop = '12px';
+  if (st === 'blocked')
+    note.textContent = 'Dieses Gate lässt sich nicht öffnen. Ein blockierender Befund oder ein P0 muss zuerst von der beitragenden Person behoben werden.';
+  else if (st === 'closed')
+    note.textContent = 'Bestätigen Sie zuerst die oben markierten Prüfpunkte.';
+  else if (st === 'open')
+    note.textContent = 'Alle Bedingungen erfüllt. Ihre Freigabe öffnet die nächste Phase.';
+  else
+    note.textContent = 'Freigegeben von ' + (p.gate.signed_by||'?') + ' am ' + (p.gate.signed_at||'?') + '.';
+  g.appendChild(note);
+
+  if (st === 'open'){
+    const cm = el('input'); cm.type='text'; cm.placeholder='Kommentar (optional)'; cm.className='gate-comment';
+    g.appendChild(cm);
+    const sign = el('button','primary','Gate freigeben');
+    sign.style.marginTop='10px';
+    sign.onclick = () => {
+      const code = reviewerCode();
+      if (!code) return toast('Bitte oben Ihren Reviewer-Code eintragen.');
+      p.gate.signed_by = code;
+      p.gate.signed_at = new Date().toISOString();
+      const t = cm.value.trim(); if (t) p.gate.comment = t;
+      touch();
+      if (ACTIVE < RUN.phases.length-1){ ACTIVE++; window.scrollTo(0,0); }
+      toast('Gate freigegeben.');
+    };
+    g.appendChild(sign);
+  } else if (st === 'passed'){
+    const undo = el('button','ghost small','Freigabe zurücknehmen');
+    undo.style.marginTop='10px';
+    undo.onclick = () => { delete p.gate.signed_by; delete p.gate.signed_at; delete p.gate.comment; touch(); };
+    g.appendChild(undo);
+  }
+  return g;
+}
+
+/* =====================================================================
+   Hilfsfunktionen
+   ===================================================================== */
+function reviewerCode(){ return $('#reviewerCode').value.trim(); }
+
+function touch(){
+  DIRTY = true;
+  recompute();
+  if (reviewerCode()) RUN.reviewer = Object.assign({}, RUN.reviewer, { code: reviewerCode() });
+  render();
+}
+
+let toastTimer;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function exportRun(){
+  if (!RUN) return;
+  recompute();
+  RUN.exported_at = new Date().toISOString();
+  const name = (RUN.artifact && RUN.artifact.id ? RUN.artifact.id : 'review') +
+               '_' + (RUN.run_id||'lauf') + '_review_run.json';
+  const blob = new Blob([JSON.stringify(RUN, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+  DIRTY = false;
+  toast('Exportiert. Bitte unter review/results/ ablegen.');
+}
+
+/* =====================================================================
+   Ereignisse
+   ===================================================================== */
+$('#loadBtn').onclick = () => $('#fileInput').click();
+$('#pickBtn').onclick = () => $('#fileInput').click();
+$('#exportBtn').onclick = exportRun;
+$('#themeBtn').onclick = () => document.body.classList.toggle('dark');
+
+$('#fileInput').addEventListener('change', ev => {
+  const f = ev.target.files && ev.target.files[0];
+  if (f) f.text().then(loadRun);
+  ev.target.value = '';
+});
+
+const dz = $('#dropZone');
+['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => {
+  ev.preventDefault(); dz.classList.add('over');
+}));
+['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => {
+  ev.preventDefault(); dz.classList.remove('over');
+}));
+dz.addEventListener('drop', ev => {
+  const f = ev.dataTransfer.files && ev.dataTransfer.files[0];
+  if (f) f.text().then(loadRun);
+});
+
+document.addEventListener('keydown', ev => {
+  if (!RUN) return;
+  if (ev.key === 'ArrowDown' && ACTIVE < RUN.phases.length-1){ ACTIVE++; render(); }
+  if (ev.key === 'ArrowUp' && ACTIVE > 0){ ACTIVE--; render(); }
+  if ((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase() === 's'){ ev.preventDefault(); exportRun(); }
+});
+
+window.addEventListener('beforeunload', ev => {
+  if (DIRTY){ ev.preventDefault(); ev.returnValue = ''; }
+});
+</script>
+</body>
+</html>
