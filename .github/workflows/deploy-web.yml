@@ -43,6 +43,10 @@ jobs:
         run: npm run build
         env:
           VITE_BASE_PATH: /kitomat/web/
+          # Oeffentliche URLs (keine Secrets) aus Repository-Variablen. Leer =
+          # Mock-/GitHub-Fallback-Modus bzw. ausgeblendeter Admin-Link (siehe A5).
+          VITE_KITOMAT_CONTENT_API_URL: ${{ vars.KITOMAT_CONTENT_API_URL }}
+          VITE_KITOMAT_ADMIN_SITE_URL: ${{ vars.KITOMAT_ADMIN_SITE_URL }}
 
       - name: Stage Pages artifact
         if: github.event_name != 'pull_request'

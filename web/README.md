@@ -1,6 +1,6 @@
 # KI-tomat Web UI
 
-Web-Oberfl?che der KItomat-Plattform im Repository `pfernando-KI/kitomat`. Die App lebt im Unterordner `web/` und ist eine React/Vite Single Page App mit Hash-Routing.
+Web-Oberfl?che der KItomat-Plattform im Repository `ki-tomat/kitomat`. Die App lebt im Unterordner `web/` und ist eine React/Vite Single Page App mit Hash-Routing.
 
 ## Status
 
@@ -70,4 +70,4 @@ web/
 - `web/design/kitomat-remix-1/` bleibt unver?ndert.
 - Produktive Views, Komponenten und Daten liegen unter `web/src/`.
 - Die App nutzt Hash-Routing, keinen React Router.
-- Sichtbare Artefakt- und Community-Links zeigen bewusst auf das Content-Upstream-Repo `ki-tomat/kitomat`; Web-UI-Entwicklung und PRs laufen hier im Fork `pfernando-KI/kitomat`.
+- Artefakt-, Community-Links und Web-UI-Entwicklung liegen jetzt im selben Repo `ki-tomat/kitomat`; PRs laufen hier.
