@@ -231,4 +231,21 @@ describe('useLibraryData bridge', () => {
     expect(second.result.current.artifacts).toHaveLength(1);
     expect(second.result.current.artifacts[0].id).toBe('live-prompt-001');
   });
+
+  it('Fallback-Link (Mock ohne githubUrl): baut Typ->Ordner-Pfad statt artifacts/', async () => {
+    const { artifactGithubUrl } = await loadBridge();
+    expect(artifactGithubUrl({ id: 'demo-prompt', type: 'prompt' })).toBe(
+      'https://github.com/ki-tomat/kitomat/tree/main/prompts/demo-prompt',
+    );
+    expect(artifactGithubUrl({ id: 'demo-dataset', type: 'dataset' })).toBe(
+      'https://github.com/ki-tomat/kitomat/tree/main/datasets/demo-dataset',
+    );
+    expect(artifactGithubUrl({ id: 'demo-model', type: 'industry' })).toBe(
+      'https://github.com/ki-tomat/kitomat/tree/main/models/demo-model',
+    );
+    // Unbekannter Typ -> Repo-Wurzel statt kaputtem artifacts/-Pfad.
+    expect(artifactGithubUrl({ id: 'x', type: 'unknown' })).toBe(
+      'https://github.com/ki-tomat/kitomat/tree/main',
+    );
+  });
 });

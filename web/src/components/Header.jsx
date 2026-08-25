@@ -82,15 +82,17 @@ export function Header({ route, go, openChat, openLogin, role, setRole, theme, s
           >
             <Icon.github size={15} />
           </a>
-          <a
-            className="btn btn-ghost btn-sm tt tt-bottom"
-            data-tt="Admin Site"
-            href={ADMIN_SITE_URL}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Icon.lock size={14} />
-          </a>
+          {ADMIN_SITE_URL && (
+            <a
+              className="btn btn-ghost btn-sm tt tt-bottom"
+              data-tt="Admin Site"
+              href={ADMIN_SITE_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon.lock size={14} />
+            </a>
+          )}
 
           <div ref={moreRef} style={{ position: 'relative' }}>
             <button

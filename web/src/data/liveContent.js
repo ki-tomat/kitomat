@@ -221,7 +221,7 @@ async function loadGithubArtifacts() {
 // GitHub-Link bevorzugt aus den API-Daten (githubUrl), sonst aus der Mock-Konvention.
 export function artifactGithubUrl(a) {
   if (a && a.githubUrl) return a.githubUrl;
-  return contentArtifactUrl(a ? a.id : '');
+  return contentArtifactUrl(a ? a.id : '', a ? a.type : undefined);
 }
 
 // Normalisiert ein API-Artefakt auf die Form, die die Views erwarten. Pflichtfelder

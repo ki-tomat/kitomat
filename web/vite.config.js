@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // base: './' bleibt vor AP7 bewusst robust f?r lokale Vorschau, Forks und Hash-Routing.
 // AP7 soll im Pages-Workflow VITE_BASE_PATH='/kitomat/web/' setzen, wenn die Web UI
-// unter https://pfernando-KI.github.io/kitomat/web/ ver?ffentlicht wird.
+// unter https://ki-tomat.github.io/kitomat/web/ ver?ffentlicht wird.
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || './',
   plugins: [react()],

@@ -73,9 +73,11 @@ export function MobileNav({
           <a className="btn btn-secondary btn-sm" href={CONTENT_REPO_URL} target="_blank" rel="noreferrer">
             <Icon.github size={14} /> GitHub
           </a>
-          <a className="btn btn-secondary btn-sm" href={ADMIN_SITE_URL} target="_blank" rel="noreferrer">
-            <Icon.lock size={13} /> Admin
-          </a>
+          {ADMIN_SITE_URL && (
+            <a className="btn btn-secondary btn-sm" href={ADMIN_SITE_URL} target="_blank" rel="noreferrer">
+              <Icon.lock size={13} /> Admin
+            </a>
+          )}
           <button
             type="button"
             className="btn btn-primary btn-sm"

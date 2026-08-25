@@ -37,7 +37,9 @@ export function navForRole(role) {
     { id: 'community', label: 'Community', desc: 'Forum, Profile, Channels' },
     { id: 'faq',       label: 'FAQ',       desc: 'Häufige Fragen kompakt' },
   ];
-  if (role === 'admin') {
+  // Admin-Einstieg nur, wenn die Admin-URL per Env gesetzt ist (sonst ausgeblendet,
+  // bis Person B die Admin-Site freigeschaltet hat — siehe Migrationsplan A5 Stufe 2).
+  if (role === 'admin' && ADMIN_SITE_URL) {
     secondary.push({
       id: 'admin',
       label: 'Admin-Bereich',
