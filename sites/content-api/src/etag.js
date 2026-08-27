@@ -29,5 +29,10 @@ export async function computeEtag(value) {
 
 export function matchesIfNoneMatch(headerValue, etag) {
   if (!headerValue) return false;
-  return headerValue.split(",").map((s) => s.trim()).includes(etag);
+  const normalizeWeak = (value) => value.trim().replace(/^W\//i, "");
+  const expected = normalizeWeak(etag);
+  return headerValue
+    .split(",")
+    .map((value) => value.trim())
+    .some((value) => value === "*" || normalizeWeak(value) === expected);
 }

@@ -1,22 +1,21 @@
-# KI-tomat Sites Content API
+# KI-tomat Cloudflare Content API
 
-Read-only API-Grundlage fuer Phase 3 B+. AP8 legt nur das Sites-Projekt, Build-Artefakt und D1-Schema an. Das echte Lesen aus `ki-tomat/kitomat`, Normalisierung und Caching folgen in AP9.
+Read-only Cloudflare Worker fuer den Inhalt aus `ki-tomat/kitomat`, inklusive Normalisierung, D1-Cache, ETag und Stale-Fallback.
 
-## Sites Foundation
+## Cloudflare Runtime
 
-- `.openai/hosting.json` enthaelt die logischen Bindings fuer Sites. `project_id` wird erst nach der Provisionierung durch Sites gesetzt.
+- `wrangler.toml` enthaelt Workername, oeffentliche Runtime-Variablen und das D1-Binding.
+- `.openai/hosting.json` bleibt waehrend der Abnahme nur als Rollback-Hinweis erhalten.
 - D1-Binding: `DB`.
 - R2 wird in Phase 3 nicht genutzt und bleibt `null`.
 - Diese Site nutzt eine eigene D1-Datenbank nur fuer `content_cache` und `sync_runs`.
-- Echte Secrets werden in Sites Runtime Environment gesetzt, nicht im Repo.
+- Echte Secrets werden als Cloudflare-Worker-Secrets gesetzt, nicht im Repo.
 
 ## Endpunkte
 
 - `GET /api/content`
 - `GET /api/content/:id`
 - `GET /api/status`
-
-In AP8 liefern diese Endpunkte nur Foundation-/Leerantworten.
 
 ## Runtime Environment
 
@@ -28,6 +27,14 @@ In AP8 liefern diese Endpunkte nur Foundation-/Leerantworten.
 
 ```bash
 npm run build
+npm test
+npm run deploy:dry-run
 ```
 
 D1-Schema: `db/schema.sql`.
+
+Remote-Initialisierung:
+
+```bash
+npx wrangler d1 execute kitomat-content-api --remote --file db/schema.sql
+```

@@ -173,6 +173,29 @@ describe("GET /api/content", () => {
     expect(body.artifacts[0].type).toBe("prompt");
   });
 
+  it("abweichender Ordnername bleibt als repoPath erhalten und README wird daraus geladen", async () => {
+    setRoutes({
+      [TREE_URL]: jsonRoute({
+        tree: [{ path: "prompts/jk-prompt-demo/metadata.yml", type: "blob" }],
+      }),
+      "raw.githubusercontent.com/ki-tomat/kitomat/main/prompts/jk-prompt-demo/metadata.yml":
+        textRoute(metadataPromptYaml("prompt-demo")),
+      "raw.githubusercontent.com/ki-tomat/kitomat/main/prompts/jk-prompt-demo/README.md":
+        textRoute("# Prompt Demo mit JK-Ordner"),
+    });
+
+    const listRes = await mf.dispatchFetch("http://test/api/content");
+    const listBody = await listRes.json();
+    expect(listBody.artifacts).toHaveLength(1);
+    expect(listBody.artifacts[0].id).toBe("prompt-demo");
+    expect(listBody.artifacts[0].repoPath).toBe("prompts/jk-prompt-demo");
+
+    const detailRes = await mf.dispatchFetch("http://test/api/content/prompt-demo");
+    const detailBody = await detailRes.json();
+    expect(detailRes.status).toBe(200);
+    expect(detailBody.artifact.readme).toContain("JK-Ordner");
+  });
+
   it("If-None-Match mit gleichem ETag -> 304", async () => {
     setRoutes({
       [TREE_URL]: jsonRoute({ tree: [] }),
@@ -185,6 +208,11 @@ describe("GET /api/content", () => {
       headers: { "if-none-match": etag },
     });
     expect(second.status).toBe(304);
+
+    const weak = await mf.dispatchFetch("http://test/api/content", {
+      headers: { "if-none-match": `W/${etag}` },
+    });
+    expect(weak.status).toBe(304);
   });
 
   it("GitHub-Fehler ohne Cache -> status=error, leere Liste", async () => {

@@ -1,0 +1,32 @@
+name = "kitomat-admin"
+main = "src/worker.js"
+compatibility_date = "2026-08-26"
+workers_dev = true
+preview_urls = false
+
+[vars]
+# Oeffentliche Runtime-Identifikatoren. ADMIN_EMAILS bleibt ein Cloudflare-Secret.
+CONTENT_API_URL = "https://kitomat-content-api.ki-tomat.workers.dev"
+ALLOWED_ORIGIN = "https://kitomat-admin.ki-tomat.workers.dev"
+FIREBASE_PROJECT_ID = "ki-tomat"
+FIREBASE_API_KEY = "AIzaSyAAcQWpUwwPDGaTzH1dnN0wdvA9bj76tHA"
+FIREBASE_AUTH_DOMAIN = "kitomat-admin.ki-tomat.workers.dev"
+FIREBASE_APP_ID = "1:686019698516:web:067319259e04bea4f1b2c1"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kitomat-admin"
+database_id = "1fdee2e9-6dc6-4f6a-bf74-4347fd19f406"
+
+[[services]]
+binding = "CONTENT_API"
+service = "kitomat-content-api"
+
+[env.dev]
+workers_dev = false
+preview_urls = false
+
+[env.dev.vars]
+LOCAL_DEV = "true"
+CONTENT_API_URL = "http://localhost:8787"
+ALLOWED_ORIGIN = "http://localhost:8788"

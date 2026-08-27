@@ -1,0 +1,14 @@
+name = "kitomat-content-api"
+main = "src/worker.js"
+compatibility_date = "2026-08-26"
+workers_dev = true
+preview_urls = false
+
+[vars]
+ALLOWED_ORIGINS = "https://ki-tomat.github.io"
+CACHE_TTL_SECONDS = "1800"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kitomat-content-api"
+database_id = "2c880db0-b067-45ad-8abf-1107a5a41d19"

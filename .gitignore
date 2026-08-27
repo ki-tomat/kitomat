@@ -6,3 +6,5 @@ dist/
 site/
 
 node_modules/
+.dev.vars
+.wrangler/

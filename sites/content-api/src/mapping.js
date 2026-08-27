@@ -67,10 +67,10 @@ function audienceToString(value) {
   return undefined;
 }
 
-export function mapToArtifact(meta, { repo, branch }) {
+export function mapToArtifact(meta, { repo, branch, repoPath: repoPathOverride }) {
   const type = TYPE_MAP[meta.artifact_type];
   const folder = FOLDER_FOR_TYPE[type];
-  const repoPath = folder && meta.id ? `${folder}/${meta.id}` : undefined;
+  const repoPath = repoPathOverride || (folder && meta.id ? `${folder}/${meta.id}` : undefined);
   const githubUrl = repoPath
     ? `https://github.com/${repo}/tree/${branch}/${repoPath}`
     : undefined;

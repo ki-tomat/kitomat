@@ -3,8 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Internal Sites admin workspace for KI-tomat Phase 3.",
+  "description": "Firebase-authenticated Cloudflare admin workspace for KI-tomat.",
   "scripts": {
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "test": "vitest run",
+    "predeploy": "node ../scripts/validate-cloudflare-config.mjs",
+    "deploy": "wrangler deploy --env=",
+    "predeploy:dry-run": "node ../scripts/validate-cloudflare-config.mjs",
+    "deploy:dry-run": "wrangler deploy --dry-run --env="
+  },
+  "dependencies": {
+    "jose": "^6.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "vitest": "^2.1.9",
+    "wrangler": "^4.0.0"
   }
 }
