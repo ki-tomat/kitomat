@@ -3,10 +3,14 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Read-only Sites API for KI-tomat content (AP9).",
+  "description": "Read-only Cloudflare Worker API for KI-tomat content.",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "predeploy": "node ../scripts/validate-cloudflare-config.mjs",
+    "deploy": "wrangler deploy",
+    "predeploy:dry-run": "node ../scripts/validate-cloudflare-config.mjs",
+    "deploy:dry-run": "wrangler deploy --dry-run"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
@@ -14,6 +18,7 @@
   "devDependencies": {
     "esbuild": "^0.25.0",
     "miniflare": "^3.20240909.0",
-    "vitest": "^2.1.0"
+    "vitest": "^2.1.0",
+    "wrangler": "^4.0.0"
   }
 }

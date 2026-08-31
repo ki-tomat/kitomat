@@ -134,6 +134,18 @@ describe("mapToArtifact/prompt", () => {
     expect(a.context).toBe("Einstiegs-Prompt fuer KMU-Mitarbeitende.");
     expect(a.personal_data_possible).toBe(false);
   });
+
+  it("bewahrt einen expliziten Repository-Pfad bei abweichendem Ordnernamen", () => {
+    const a = mapToArtifact(basePromptMeta(), {
+      ...REPO_CTX,
+      repoPath: "prompts/jk-prompt-demo",
+    });
+    expect(a.id).toBe("prompt-demo");
+    expect(a.repoPath).toBe("prompts/jk-prompt-demo");
+    expect(a.githubUrl).toBe(
+      "https://github.com/ki-tomat/kitomat/tree/main/prompts/jk-prompt-demo",
+    );
+  });
 });
 
 describe("mapToArtifact/dataset", () => {

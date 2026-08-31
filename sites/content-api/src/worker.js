@@ -87,14 +87,11 @@ async function loadFromGitHub(env, fetchImpl) {
         });
         continue;
       }
-      if (meta.id !== c.id) {
-        skips.push({
-          path: c.path,
-          reason: `id-mismatch: yaml id=${meta.id} but folder id=${c.id}`,
-        });
-        continue;
-      }
-      artifacts.push(mapToArtifact(meta, { repo: REPO, branch: BRANCH }));
+      artifacts.push(mapToArtifact(meta, {
+        repo: REPO,
+        branch: BRANCH,
+        repoPath: `${c.folder}/${c.id}`,
+      }));
     } catch (err) {
       skips.push({ path: c.path, reason: `fetch: ${err.message}` });
     }

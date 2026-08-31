@@ -1,11 +1,13 @@
-// AP: Admin RBAC Foundation
-// Internal KI-tomat admin surface with authenticated Sites identity, D1-backed
-// roles, audit log, admin-only access and artifact status overrides.
+// Internal KI-tomat admin surface protected by Firebase Authentication. The
+// Worker validates the Firebase ID token before it performs any D1 operation.
 
-const SITES_USER_EMAIL_HEADER = 'oai-authenticated-user-email';
-const SITES_USER_NAME_HEADER = 'oai-authenticated-user-full-name';
-const SITES_USER_NAME_ENCODING_HEADER = 'oai-authenticated-user-full-name-encoding';
-const LEGACY_USER_HEADER = 'x-openai-workspace-user';
+import { importX509, jwtVerify } from 'jose';
+
+const FIREBASE_CERTS_URL = 'https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com';
+const FIREBASE_COOKIE = '__Host-kitomat_firebase_id_token';
+const FIREBASE_SDK_VERSION = '12.18.0';
+const FIREBASE_AUTH_HELPER_PREFIX = '/__/auth/';
+const LOCAL_DEV_EMAIL = 'local.admin@example.test';
 const INPUT_MAX_LEN = 2000;
 const CONTENT_REPO_OWNER = 'ki-tomat';
 const CONTENT_REPO_NAME = 'kitomat';
@@ -42,81 +44,205 @@ const DEFAULT_CHECKLIST = [
   { id: 'ap13', label: 'AP13: Integration, QA, Rollout' },
 ];
 
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    const method = request.method;
-    const isLocalDev = env.LOCAL_DEV === 'true';
+let firebaseCertCache = { expiresAt: 0, certs: new Map() };
 
-    await ensureSchema(env);
+export function createWorker({ firebaseKeyResolver } = {}) {
+  return {
+    async fetch(request, env) {
+      const url = new URL(request.url);
+      const method = request.method;
+      const isLocalDev = env.LOCAL_DEV === 'true';
 
-    const identity = getIdentity(request, isLocalDev);
+      if (url.pathname.startsWith(FIREBASE_AUTH_HELPER_PREFIX)) {
+        return proxyFirebaseAuth(request, env);
+      }
 
-    if (!identity.email && !isLocalDev) {
-      return renderAccessDenied(401, 'Login erforderlich', 'Die Admin-Site benoetigt eine authentifizierte Sites-Identitaet.');
-    }
+      const auth = await authenticateRequest(request, env, { isLocalDev, firebaseKeyResolver });
+      if (!auth.ok) {
+        if (url.pathname === '/' && method === 'GET') {
+          return renderLoginPage(env, auth.message);
+        }
+        return renderAccessDenied(auth.status, auth.title, auth.message);
+      }
 
-    const currentUser = await resolveCurrentUser(env, identity, isLocalDev);
+      if (method === 'POST') {
+        const originError = checkOrigin(request, env);
+        if (originError) return originError;
+      }
 
-    if (!currentUser.isAdmin) {
-      return renderAccessDenied(403, 'Kein Admin-Zugriff', 'Dein Login wurde erkannt, aber deiner Person ist keine Admin-Rolle zugewiesen.');
-    }
+      const currentUser = await resolveCurrentUser(env, auth.identity, isLocalDev);
 
-    if (method === 'POST') {
-      const originError = checkOrigin(request, env);
-      if (originError) return originError;
-    }
+      if (!currentUser.isAdmin) {
+        return renderAccessDenied(403, 'Kein Admin-Zugriff', 'Dein Login wurde erkannt, aber deiner Person ist keine Admin-Rolle zugewiesen.');
+      }
 
-    if (url.pathname === '/api/admin/state' && method === 'GET') {
-      return handleState(env, currentUser);
-    }
-    if (url.pathname === '/api/admin/notes' && method === 'POST') {
-      return handleNotesPost(request, env, currentUser);
-    }
-    if (url.pathname === '/api/admin/notes/delete' && method === 'POST') {
-      return handleNotesDelete(request, env, currentUser);
-    }
-    if (url.pathname === '/api/admin/checklist' && method === 'POST') {
-      return handleChecklistPost(request, env, currentUser);
-    }
-    if (url.pathname === '/api/admin/users/grant' && method === 'POST') {
-      return handleRoleGrant(request, env, currentUser);
-    }
-    if (url.pathname === '/api/admin/users/revoke' && method === 'POST') {
-      return handleRoleRevoke(request, env, currentUser);
-    }
-    if (url.pathname === '/api/admin/users/delete' && method === 'POST') {
-      return handleUserDelete(request, env, currentUser);
-    }
-    if (url.pathname === '/api/admin/artifact-status' && method === 'POST') {
-      return handleArtifactStatusPost(request, env, currentUser);
-    }
+      if (url.pathname === '/api/admin/state' && method === 'GET') {
+        return handleState(env, currentUser);
+      }
+      if (url.pathname === '/api/admin/notes' && method === 'POST') {
+        return handleNotesPost(request, env, currentUser);
+      }
+      if (url.pathname === '/api/admin/notes/delete' && method === 'POST') {
+        return handleNotesDelete(request, env, currentUser);
+      }
+      if (url.pathname === '/api/admin/checklist' && method === 'POST') {
+        return handleChecklistPost(request, env, currentUser);
+      }
+      if (url.pathname === '/api/admin/users/grant' && method === 'POST') {
+        return handleRoleGrant(request, env, currentUser);
+      }
+      if (url.pathname === '/api/admin/users/revoke' && method === 'POST') {
+        return handleRoleRevoke(request, env, currentUser);
+      }
+      if (url.pathname === '/api/admin/users/delete' && method === 'POST') {
+        return handleUserDelete(request, env, currentUser);
+      }
+      if (url.pathname === '/api/admin/artifact-status' && method === 'POST') {
+        return handleArtifactStatusPost(request, env, currentUser);
+      }
 
-    if (method !== 'GET') {
-      return jsonResp({ error: 'Method not allowed.' }, 405);
-    }
+      if (method !== 'GET') {
+        return jsonResp({ error: 'Method not allowed.' }, 405);
+      }
 
-    return renderAdminPage(env, currentUser);
-  },
-};
+      return renderAdminPage(env, currentUser);
+    },
+  };
+}
 
-function getIdentity(request, isLocalDev) {
-  const email = normalizeEmail(
-    request.headers.get(SITES_USER_EMAIL_HEADER) ||
-    request.headers.get(LEGACY_USER_HEADER) ||
-    (isLocalDev ? 'local.admin@example.test' : ''),
-  );
-  const encodedName = request.headers.get(SITES_USER_NAME_HEADER);
-  const encoding = request.headers.get(SITES_USER_NAME_ENCODING_HEADER);
-  let displayName = email;
-  if (encodedName && encoding === 'percent-encoded-utf-8') {
-    try {
-      displayName = decodeURIComponent(encodedName);
-    } catch {
-      displayName = email;
-    }
+export default createWorker();
+
+async function proxyFirebaseAuth(request, env) {
+  const projectId = normalizeFirebaseProjectId(env.FIREBASE_PROJECT_ID);
+  if (!projectId) {
+    return jsonResp({ error: 'Firebase-Authentifizierung ist nicht konfiguriert.' }, 503);
   }
-  return { email, displayName };
+
+  const requestUrl = new URL(request.url);
+  const appOrigin = requestUrl.origin;
+  const upstreamOrigin = `https://${projectId}.firebaseapp.com`;
+  requestUrl.protocol = 'https:';
+  requestUrl.hostname = `${projectId}.firebaseapp.com`;
+  requestUrl.port = '';
+
+  const headers = new Headers(request.headers);
+  headers.delete('host');
+  const init = {
+    method: request.method,
+    headers,
+    redirect: 'manual',
+  };
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    init.body = await request.arrayBuffer();
+  }
+
+  const fetchImpl = env.__FETCH || globalThis.fetch;
+  const upstream = await fetchImpl(new Request(requestUrl.toString(), init));
+  const responseHeaders = new Headers(upstream.headers);
+  const location = responseHeaders.get('location');
+  if (location?.startsWith(upstreamOrigin)) {
+    responseHeaders.set('location', appOrigin + location.slice(upstreamOrigin.length));
+  }
+
+  return new Response(upstream.body, {
+    status: upstream.status,
+    statusText: upstream.statusText,
+    headers: responseHeaders,
+  });
+}
+
+export async function authenticateRequest(
+  request,
+  env,
+  { isLocalDev = false, firebaseKeyResolver } = {},
+) {
+  if (isLocalDev) {
+    return {
+      ok: true,
+      identity: { email: LOCAL_DEV_EMAIL, displayName: 'Local Admin' },
+    };
+  }
+
+  const projectId = normalizeFirebaseProjectId(env.FIREBASE_PROJECT_ID);
+  if (!projectId) {
+    return authFailure('Admin-Authentifizierung ist noch nicht vollstaendig konfiguriert.');
+  }
+
+  const token = extractFirebaseToken(request);
+  if (!token) {
+    return authFailure('Ein gueltiges Firebase-Login ist erforderlich.');
+  }
+
+  try {
+    const keyResolver = firebaseKeyResolver || getFirebaseSigningKey;
+    const { payload } = await jwtVerify(token, keyResolver, {
+      issuer: `https://securetoken.google.com/${projectId}`,
+      audience: projectId,
+      algorithms: ['RS256'],
+      requiredClaims: ['exp', 'iat', 'sub', 'auth_time', 'email'],
+    });
+    const email = normalizeEmail(payload.email);
+    const subject = String(payload.sub || '').trim();
+    const now = Math.floor(Date.now() / 1000);
+    if (!email || !subject || payload.email_verified !== true) {
+      return authFailure('Das Firebase-Login enthaelt keine bestaetigte E-Mail-Adresse.');
+    }
+    if (!Number.isFinite(payload.iat) || payload.iat > now || !Number.isFinite(payload.auth_time) || payload.auth_time > now) {
+      return authFailure('Das Firebase-Login enthaelt ungueltige Zeitangaben.');
+    }
+    const displayName = String(payload.name || email).trim() || email;
+    return { ok: true, identity: { email, displayName } };
+  } catch {
+    return authFailure('Das Firebase-Login ist ungueltig oder abgelaufen.');
+  }
+}
+
+function authFailure(message) {
+  return {
+    ok: false,
+    status: 403,
+    title: 'Zugriff verweigert',
+    message,
+  };
+}
+
+function normalizeFirebaseProjectId(value) {
+  const projectId = String(value || '').trim();
+  return /^[a-z0-9][a-z0-9-]{4,28}[a-z0-9]$/.test(projectId) ? projectId : '';
+}
+
+function extractFirebaseToken(request) {
+  const authorization = String(request.headers.get('Authorization') || '');
+  const bearer = authorization.match(/^Bearer\s+([^\s]+)$/i);
+  if (bearer) return bearer[1];
+
+  const cookie = String(request.headers.get('Cookie') || '');
+  for (const part of cookie.split(';')) {
+    const [name, ...rest] = part.trim().split('=');
+    if (name === FIREBASE_COOKIE) return rest.join('=');
+  }
+  return '';
+}
+
+async function getFirebaseSigningKey(protectedHeader) {
+  const kid = String(protectedHeader?.kid || '').trim();
+  if (!kid) throw new Error('Firebase token has no kid.');
+
+  const now = Date.now();
+  if (firebaseCertCache.expiresAt <= now || !firebaseCertCache.certs.has(kid)) {
+    const response = await fetch(FIREBASE_CERTS_URL);
+    if (!response.ok) throw new Error(`Firebase certificates unavailable: ${response.status}`);
+    const certificates = await response.json();
+    const maxAge = Number.parseInt(response.headers.get('Cache-Control')?.match(/max-age=(\d+)/)?.[1] || '3600', 10);
+    firebaseCertCache = {
+      expiresAt: now + Math.max(60, maxAge) * 1000,
+      certs: new Map(Object.entries(certificates)),
+    };
+  }
+
+  const certificate = firebaseCertCache.certs.get(kid);
+  if (!certificate) throw new Error('Unknown Firebase signing key.');
+  return importX509(certificate, 'RS256');
 }
 
 function normalizeEmail(value) {
@@ -130,11 +256,10 @@ function parseEmailList(value) {
     .filter(Boolean);
 }
 
-function checkOrigin(request, env) {
-  const allowed = env.ALLOWED_ORIGIN || '';
-  if (!allowed) return null;
-  const origin = request.headers.get('Origin') || '';
-  if (origin !== allowed) {
+export function checkOrigin(request, env) {
+  const allowed = String(env.ALLOWED_ORIGIN || '').trim().replace(/\/$/, '');
+  const origin = String(request.headers.get('Origin') || '').trim().replace(/\/$/, '');
+  if (!allowed || !origin || origin !== allowed) {
     return jsonResp({ error: 'Origin nicht erlaubt.' }, 403);
   }
   return null;
@@ -175,19 +300,6 @@ async function resolveCurrentUser(env, identity, isLocalDev) {
   if (isLocalDev) {
     await grantRole(env, email, 'admin', 'system:LOCAL_DEV');
     bootstrapSource = 'local-dev';
-  }
-
-  const adminCount = await countAdminRoles(env);
-  if (adminCount === 0 && env.ALLOW_FIRST_ADMIN_BOOTSTRAP === 'true' && email) {
-    await grantRole(env, email, 'admin', 'system:first-admin-bootstrap');
-    await writeAudit(env, {
-      actor: email,
-      action: 'first_admin_bootstrap',
-      targetType: 'admin_user',
-      targetId: email,
-      details: 'ALLOW_FIRST_ADMIN_BOOTSTRAP=true',
-    });
-    bootstrapSource = 'first-admin-bootstrap';
   }
 
   const roles = await getRolesForEmail(env, email);
@@ -252,6 +364,15 @@ async function revokeRole(env, email, role) {
     .run();
 }
 
+export async function fetchContentApi(env, contentApiUrl) {
+  const request = new Request(`${contentApiUrl}/api/content`, {
+    headers: { 'Accept': 'application/json' },
+  });
+  return env.CONTENT_API?.fetch
+    ? env.CONTENT_API.fetch(request)
+    : fetch(request);
+}
+
 async function handleState(env, currentUser) {
   const contentApiUrl = env.CONTENT_API_URL;
   let apiStatus = 'nicht konfiguriert';
@@ -261,9 +382,7 @@ async function handleState(env, currentUser) {
 
   if (contentApiUrl) {
     try {
-      const resp = await fetch(`${contentApiUrl}/api/content`, {
-        headers: { 'Accept': 'application/json' },
-      });
+      const resp = await fetchContentApi(env, contentApiUrl);
       if (resp.ok) {
         const data = await resp.json();
         apiStatus = 'erreichbar';
@@ -713,56 +832,6 @@ async function writeAudit(env, { actor, action, targetType, targetId, details = 
     .run();
 }
 
-async function ensureSchema(env) {
-  if (!env.DB) return;
-
-  await env.DB.batch([
-    env.DB.prepare(`CREATE TABLE IF NOT EXISTS team_notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      created_at TEXT NOT NULL,
-      author_key TEXT,
-      body TEXT NOT NULL
-    )`),
-    env.DB.prepare(`CREATE TABLE IF NOT EXISTS checklist_items (
-      id TEXT PRIMARY KEY,
-      label TEXT NOT NULL,
-      done INTEGER NOT NULL DEFAULT 0,
-      updated_at TEXT NOT NULL
-    )`),
-    env.DB.prepare(`CREATE TABLE IF NOT EXISTS admin_users (
-      email TEXT PRIMARY KEY,
-      display_name TEXT,
-      status TEXT NOT NULL DEFAULT 'active',
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    )`),
-    env.DB.prepare(`CREATE TABLE IF NOT EXISTS admin_user_roles (
-      email TEXT NOT NULL,
-      role TEXT NOT NULL,
-      granted_by TEXT NOT NULL,
-      granted_at TEXT NOT NULL,
-      PRIMARY KEY (email, role),
-      FOREIGN KEY (email) REFERENCES admin_users(email)
-    )`),
-    env.DB.prepare(`CREATE TABLE IF NOT EXISTS artifact_status_overrides (
-      artifact_id TEXT PRIMARY KEY,
-      status TEXT NOT NULL,
-      note TEXT,
-      updated_by TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    )`),
-    env.DB.prepare(`CREATE TABLE IF NOT EXISTS audit_log (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      created_at TEXT NOT NULL,
-      actor_email TEXT NOT NULL,
-      action TEXT NOT NULL,
-      target_type TEXT NOT NULL,
-      target_id TEXT NOT NULL,
-      details TEXT
-    )`),
-  ]);
-}
-
 function esc(str) {
   return String(str ?? '')
     .replace(/&/g, '&amp;')
@@ -782,6 +851,137 @@ function statusOptions(selected = '') {
   return ARTIFACT_STATUSES.map((status) =>
     `<option value="${esc(status)}"${status === selected ? ' selected' : ''}>${esc(status)}</option>`
   ).join('');
+}
+
+function firebaseClientConfig(env) {
+  const config = {
+    apiKey: String(env.FIREBASE_API_KEY || '').trim(),
+    authDomain: String(env.FIREBASE_AUTH_DOMAIN || '').trim().toLowerCase(),
+    projectId: normalizeFirebaseProjectId(env.FIREBASE_PROJECT_ID),
+    appId: String(env.FIREBASE_APP_ID || '').trim(),
+  };
+  if (!config.apiKey || !config.authDomain || !config.projectId || !config.appId) return null;
+  return config;
+}
+
+function inlineJson(value) {
+  return JSON.stringify(value).replace(/</g, '\\u003c');
+}
+
+function firebaseSessionScript(env, { login = false } = {}) {
+  const config = firebaseClientConfig(env);
+  if (!config) return '';
+  const action = login
+    ? `
+      const button = document.getElementById('firebase-login');
+      button.addEventListener('click', async () => {
+        button.disabled = true;
+        errorBox.textContent = '';
+        try {
+          await setPersistence(auth, browserLocalPersistence);
+          await signInWithRedirect(auth, new GoogleAuthProvider());
+        } catch (error) {
+          button.disabled = false;
+          errorBox.textContent = error?.message || 'Google-Anmeldung fehlgeschlagen.';
+        }
+      });
+      getRedirectResult(auth).catch((error) => {
+        button.disabled = false;
+        errorBox.textContent = error?.message || 'Google-Anmeldung fehlgeschlagen.';
+      });
+      onAuthStateChanged(auth, async (user) => {
+        if (user) await establishSession(user, false);
+      });`
+    : `
+      onIdTokenChanged(auth, async (user) => {
+        if (!user) {
+          clearSession();
+          location.reload();
+          return;
+        }
+        await establishSession(user, false, false);
+      });
+      document.getElementById('firebase-logout')?.addEventListener('click', async () => {
+        await signOut(auth);
+        clearSession();
+        location.reload();
+      });`;
+
+  return `<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-app.js';
+    import {
+      browserLocalPersistence,
+      getAuth,
+      getRedirectResult,
+      GoogleAuthProvider,
+      onAuthStateChanged,
+      onIdTokenChanged,
+      setPersistence,
+      signInWithRedirect,
+      signOut,
+    } from 'https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-auth.js';
+
+    const app = initializeApp(${inlineJson(config)});
+    const auth = getAuth(app);
+    const cookieName = ${inlineJson(FIREBASE_COOKIE)};
+    const errorBox = document.getElementById('firebase-error');
+    let sessionPending = false;
+
+    function clearSession() {
+      document.cookie = cookieName + '=; Path=/; Secure; SameSite=Strict; Max-Age=0';
+    }
+
+    async function establishSession(user, forceRefresh = false, reload = true) {
+      if (sessionPending) return;
+      sessionPending = true;
+      try {
+        const token = await user.getIdToken(forceRefresh);
+        document.cookie = cookieName + '=' + token + '; Path=/; Secure; SameSite=Strict; Max-Age=3300';
+        if (reload) location.replace(location.href);
+      } finally {
+        sessionPending = false;
+      }
+    }
+    ${action}
+  </script>`;
+}
+
+function renderLoginPage(env, authMessage = '') {
+  const configured = Boolean(firebaseClientConfig(env));
+  const configMessage = configured
+    ? ''
+    : '<p class="error">Firebase ist noch nicht vollstaendig konfiguriert.</p>';
+  return new Response(`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KI-tomat Admin Login</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, system-ui, sans-serif; --red:#e63329; --ink:#1f1d1a; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f8f5ee; color: var(--ink); }
+    main { width: min(520px, calc(100% - 32px)); padding: 34px; background: #fff; border: 1px solid #ddd8ce; border-radius: 10px; box-shadow: 0 16px 40px rgba(31,29,26,.08); }
+    h1 { margin: 0 0 10px; font-size: 26px; }
+    p { line-height: 1.55; color: #655d52; }
+    button { padding: 11px 18px; border: 0; border-radius: 7px; background: var(--red); color: #fff; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: wait; }
+    .error { color: #9e211a; }
+  </style>
+</head>
+<body><main>
+  <h1>KI-tomat Admin</h1>
+  <p>Bitte melde dich mit dem zugelassenen Google-Konto an. Firebase bestaetigt deine Identitaet; der Worker prueft danach zusaetzlich die Admin-Rolle.</p>
+  ${configMessage}
+  <p id="firebase-error" class="error">${esc(authMessage)}</p>
+  <button id="firebase-login"${configured ? '' : ' disabled'}>Mit Google anmelden</button>
+</main>${firebaseSessionScript(env, { login: true })}</body>
+</html>`, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+    },
+  });
 }
 
 async function renderAdminPage(env, currentUser) {
@@ -812,7 +1012,7 @@ async function renderAdminPage(env, currentUser) {
   const apiWarningHint = state.apiWarning
     ? `<div class="hint info"><strong>Datenquelle:</strong> ${esc(state.apiWarning)}</div>`
     : '';
-  const externalHint = `<div class="hint info"><strong>Hinweis zu externen Personen:</strong> Rollen in D1 reichen fuer den Admin-Zugang nicht allein. Die Person muss zusaetzlich ueber Sites/Workspace-Zugriff auf diese Admin-Site zugelassen sein. Beim Anlegen wird keine E-Mail versendet und kein KI-Tomat-Passwort erzeugt; der Login laeuft ueber Sites/Workspace.</div>`;
+  const externalHint = `<div class="hint info"><strong>Hinweis zu externen Personen:</strong> Rollen in D1 reichen fuer den Admin-Zugang nicht allein. Die Person muss sich mit einer bestaetigten Firebase-/Google-E-Mail anmelden und zusaetzlich in der Admin-Allowlist stehen.</div>`;
 
   const inventoryRows = state.inventory.length > 0
     ? state.inventory.map((item) => {
@@ -939,7 +1139,7 @@ async function renderAdminPage(env, currentUser) {
 <body>
 <main>
   <h1>KI-tomat Admin</h1>
-  <p class="topline">Angemeldet als <strong>${esc(currentUser.email)}</strong> · Rollen: ${esc(currentUser.roles.join(', '))}</p>
+  <p class="topline">Angemeldet als <strong>${esc(currentUser.email)}</strong> · Rollen: ${esc(currentUser.roles.join(', '))} · <button id="firebase-logout" class="danger-lite" type="button">Abmelden</button></p>
   ${configHint}${apiErrorHint}${apiWarningHint}${externalHint}
 
   <section class="grid">
@@ -963,7 +1163,7 @@ async function renderAdminPage(env, currentUser) {
         <select id="role-id">${roleOptions()}</select>
         <button onclick="grantRole()">Hinzufuegen</button>
       </div>
-      <p class="topline" style="margin-top:12px">Nur Personen mit Rolle <strong>admin</strong> duerfen diese Admin-Seite nutzen. Das Anlegen versendet keine E-Mail und setzt kein Passwort; die Person muss sich mit ihrem Sites/Workspace-Konto anmelden.</p>
+      <p class="topline" style="margin-top:12px">Nur Personen mit Rolle <strong>admin</strong> duerfen diese Admin-Seite nutzen. Das Anlegen versendet keine E-Mail und setzt kein Passwort; die Person muss sich zusaetzlich ueber Firebase Authentication anmelden.</p>
     </div>
   </div>
 
@@ -1053,9 +1253,13 @@ async function renderAdminPage(env, currentUser) {
     });
   });
 </script>
+${firebaseSessionScript(env)}
 </body>
 </html>`, {
-    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+    },
   });
 }
 

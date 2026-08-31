@@ -1,15 +1,16 @@
-# KI-tomat Internal Admin Site
+# KI-tomat Internal Admin Worker
 
-Workspace-interne Admin-Grundlage fuer Phase 3 B+. Die Site nutzt Sites-Login als aeussere Zugangsschicht und ein eigenes D1-gestuetztes Rollenmodell fuer echte Admin-Rechte.
+Interner Cloudflare Worker fuer Administration. Firebase Authentication stellt den Google-Login bereit; der Worker validiert jedes Firebase-ID-Token selbst und nutzt zusaetzlich ein eigenes D1-gestuetztes Rollenmodell.
 
-## Sites Foundation
+## Cloudflare Runtime
 
-- `.openai/hosting.json` enthaelt die logischen Bindings fuer Sites. `project_id` wird erst nach der Provisionierung durch Sites gesetzt.
-- D1-Binding: `DB`.
+- `wrangler.toml` enthaelt Workername, oeffentliche Runtime-Variablen und das D1-Binding.
+- `.openai/hosting.json` bleibt waehrend der Abnahme nur als Rollback-Hinweis erhalten.
+- D1-Binding: `DB`; Service-Binding `CONTENT_API` fuer den internen Aufruf des Content-Workers.
 - R2 wird in Phase 3 nicht genutzt und bleibt `null`.
 - Diese Site nutzt eine eigene D1-Datenbank fuer Rollen, Team-Notizen, Checklisten, Artefakt-Status-Overlays und Audit-Log.
-- Team-Notizen speichern kein Klartext-Autorenprofil, sondern nur einen kurzen `author_key`.
-- Echte Secrets werden in Sites Runtime Environment gesetzt, nicht im Repo.
+- Team-Notizen speichern zur nachvollziehbaren Zuordnung die bestaetigte Admin-E-Mail als `author_key`.
+- `ADMIN_EMAILS` wird mit `wrangler secret put ADMIN_EMAILS` gesetzt und nicht eingecheckt.
 
 ## Funktionen
 
@@ -35,11 +36,11 @@ Vorbereitete Rollen:
 - `contributor`: Beitragsrolle ohne Admin-Zugang.
 - `viewer`: Leserolle fuer spaetere interne Uebersichten.
 
-Wichtig fuer externe Personen: Die D1-Rolle allein reicht nicht. Die Person muss zusaetzlich ueber Sites/Workspace-Zugriff auf diese Admin-Site zugelassen werden. Danach entscheidet das D1-Rollenmodell, ob die Admin-Seite freigegeben wird.
+Wichtig fuer externe Personen: Die D1-Rolle allein reicht nicht. Die Person muss sich mit einer von Firebase bestaetigten Google-E-Mail anmelden. Danach entscheidet die feste `ADMIN_EMAILS`-Allowlist zusammen mit dem D1-Rollenmodell, ob die Admin-Seite freigegeben wird.
 
 ## Initiale Admins
 
-Initiale Admins werden ueber die Sites Runtime Environment Variable `ADMIN_EMAILS` gesetzt.
+Initiale Admins werden ueber das Cloudflare-Secret `ADMIN_EMAILS` gesetzt.
 
 Beispiel:
 
@@ -49,23 +50,30 @@ ADMIN_EMAILS=oschwenker@wbsedu.de,patrizia@example.com
 
 `patrizia@example.com` ist ein Platzhalter und muss vor Deployment durch die echte Login-E-Mail ersetzt werden.
 
-Optionaler Notfall-Mechanismus:
-
-```text
-ALLOW_FIRST_ADMIN_BOOTSTRAP=true
-```
-
-Damit wird die erste authentifizierte Person Admin, falls noch keine Admin-Rolle existiert. Fuer produktive Nutzung sollte das nach dem Bootstrap wieder auf `false` stehen.
+Ein automatischer First-Admin-Mechanismus ist bewusst nicht vorhanden. Der erste Admin kommt ausschliesslich aus `ADMIN_EMAILS`.
 
 ## Runtime Environment
 
 - `CONTENT_API_URL`: URL der Public Content API Site.
 - `ADMIN_EMAILS`: komma-separierte Liste initialer Admin-E-Mails.
-- `ALLOWED_ORIGIN`: optionaler Origin-Schutz fuer POST-Endpunkte.
-- `ALLOW_FIRST_ADMIN_BOOTSTRAP`: optionaler Erstadmin-Bootstrap, default `false`.
+- `ALLOWED_ORIGIN`: erforderliche, exakte Admin-Worker-Origin fuer POST-Endpunkte.
+- `FIREBASE_PROJECT_ID`: unveraenderliche Firebase-Projekt-ID; zugleich `aud` des ID-Tokens.
+- `FIREBASE_API_KEY`: oeffentliche Web-App-Konfiguration von Firebase.
+- `FIREBASE_AUTH_DOMAIN`: Firebase-Auth-Domain der Web-App.
+- `FIREBASE_APP_ID`: oeffentliche Firebase-Web-App-ID.
+
+Die Firebase-Webwerte sind keine Server-Secrets und duerfen in `wrangler.toml` stehen. `ADMIN_EMAILS` bleibt dagegen ein Cloudflare-Secret.
 
 ## Build
 
 ```bash
 npm run build
+npm test
+npm run deploy:dry-run
+```
+
+Das D1-Schema wird einmalig und ausdruecklich remote initialisiert:
+
+```bash
+npx wrangler d1 execute kitomat-admin --remote --file db/schema.sql
 ```
