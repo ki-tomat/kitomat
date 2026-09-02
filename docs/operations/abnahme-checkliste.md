@@ -46,6 +46,8 @@ ist dort ein optionaler Gegencheck.
   - _So testen (🪟 Windows · Person B):_ `https://kitomat-content-api.ki-tomat.workers.dev/api/content` oeffnen → Liste echter Artefakte, `status: live`, keine `_template`-Eintraege.
 - [ ] **[gemeinsam]** `GET /api/content/<id>` → Artefakt inkl. `readme`.
   - _So testen (🪟 Windows · Person B):_ Eine echte ID aus `/api/content` nehmen und `…/api/content/<id>` oeffnen → Feld `readme` ist vorhanden.
+  -  _Nachweis (02.09.2026, Person B):_ `GET /api/content/ki-stakeholder-persona-framework` → HTTP 200; Artefakt „Perspektive wechseln“ geladen; Feld `readme` vorhanden und mit 2.550 Zeichen befüllt.
+  - _Hinweis:_ Die Antwort meldete `status: cache`. Der Detail-Endpunkt funktioniert; der Status sollte beim vorherigen `/api/content`-Prüfpunkt separat beobachtet werden.
 - [ ] **[Person B]** `If-None-Match` → 304; GitHub-Fehler simulieren → `stale`.
   - _So testen (🪟 Windows · Person B, Codex/PowerShell):_ ETag holen: `curl.exe -sS -D - https://kitomat-content-api.ki-tomat.workers.dev/api/content -o NUL` → Zeile `etag:`. Dann erneut mit `curl.exe -sS -D - -H "If-None-Match: <etag>" https://kitomat-content-api.ki-tomat.workers.dev/api/content -o NUL` → `HTTP/2 304`. GitHub-Ausfall simulieren → Status `stale`.
 - [ ] **[Person B]** Remote-D1 zeigt erwartete Tabellen: `wrangler d1 execute <db> --remote --command "SELECT name FROM sqlite_schema WHERE type='table'"` (beide DBs).
