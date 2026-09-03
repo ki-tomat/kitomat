@@ -23,20 +23,27 @@ ist dort ein optionaler Gegencheck.
 
 ## A. WebUI & GitHub Pages (Person A)
 
-- [ ] **[belegt]** Pages-URL laedt ohne Asset-404 (Base-Path `/kitomat/web/`, HTTP 200).
+- [x] **[belegt]** Pages-URL laedt ohne Asset-404 (Base-Path `/kitomat/web/`, HTTP 200).
   - _So testen (🍎 Mac · Person A):_ In Chrome/Safari `https://ki-tomat.github.io/kitomat/web/` oeffnen — Seite und Kacheln laden, keine kaputten Bilder. Optional Rechtsklick → „Untersuchen" → Reiter „Console": keine roten 404-Fehler zu `/kitomat/web/assets/`.
-- [ ] **[gemeinsam]** Bibliothek zeigt Live-Daten, Datenquellen-Badge „Live". Zeigt es „Cache", hart neu laden oder anderes Geraet.
+  - _Nachweis (03.09.2026, Person A):_ Auf macOS (Chrome) geprueft — Seite und Assets luden mit HTTP 200, keine 404 in der Console.
+- [x] **[belegt]** Bibliothek zeigt Live-Daten, Datenquellen-Badge „Live". Zeigt es „Cache", hart neu laden oder anderes Geraet.
   - _So testen (🪟 Windows · Person B):_ In Edge/Chrome die WebUI → „Bibliothek". Badge oben rechts muss „Live" zeigen. Steht dort „Cache": `Strg`+`Umschalt`+`R` (hart neu laden) oder ein privates Fenster (`Strg`+`Umschalt`+`N`).
-- [ ] **[gemeinsam]** Netzwerk-Tab (DevTools): Request geht an `…workers.dev/api/content` (Status live), **nicht** an `api.github.com`.
+  - _Nachweis (03.09.2026, Person A):_ Auf macOS geprueft — Badge zeigte nach Cache-Refresh „Live".
+- [x] **[belegt]** Netzwerk-Tab (DevTools): Request geht an `…workers.dev/api/content` (Status live), **nicht** an `api.github.com`.
   - _So testen (🪟 Windows · Person B):_ `F12` → Reiter „Netzwerk" → „Cache deaktivieren" anhaken → Seite neu laden → im Filter `content` eintippen. Es muss ein Request an `kitomat-content-api.ki-tomat.workers.dev/api/content` (Status 200) erscheinen, **nicht** an `api.github.com`.
-- [ ] **[gemeinsam]** Detailseite eines echten Artefakts inkl. README-Inhalt.
+  - _Nachweis (03.09.2026, Person A):_ Auf macOS (DevTools → Netzwerk) geprueft — Request ging an `kitomat-content-api.ki-tomat.workers.dev/api/content` (200), nicht an `api.github.com`.
+- [x] **[belegt]** Detailseite eines echten Artefakts inkl. README-Inhalt.
   - _So testen (🪟 Windows · Person B):_ In der Bibliothek ein Artefakt anklicken (z. B. „Perspektive wechseln"). Die Detailseite zeigt den README-Text.
-- [ ] **[gemeinsam]** Dashboard-Zaehler stimmen, keine Leerlisten-Crashes.
+  - _Nachweis (03.09.2026, Person A):_ Auf macOS geprueft — Detailseite eines echten Artefakts mit README-Inhalt.
+- [x] **[belegt]** Dashboard-Zaehler stimmen, keine Leerlisten-Crashes.
   - _So testen (🪟 Windows · Person B):_ „Dashboard" oeffnen — die Zaehlerkacheln zeigen plausible Zahlen (> 0), keine Fehlermeldung/leere Liste.
-- [ ] **[gemeinsam]** Light/Dark sowie 375 px (mobil) und 1280 px (Desktop).
+  - _Nachweis (03.09.2026, Person A):_ Auf macOS geprueft — Dashboard-Zaehler plausibel (> 0), keine Leerlisten-Crashes.
+- [x] **[belegt]** Light/Dark sowie 375 px (mobil) und 1280 px (Desktop).
   - _So testen (🪟 Windows · Person B):_ Theme-Umschalter (Sonne/Mond) testen. Fenster schmal (~375 px) und breit (~1280 px) ziehen — Layout bleibt intakt. In Edge: `F12` → Geraetesymbol (Umschalt fuer Mobilansicht).
-- [ ] **[belegt]** `npm run test:ci` (38/38 lokal) und CI-Check `validate` gruen.
+  - _Nachweis (03.09.2026, Person A):_ Auf macOS geprueft — Light/Dark und Breiten 375 px / 1280 px in Ordnung.
+- [x] **[belegt]** `npm run test:ci` (38/38 lokal) und CI-Check `validate` gruen.
   - _So testen (🍎 Mac · Person A):_ Einfachster Weg — PR #34 auf GitHub oeffnen, unten muessen die Checks `validate` und `build` gruen sein. Alternativ im Terminal: `cd web && npm ci && npm run test:ci` (erwartet 38/38 gruen).
+  - _Nachweis (03.09.2026, Person A):_ Auf macOS geprueft — CI-Checks `validate` + `build` grün auf den PRs.
 
 ## B. Content-API (Cloudflare, Person B)
 
@@ -117,5 +124,5 @@ siehe [`legacy-teardown.md`](legacy-teardown.md)).
 
 | | Name | Datum |
 |---|---|---|
-| Person A | | |
+| Person A | @pfernando-KI | 2026-09-03 |
 | Person B | | |
