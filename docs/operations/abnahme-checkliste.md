@@ -44,12 +44,23 @@ ist dort ein optionaler Gegencheck.
   - _So testen (🪟 Windows · Person B):_ Im Browser `https://kitomat-content-api.ki-tomat.workers.dev/api/status` oeffnen → JSON. Oder Codex/PowerShell: `curl.exe -sS https://kitomat-content-api.ki-tomat.workers.dev/api/status`.
 - [ ] **[belegt]** `GET /api/content` → echte Artefakte, kein `_template`.
   - _So testen (🪟 Windows · Person B):_ `https://kitomat-content-api.ki-tomat.workers.dev/api/content` oeffnen → Liste echter Artefakte, `status: live`, keine `_template`-Eintraege.
-- [ ] **[gemeinsam]** `GET /api/content/<id>` → Artefakt inkl. `readme`.
+- [ ] **[belegt]** `GET /api/content/<id>` → Artefakt inkl. `readme`.
   - _So testen (🪟 Windows · Person B):_ Eine echte ID aus `/api/content` nehmen und `…/api/content/<id>` oeffnen → Feld `readme` ist vorhanden.
-- [ ] **[Person B]** `If-None-Match` → 304; GitHub-Fehler simulieren → `stale`.
+  - _Nachweis (02.09.2026, Person B):_ `GET /api/content/ki-stakeholder-persona-framework` → HTTP 200; Artefakt „Perspektive wechseln“ geladen; Feld `readme` vorhanden und mit 2.550 Zeichen befüllt.
+  - _Hinweis:_ Die Antwort meldete `status: cache`. Der Detail-Endpunkt funktioniert; der Status sollte beim vorherigen `/api/content`-Prüfpunkt separat beobachtet werden.
+- [ ] **[belegt]** `If-None-Match` → 304; GitHub-Fehler simulieren → `stale`.
   - _So testen (🪟 Windows · Person B, Codex/PowerShell):_ ETag holen: `curl.exe -sS -D - https://kitomat-content-api.ki-tomat.workers.dev/api/content -o NUL` → Zeile `etag:`. Dann erneut mit `curl.exe -sS -D - -H "If-None-Match: <etag>" https://kitomat-content-api.ki-tomat.workers.dev/api/content -o NUL` → `HTTP/2 304`. GitHub-Ausfall simulieren → Status `stale`.
-- [ ] **[Person B]** Remote-D1 zeigt erwartete Tabellen: `wrangler d1 execute <db> --remote --command "SELECT name FROM sqlite_schema WHERE type='table'"` (beide DBs).
+  -  _Nachweis (03.09.2026, Person B):_ ETag
+  `"f45e2f75ebd4417bfa5483872f84fb2fa42683c4e66e9aecfda7587401944934"`
+  abgerufen und anschließend mit `If-None-Match` gesendet.
+  Ergebnis: `HTTP/1.1 304 Not Modified`.
+- [ ] **[belegt]** Remote-D1 zeigt erwartete Tabellen: `wrangler d1 execute <db> --remote --command "SELECT name FROM sqlite_schema WHERE type='table'"` (beide DBs).
   - _So testen (🪟 Windows · Person B, Codex):_ Im Ordner `sites/content-api` bzw. `sites/admin`: `npx wrangler d1 execute <db> --remote --command "SELECT name FROM sqlite_schema WHERE type='table'"` → erwartete Tabellen erscheinen.
+  - _Nachweis (03.09.2026, Person B):_ Remote-D1-Schema beider Datenbanken
+  mit Wrangler 4.128.0 geprüft. `kitomat-content-api` enthält `content_cache`
+  und `sync_runs`. `kitomat-admin` enthält `team_notes`, `checklist_items`,
+  `admin_users`, `admin_user_roles`, `artifact_status_overrides` und
+  `audit_log`. Beide Abfragen erfolgreich; keine Schreibvorgänge.
 - [ ] **[belegt]** CORS: `access-control-allow-origin: https://ki-tomat.github.io`, Preflight (OPTIONS) → 204.
   - _So testen (🪟 Windows · Person B, Codex/PowerShell):_ `curl.exe -sS -D - -H "Origin: https://ki-tomat.github.io" https://kitomat-content-api.ki-tomat.workers.dev/api/content -o NUL` → Header `access-control-allow-origin: https://ki-tomat.github.io`. Preflight: dieselbe URL mit `-X OPTIONS -H "Access-Control-Request-Method: GET"` → `204`.
 
@@ -67,17 +78,32 @@ ist dort ein optionaler Gegencheck.
   - _So testen (🪟 Windows · Person B):_ Belegt via `auth.test.js` (Origin-Pruefung). Ein echter Live-Test braucht ein gueltiges Login und wird bei c8 mit abgedeckt.
 - [ ] **[belegt]** Prod-Bundle: Legacy-/Local-Bypass aus (`[env.dev]` nicht in Prod-vars).
   - _So testen (🪟 Windows · Person B, Codex):_ `sites/admin/wrangler.toml` pruefen — `LOCAL_DEV` steht nur unter `[env.dev.vars]`, nicht in den Prod-`[vars]`. `npm run predeploy` (Config-Validator) laeuft ohne Fehler.
-- [ ] **[gemeinsam]** Eingeloggt (`ADMIN_EMAILS`): State/Notes/Checklist funktionieren; XSS-Escape greift (`<script>` in Notiz wird escaped).
+- [ ] **[belegt]** Eingeloggt (`ADMIN_EMAILS`): State/Notes/Checklist funktionieren; XSS-Escape greift (`<script>` in Notiz wird escaped).
   - _So testen (🪟 Windows · Person B):_ Mit einer `ADMIN_EMAILS`-Adresse via Google einloggen (`https://kitomat-admin.ki-tomat.workers.dev`). State/Notizen/Checkliste sind bedienbar. XSS-Test: Notiz mit Text `<script>alert(1)</script>` anlegen → wird als Text angezeigt, kein Popup.
-- [ ] **[gemeinsam]** Erster Admin-POST gelingt eingeloggt → `ALLOWED_ORIGIN` korrekt (same-origin, kein 403).
+- [ ] **[belegt]** Erster Admin-POST gelingt eingeloggt → `ALLOWED_ORIGIN` korrekt (same-origin, kein 403).
   - _So testen (🪟 Windows · Person B):_ Nach dem Login eine Notiz anlegen → wird gespeichert (kein 403). Bestaetigt, dass `ALLOWED_ORIGIN` korrekt gesetzt ist.
+  - _Nachweis (03.09.2026, Person B):_ Eingeloggt eine Testnotiz angelegt.
+    Die Notiz wurde ohne 403 gespeichert und anschließend mit Benutzer und
+    Zeitstempel im Bereich „Team-Notizen“ angezeigt. 
 
 ## D. Rollback & Betrieb (gemeinsam)
 
-- [ ] **[gemeinsam]** WebUI-Rollback bekannt: Repo-Variablen leeren → Fallback-Modus, Pages-Rebuild.
+- [ ] **[belegt]** WebUI-Rollback bekannt: Repo-Variablen leeren → Fallback-Modus, Pages-Rebuild.
   - _So testen (🪟 Windows · Person B — nur Kenntnis, nicht ausfuehren):_ GitHub → `ki-tomat/kitomat` → Settings → Secrets and variables → Actions → Variables: die `KITOMAT_*`-Variablen leeren und den Deploy-Workflow neu starten → WebUI faellt auf Fallback-Modus.
+  - _Nachweis (03.09.2026, Person B):_ Rollback-Ablauf anhand von Runbook,
+    Pages-Workflow und WebUI-Fallback-Code geprüft. Lokaler Fallback-Test
+    erfolgreich (8/8). Produktive Variablen wurden gemäß Testanweisung nicht
+    verändert und kein Pages-Rebuild ausgelöst.
 - [ ] **[Person B]** Sites-Rollback bekannt: `wrangler rollback`; alte pfernando-Deployments bleiben bis zur Abnahme als Fallback.
   - _So testen (🪟 Windows · Person B — nur Kenntnis):_ `npx wrangler rollback` je Worker bekannt; die alten pfernando-Deployments bleiben bis zur Abnahme unangetastet als Fallback.
+  - _Nachweis (03.09.2026, Person B):_ Rollback-Syntax geprüft und vorhandene
+  Versionen beider Cloudflare-Worker read-only aufgelistet. Für Content-API
+  und Admin sind mehrere rückrollbare Versionen vorhanden. Kein Rollback
+  ausgeführt; D1 bleibt bei einem Worker-Rollback bestehen. Die alten
+  pfernando-Sites sind weiterhin aktiv und wurden nicht verändert.
+- _Finding:_ Der Zugriff auf die alten Sites ist derzeit eingeschränkt.
+  Die alte Content-API ist daher kein unmittelbar öffentlicher
+  Drop-in-Fallback für die WebUI.
 - [ ] **[belegt]** Repo: `main` protected, Merges nur per PR (`enforce_admins`, 1 Review Pflicht).
   - _So testen (🪟 Windows · Person B):_ GitHub → Settings → Branches → Regel fuer `main`: 1 Review Pflicht und „Include administrators" (enforce_admins) sichtbar.
 - [ ] **[belegt]** Runbook vorhanden: [`cloudflare-cutover-runbook.md`](cloudflare-cutover-runbook.md).
