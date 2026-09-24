@@ -7,6 +7,7 @@ import { CONTENT_REPO_URL } from '../lib/links.js';
 import {
   readDraft, writeDraft, clearDraft, fileMetadata, buildHandoffMarkdown, CONTENT_ISSUE_NEW_URL,
 } from '../lib/contributionDraft.js';
+import { buildAp14IssueDraft } from '../lib/ap14Handoff.js';
 
 // AP12 — Ausgangswerte der Formularfelder (zugleich Agenten-Vorschlaege).
 const INITIAL_FORM = {
@@ -189,6 +190,7 @@ export default function Contribution({ go }) {
               requestSent={requestSent} setRequestSent={setRequestSent}
               form={form} setForm={setForm}
               handoffMarkdown={buildHandoffMarkdown(draftState)}
+              ap14Draft={buildAp14IssueDraft(draftState)}
             />
 
             <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:32, paddingTop:20, borderTop:"1px solid var(--line)"}}>
@@ -256,7 +258,7 @@ function PrivacyBlock() {
   );
 }
 
-function StepBody({ step, selectedType, setSelectedType, types, files, setFiles, agentRun, setAgentRun, requestSent, setRequestSent, form, setForm, handoffMarkdown }) {
+function StepBody({ step, selectedType, setSelectedType, types, files, setFiles, agentRun, setAgentRun, requestSent, setRequestSent, form, setForm, handoffMarkdown, ap14Draft }) {
   if (step === 0) {
     return (
       <div style={{display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:14}}>
@@ -282,7 +284,7 @@ function StepBody({ step, selectedType, setSelectedType, types, files, setFiles,
   if (step === 4) return <ScenariosStep form={form} setForm={setForm}/>;
   if (step === 5) return <TrustCheckStep/>;
   // step 6
-  return <RequestStep requestSent={requestSent} setRequestSent={setRequestSent} handoffMarkdown={handoffMarkdown}/>;
+  return <RequestStep requestSent={requestSent} setRequestSent={setRequestSent} handoffMarkdown={handoffMarkdown} ap14Draft={ap14Draft}/>;
 }
 
 // ---------- Step 2: Upload ----------
@@ -578,7 +580,7 @@ function TrustCheckStep() {
 }
 
 // ---------- Step 7: Review Request ----------
-function RequestStep({ requestSent, setRequestSent, handoffMarkdown }) {
+function RequestStep({ requestSent, setRequestSent, handoffMarkdown, ap14Draft }) {
   const { show } = useToast();
   const isDark = useIsDarkMode();
   const headerTextColor = isDark ? 'var(--surface)' : 'white';
@@ -595,8 +597,8 @@ function RequestStep({ requestSent, setRequestSent, handoffMarkdown }) {
   const copyHandoff = async () => {
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(handoffMarkdown);
-        show({ title: "Issue-Text kopiert.", body: "Füge ihn in GitHub als neues Issue oder in deinen Pull Request ein.", tone: "success" });
+        await navigator.clipboard.writeText(ap14Draft.body);
+        show({ title: "AP14-Übergabetext kopiert.", body: "Füge ihn in ein neues GitHub-Issue ein. Ein Maintainer startet danach den Import mit dem Label webui-import.", tone: "success" });
       } else {
         throw new Error("clipboard unavailable");
       }
@@ -613,14 +615,14 @@ function RequestStep({ requestSent, setRequestSent, handoffMarkdown }) {
         <h3 className="h3" style={{marginBottom:8}}>Beitrag an GitHub übergeben</h3>
         <p className="muted" style={{margin:"0 0 16px", fontSize:13.5, lineHeight:1.55, maxWidth:680}}>
           Die WebUI bereitet deinen Beitrag nur vor. Die eigentliche Einreichung übernimmt GitHub:
-          kopiere den vorbereiteten Issue-Text, öffne ein neues Issue im Content-Repository und füge ihn dort ein.
-          Es wird nichts automatisch nach GitHub geschrieben.
+          kopiere den AP14-Übergabetext, öffne ein neues Issue im Content-Repository und füge ihn dort ein.
+          Danach startet ausschließlich ein berechtigter Maintainer den Import über das Label <code>webui-import</code>.
         </p>
-        <textarea className="input mono" readOnly value={handoffMarkdown}
+        <textarea className="input mono" readOnly value={ap14Draft.body}
           style={{minHeight:200, resize:"vertical", width:"100%", fontSize:12, lineHeight:1.5}}/>
         <div style={{display:"flex", gap:8, flexWrap:"wrap", marginTop:14}}>
           <button className="btn btn-primary btn-sm" onClick={copyHandoff}>
-            <Icon.file size={13}/> Issue-Text kopieren
+            <Icon.file size={13}/> AP14-Text kopieren
           </button>
           <a className="btn btn-secondary btn-sm" href={CONTENT_ISSUE_NEW_URL} target="_blank" rel="noreferrer">
             <Icon.github size={13}/> GitHub Issue öffnen <Icon.external/>

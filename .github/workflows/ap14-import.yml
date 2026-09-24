@@ -1,0 +1,75 @@
+name: AP14 Import
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: ap14-import-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  import:
+    if: github.event.label.name == 'webui-import' && github.event.issue.state == 'open'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Berechtigung prüfen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTOR: ${{ github.actor }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          role="$(gh api "repos/${REPOSITORY}/collaborators/${ACTOR}/permission" --jq '.role_name // .permission')"
+          case "$role" in admin|maintain|write|triage) ;; *) echo "Keine Maintainer-Berechtigung." >&2; exit 1;; esac
+      - name: Artefakt vorbereiten
+        id: artifact
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          result="$(node tools/ap14/import-issue.mjs)"
+          echo "$result"
+          echo "id=$(node -e 'console.log(JSON.parse(process.argv[1]).id)' "$result")" >> "$GITHUB_OUTPUT"
+          echo "path=$(node -e 'console.log(JSON.parse(process.argv[1]).artifactPath)' "$result")" >> "$GITHUB_OUTPUT"
+          echo "risk=$(node -e 'console.log(JSON.parse(process.argv[1]).risk)' "$result")" >> "$GITHUB_OUTPUT"
+      - name: Validieren
+        run: |
+          python -m pip install pyyaml
+          python tools/validators/validate_metadata.py
+          python tools/validators/validate_completeness.py
+          python tools/validators/pii_heuristic.py
+      - name: Review-PR erstellen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ID: ${{ steps.artifact.outputs.id }}
+          PATH_TO_ARTIFACT: ${{ steps.artifact.outputs.path }}
+          RISK: ${{ steps.artifact.outputs.risk }}
+          ISSUE: ${{ github.event.issue.number }}
+        run: |
+          branch="ap14/${ID}-i${ISSUE}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add -- "$PATH_TO_ARTIFACT"
+          git diff --cached --quiet && exit 1
+          git commit -m "feat(ap14): Beitrag ${ID} vorbereiten (#${ISSUE})"
+          git push --set-upstream origin "$branch"
+          gh pr create --base main --head "$branch" --title "AP14 import: ${ID}" --body "Closes #${ISSUE}\n\n## Menschliche Prüfung\n- [ ] Inhalt fachlich geprüft\n- [ ] Datenschutz und Quellen geprüft\n- [ ] Freigabe dokumentiert" --label artifact --label needs-review --label "risk_${RISK}"
+      - name: Sicheren Abbruch im Issue melden
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue comment "$ISSUE" --body "Der AP14-Import wurde sicher abgebrochen. Es wurde keine automatische Freigabe oder Zusammenführung durchgeführt. Details: ${RUN_URL}"
