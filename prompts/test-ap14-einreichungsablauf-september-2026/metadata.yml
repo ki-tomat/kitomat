@@ -1,0 +1,23 @@
+id: "test-ap14-einreichungsablauf-september-2026"
+artifact_type: "prompt_package"
+title: "TEST – AP14 Einreichungsablauf September 2026"
+category: "general"
+status: "draft"
+language: "de"
+version: "0.1.0"
+maintainer: "solvity"
+license: "CC-BY-4.0"
+license_status: "declared"
+data_risk: "green"
+human_review_required: true
+ai_act_proximity: "none"
+legal_disclaimer: "Arbeits- und Orientierungshilfe. Keine automatische fachliche Freigabe."
+sources_status: "not_required"
+target_users:
+  - "KItomat-Mitwirkende und Reviewer"
+use_case: "Synthetischer End-to-End-Test des Einreichungsprozesses"
+required_inputs:
+  - "Synthetischer Beispielinput"
+output_format: "Markdown"
+personal_data_possible: false
+evaluation_criteria: "Ausgabe nachvollziehbar, synthetisch und menschlich prüfbar."
