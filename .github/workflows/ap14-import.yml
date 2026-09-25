@@ -41,6 +41,7 @@ jobs:
           echo "$result"
           echo "id=$(node -e 'console.log(JSON.parse(process.argv[1]).id)' "$result")" >> "$GITHUB_OUTPUT"
           echo "path=$(node -e 'console.log(JSON.parse(process.argv[1]).artifactPath)' "$result")" >> "$GITHUB_OUTPUT"
+          echo "type=$(node -e 'console.log(JSON.parse(process.argv[1]).artifactType)' "$result")" >> "$GITHUB_OUTPUT"
           echo "risk=$(node -e 'console.log(JSON.parse(process.argv[1]).risk)' "$result")" >> "$GITHUB_OUTPUT"
       - name: Validieren
         run: |
@@ -53,7 +54,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ID: ${{ steps.artifact.outputs.id }}
           PATH_TO_ARTIFACT: ${{ steps.artifact.outputs.path }}
-          RISK: ${{ steps.artifact.outputs.risk }}
+          TYPE: ${{ steps.artifact.outputs.type }}
           ISSUE: ${{ github.event.issue.number }}
         run: |
           branch="ap14/${ID}-i${ISSUE}"
@@ -64,7 +65,7 @@ jobs:
           git diff --cached --quiet && exit 1
           git commit -m "feat(ap14): Beitrag ${ID} vorbereiten (#${ISSUE})"
           git push --set-upstream origin "$branch"
-          gh pr create --base main --head "$branch" --title "AP14 import: ${ID}" --body "Closes #${ISSUE}\n\n## Menschliche Prüfung\n- [ ] Inhalt fachlich geprüft\n- [ ] Datenschutz und Quellen geprüft\n- [ ] Freigabe dokumentiert" --label artifact --label needs-review --label "risk_${RISK}"
+          gh pr create --base main --head "$branch" --title "AP14 import: ${ID}" --body "Closes #${ISSUE}\n\n## Menschliche Prüfung\n- [ ] Inhalt fachlich geprüft\n- [ ] Datenschutz und Quellen geprüft\n- [ ] Freigabe dokumentiert" --label "$TYPE" --label needs_peer_review
       - name: Sicheren Abbruch im Issue melden
         if: failure()
         env:

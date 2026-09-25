@@ -51,7 +51,7 @@ export async function generateFromIssue({ issueBody, root }) {
     await mkdir(path.dirname(target), { recursive: true });
     await writeFile(target, content.replace(/\r\n/g, '\n'), { encoding: 'utf8', flag: 'wx' });
   }
-  return { id: a.id, folder, artifactPath: `${folder}/${a.id}`, risk: a.data_risk };
+  return { id: a.id, folder, artifactType, artifactPath: `${folder}/${a.id}`, risk: a.data_risk };
 }
 
 if (process.argv[1] === new URL(import.meta.url).pathname) {
