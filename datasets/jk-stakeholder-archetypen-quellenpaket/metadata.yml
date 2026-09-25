@@ -2,7 +2,7 @@ id: ki-stakeholder-archetypen-quellenpaket
 artifact_type: dataset_package
 title: "Gegenüber kennen — 12 Stakeholder-Profile für KI-Projekte in KMU"
 category: consulting
-status: bronze_candidate
+status: bronze
 language: de
 version: "0.1.0"
 maintainer: jk
