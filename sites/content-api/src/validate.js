@@ -63,6 +63,9 @@ const ENUMS = {
   sources_status: ["not_required", "missing", "provided", "checked", "unverified"],
 };
 
+const FINAL_RELEASE_STATUSES = new Set(["bronze", "silver", "gold"]);
+const RELEASE_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
 const TYPE_SPECIFIC_REQUIRED = {
   prompt_package: PROMPT_REQUIRED,
   dataset_package: DATASET_REQUIRED,
@@ -88,6 +91,14 @@ export function validateMinimal(meta) {
     }
   }
 
+  if (meta.released_at !== undefined && !RELEASE_DATE_PATTERN.test(meta.released_at)) {
+    errors.push("Invalid released_at: expected YYYY-MM-DD");
+  }
+
+  if (FINAL_RELEASE_STATUSES.has(meta.status) && !meta.released_at) {
+    errors.push("Missing released_at for final release status");
+  }
+
   const typeRequired = TYPE_SPECIFIC_REQUIRED[meta.artifact_type];
   if (typeRequired) {
     for (const key of typeRequired) {
@@ -100,4 +111,7 @@ export function validateMinimal(meta) {
   return { ok: errors.length === 0, errors };
 }
 
-export const _testing = { METADATA_REQUIRED, PROMPT_REQUIRED, DATASET_REQUIRED, MODEL_REQUIRED, ENUMS };
+export const _testing = {
+  METADATA_REQUIRED, PROMPT_REQUIRED, DATASET_REQUIRED, MODEL_REQUIRED, ENUMS,
+  FINAL_RELEASE_STATUSES, RELEASE_DATE_PATTERN,
+};

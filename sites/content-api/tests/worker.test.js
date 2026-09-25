@@ -101,6 +101,7 @@ function metadataPromptYaml(id = "prompt-demo", overrides = {}) {
     title: "Demo Prompt",
     category: "Onboarding",
     status: "gold",
+    released_at: "2026-09-25",
     language: "DE",
     version: "v1.0.0",
     maintainer: "@demo",

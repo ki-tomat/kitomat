@@ -102,6 +102,7 @@ export function mapToArtifact(meta, { repo, branch, repoPath: repoPathOverride }
     license_status: meta.license_status,
     language: meta.language,
     version: meta.version,
+    released: meta.released_at,
     contributor: meta.maintainer,
     topic: meta.category,
     audience: audienceToString(meta.target_users),

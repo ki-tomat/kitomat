@@ -3,6 +3,7 @@ artifact_type: dataset_package
 title: "Gegenüber kennen — 12 Stakeholder-Profile für KI-Projekte in KMU"
 category: consulting
 status: bronze
+released_at: "2026-09-25"
 language: de
 version: "0.1.0"
 maintainer: jk
