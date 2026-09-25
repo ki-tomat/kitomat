@@ -118,7 +118,9 @@ function listPayload({ status, artifacts, loadedAt, cacheUpdatedAt }) {
     branch: BRANCH,
     loadedAt,
     cacheUpdatedAt,
-    artifacts,
+    // Auch ein vor dem Deployment gespeicherter Cache darf niemals Entwuerfe
+    // ausliefern. Die Sperre muss daher beim Lesen des Caches erneut greifen.
+    artifacts: (artifacts ?? []).filter((artifact) => isPublicReleaseStatus(artifact.status)),
   };
 }
 
@@ -226,6 +228,10 @@ async function handleDetail(request, env, id, { fetchImpl }) {
       listStatus = "live";
     }
   }
+
+  // Detail-URLs duerfen die Listen-Sperre nicht umgehen, auch nicht aus einem
+  // noch frischen Cache, der vor der Statusregel geschrieben wurde.
+  artifacts = (artifacts ?? []).filter((artifact) => isPublicReleaseStatus(artifact.status));
 
   const allowlist = parseAllowlist(env.ALLOWED_ORIGINS);
   const cors = corsHeaders(request.headers.get("origin"), allowlist);
