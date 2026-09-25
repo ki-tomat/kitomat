@@ -10,7 +10,7 @@
 import { fetchTree, fetchRaw, filterArtifactPaths } from "./github.js";
 import { parseYaml } from "./parse.js";
 import { validateMinimal } from "./validate.js";
-import { mapToArtifact, folderForArtifactType } from "./mapping.js";
+import { mapToArtifact, folderForArtifactType, isPublicReleaseStatus } from "./mapping.js";
 import { getList, setList, logSyncRun, lastSyncRun, isFresh } from "./cache.js";
 import { computeEtag, matchesIfNoneMatch } from "./etag.js";
 import { parseAllowlist, corsHeaders } from "./cors.js";
@@ -77,6 +77,10 @@ async function loadFromGitHub(env, fetchImpl) {
       const validation = validateMinimal(meta);
       if (!validation.ok) {
         skips.push({ path: c.path, reason: `validate: ${validation.errors.join("; ")}` });
+        continue;
+      }
+      if (!isPublicReleaseStatus(meta.status)) {
+        skips.push({ path: c.path, reason: `not-public-release: status=${meta.status}` });
         continue;
       }
       const expectedFolder = folderForArtifactType(meta.artifact_type);

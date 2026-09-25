@@ -36,7 +36,7 @@ export function LibraryCard({ a, onOpen, compact }) {
       ></span>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 2 }}>
         <TypeBadge type={a.type} />
-        <GoldBadge />
+        <GoldBadge status={a.status} />
       </div>
       <div>
         <h3

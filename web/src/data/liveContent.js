@@ -29,6 +29,7 @@ const CONTENT_REPO = {
 // Nur diese API-Status gelten als verwertbare Datenquelle. Alles andere
 // (z. B. 'error' oder der AP8-Foundation-Stub 'foundation') faellt auf Cache/Mock.
 const LIVE_STATUSES = ['live', 'cache', 'stale'];
+const PUBLIC_RELEASE_STATUSES = new Set(['bronze', 'silver', 'gold']);
 const TYPE_MAP = {
   prompt_package: 'prompt',
   dataset_package: 'dataset',
@@ -140,6 +141,10 @@ function folderForArtifactType(artifactType) {
   return FOLDER_FOR_TYPE[type];
 }
 
+function isPublicReleaseStatus(status) {
+  return PUBLIC_RELEASE_STATUSES.has(status);
+}
+
 function normalizeGithubArtifact(meta, repoPathOverride) {
   const type = TYPE_MAP[meta.artifact_type];
   const folder = FOLDER_FOR_TYPE[type];
@@ -212,6 +217,7 @@ async function loadGithubArtifacts() {
     const meta = parseSimpleYaml(await metaRes.text());
     if (!meta.id || !meta.artifact_type || !meta.title) continue;
     if (folderForArtifactType(meta.artifact_type) !== folder) continue;
+    if (!isPublicReleaseStatus(meta.status)) continue;
     artifacts.push(normalizeGithubArtifact(meta, `${folder}/${id}`));
   }
 
@@ -265,7 +271,11 @@ function writeCache(artifacts) {
 }
 
 function mockResult() {
-  return { artifacts: LIBRARY, status: 'fallback', loadedAt: null, cacheUpdatedAt: null };
+  // Beispieldaten sind nur fuer die lokale Entwicklung gedacht. Im oeffentlichen
+  // Build darf ein Ausfall der Live-Quellen niemals als angebliche Freigabe
+  // fiktiver Inhalte erscheinen.
+  const artifacts = import.meta.env?.DEV ? LIBRARY : [];
+  return { artifacts, status: 'fallback', loadedAt: null, cacheUpdatedAt: null };
 }
 
 // Bestmoegliche Daten ohne (frische) API-Antwort: gueltiger Cache, sonst Mock.
@@ -312,9 +322,10 @@ export function useLibraryData() {
 
               const apiStatus = data && data.status;
               const rawArtifacts = data && Array.isArray(data.artifacts) ? data.artifacts : [];
+              const publicArtifacts = rawArtifacts.filter((artifact) => isPublicReleaseStatus(artifact.status));
 
-              if (LIVE_STATUSES.includes(apiStatus) && rawArtifacts.length > 0) {
-                const artifacts = rawArtifacts.map(normalizeArtifact);
+              if (LIVE_STATUSES.includes(apiStatus)) {
+                const artifacts = publicArtifacts.map(normalizeArtifact);
                 writeCache(artifacts);
                 memorySnapshot = {
                   artifacts,

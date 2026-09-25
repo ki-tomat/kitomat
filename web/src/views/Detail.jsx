@@ -227,7 +227,7 @@ export default function Detail({ id, go }) {
             }}
           >
             <TypeBadge type={a.type} />
-            <GoldBadge />
+            <GoldBadge status={a.status} />
             <RiskBadge risk={a.risk} />
             <span className="badge badge-neutral mono">{a.language}</span>
             <span className="badge badge-neutral mono">{a.version}</span>

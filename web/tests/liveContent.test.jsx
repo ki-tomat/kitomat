@@ -94,7 +94,7 @@ describe('useLibraryData bridge', () => {
         artifact_type: 'prompt_package',
         title: 'GitHub Prompt-Paket',
         category: 'Test',
-        status: 'bronze_candidate',
+        status: 'bronze',
         language: 'de',
         version: '1.0.0',
         maintainer: '@github',
@@ -129,7 +129,7 @@ describe('useLibraryData bridge', () => {
         artifact_type: 'model',
         title: 'Perspektive wechseln',
         category: 'consulting',
-        status: 'bronze_candidate',
+        status: 'bronze',
         language: 'de',
         version: '0.1.0',
         maintainer: 'jk',
@@ -172,7 +172,21 @@ describe('useLibraryData bridge', () => {
     expect(artifactGithubUrl(result.current.artifacts[0])).toBe(apiArtifact.githubUrl);
   });
 
-  it('leere Live-Liste: faellt auf Mockdaten zurueck (kein Fehler)', async () => {
+  it('mit API-URL: blendet Entwurfsartefakte auch dann aus, wenn die API sie liefert', async () => {
+    vi.stubEnv('VITE_KITOMAT_CONTENT_API_URL', API_URL);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(liveResponse([
+      { ...apiArtifact, id: 'draft-prompt-001', status: 'draft' },
+    ])));
+    const { useLibraryData } = await loadBridge();
+
+    const { result } = renderHook(() => useLibraryData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.status).toBe('live');
+    expect(result.current.artifacts).toEqual([]);
+  });
+
+  it('leere Live-Liste: bleibt leer statt nicht freigegebene Fallbackdaten zu zeigen', async () => {
     vi.stubEnv('VITE_KITOMAT_CONTENT_API_URL', API_URL);
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(liveResponse([])));
     const { useLibraryData } = await loadBridge();
@@ -180,8 +194,8 @@ describe('useLibraryData bridge', () => {
     const { result } = renderHook(() => useLibraryData());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(result.current.status).toBe('fallback');
-    expect(result.current.artifacts).toHaveLength(LIBRARY.length);
+    expect(result.current.status).toBe('live');
+    expect(result.current.artifacts).toEqual([]);
   });
 
   it('API-Status error: nicht cachen, Mock-Fallback', async () => {
