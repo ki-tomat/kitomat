@@ -23,6 +23,22 @@ afterEach(() => {
 });
 
 describe('Contribution Opt-in-Persistenz', () => {
+  it('bietet fuer jedes Szenario eine eindeutige Funktion zum Leeren an', () => {
+    renderContribution();
+
+    for (let step = 0; step < 4; step += 1) {
+      fireEvent.click(screen.getByRole('button', { name: /^Weiter/i }));
+    }
+
+    const clearButtons = screen.getAllByRole('button', { name: /Inhalt leeren/i });
+    expect(clearButtons).toHaveLength(3);
+
+    const scenarioInputs = screen.getAllByRole('textbox').slice(0, 3);
+    expect(scenarioInputs[2]).not.toHaveValue('');
+    fireEvent.click(clearButtons[2]);
+    expect(scenarioInputs[2]).toHaveValue('');
+  });
+
   it('ohne Opt-in wird kein Entwurf gespeichert', () => {
     renderContribution();
     expect(screen.getByRole('checkbox')).not.toBeChecked();
