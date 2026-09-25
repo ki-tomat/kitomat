@@ -145,6 +145,16 @@ function isPublicReleaseStatus(status) {
   return PUBLIC_RELEASE_STATUSES.has(status);
 }
 
+// Der Browser-Cache kann aus einer Version vor der Freigabesperre stammen.
+// Deshalb wird er bei *jedem* Lesen erneut gefiltert, nicht nur beim Schreiben.
+// So kann ein alter Cache weder beim ersten Rendern noch bei einem API-Ausfall
+// einen Entwurf oder einen Kandidaten sichtbar machen.
+function publicArtifactsOnly(artifacts) {
+  return Array.isArray(artifacts)
+    ? artifacts.filter((artifact) => isPublicReleaseStatus(artifact && artifact.status))
+    : [];
+}
+
 function normalizeGithubArtifact(meta, repoPathOverride) {
   const type = TYPE_MAP[meta.artifact_type];
   const folder = FOLDER_FOR_TYPE[type];
@@ -253,7 +263,11 @@ function readCache() {
   try {
     const rec = JSON.parse(localStorage.getItem(CACHE_KEY));
     if (!rec || !Array.isArray(rec.artifacts) || typeof rec.savedAt !== 'number') return null;
-    return { ...rec, expired: Date.now() - rec.savedAt > CACHE_TTL_MS };
+    return {
+      ...rec,
+      artifacts: publicArtifactsOnly(rec.artifacts),
+      expired: Date.now() - rec.savedAt > CACHE_TTL_MS,
+    };
   } catch (e) {
     return null;
   }
@@ -263,7 +277,7 @@ function writeCache(artifacts) {
   try {
     localStorage.setItem(
       CACHE_KEY,
-      JSON.stringify({ artifacts, savedAt: Date.now() }),
+      JSON.stringify({ artifacts: publicArtifactsOnly(artifacts), savedAt: Date.now() }),
     );
   } catch (e) {
     /* localStorage nicht verfuegbar/voll — kein Fehler, Cache ist optional */
@@ -282,7 +296,7 @@ function mockResult() {
 function offlineResult() {
   if (memorySnapshot && Date.now() - memorySnapshot.savedAt <= CACHE_TTL_MS) {
     return {
-      artifacts: memorySnapshot.artifacts,
+      artifacts: publicArtifactsOnly(memorySnapshot.artifacts),
       status: 'cache',
       loadedAt: memorySnapshot.loadedAt,
       cacheUpdatedAt: memorySnapshot.cacheUpdatedAt,
@@ -322,7 +336,7 @@ export function useLibraryData() {
 
               const apiStatus = data && data.status;
               const rawArtifacts = data && Array.isArray(data.artifacts) ? data.artifacts : [];
-              const publicArtifacts = rawArtifacts.filter((artifact) => isPublicReleaseStatus(artifact.status));
+              const publicArtifacts = publicArtifactsOnly(rawArtifacts);
 
               if (LIVE_STATUSES.includes(apiStatus)) {
                 const artifacts = publicArtifacts.map(normalizeArtifact);

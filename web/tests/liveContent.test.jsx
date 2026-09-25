@@ -246,6 +246,27 @@ describe('useLibraryData bridge', () => {
     expect(second.result.current.artifacts[0].id).toBe('live-prompt-001');
   });
 
+  it('filtert einen Browser-Cache aus einer alten Version bereits beim ersten Rendern', async () => {
+    vi.stubEnv('VITE_KITOMAT_CONTENT_API_URL', API_URL);
+    localStorage.setItem('kitomat_public_content_cache_v1', JSON.stringify({
+      artifacts: [
+        { ...apiArtifact, id: 'old-draft-001', status: 'draft' },
+        apiArtifact,
+      ],
+      savedAt: Date.now(),
+    }));
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')));
+    const { useLibraryData } = await loadBridge();
+
+    const { result } = renderHook(() => useLibraryData());
+
+    // Schon der initiale State darf nur endgültig freigegebene Artefakte enthalten.
+    expect(result.current.artifacts.map((artifact) => artifact.id)).toEqual(['live-prompt-001']);
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.status).toBe('cache');
+    expect(result.current.artifacts.map((artifact) => artifact.id)).toEqual(['live-prompt-001']);
+  });
+
   it('Fallback-Link (Mock ohne githubUrl): baut Typ->Ordner-Pfad statt artifacts/', async () => {
     const { artifactGithubUrl } = await loadBridge();
     expect(artifactGithubUrl({ id: 'demo-prompt', type: 'prompt' })).toBe(
