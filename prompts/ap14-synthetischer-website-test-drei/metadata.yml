@@ -1,0 +1,23 @@
+id: "ap14-synthetischer-website-test-drei"
+artifact_type: "prompt_package"
+title: "AP14 synthetischer Website-Test drei"
+category: "general"
+status: "draft"
+language: "de"
+version: "0.1.0"
+maintainer: "kitomat-test"
+license: "CC-BY-4.0"
+license_status: "declared"
+data_risk: "green"
+human_review_required: true
+ai_act_proximity: "none"
+legal_disclaimer: "Arbeits- und Orientierungshilfe. Keine automatische fachliche Freigabe."
+sources_status: "not_required"
+target_users:
+  - "KItomat-Maintainer"
+use_case: "Vollständig synthetischer Abschlusstest des AP14-Importwegs; keine echten Personen-, Kunden- oder Betriebsdaten."
+required_inputs:
+  - "Synthetischer Beispielinput"
+output_format: "Markdown"
+personal_data_possible: false
+evaluation_criteria: "Ausgabe nachvollziehbar, synthetisch und menschlich prüfbar."
