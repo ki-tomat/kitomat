@@ -133,6 +133,12 @@ describe("mapToArtifact/prompt", () => {
     expect(a.audience).toBe("KMU");
     expect(a.context).toBe("Einstiegs-Prompt fuer KMU-Mitarbeitende.");
     expect(a.personal_data_possible).toBe(false);
+    expect(a.released).toBeUndefined();
+  });
+
+  it("reicht ein dokumentiertes Freigabedatum an die WebUI durch", () => {
+    const a = mapToArtifact({ ...basePromptMeta(), status: "bronze", released_at: "2026-09-25" }, REPO_CTX);
+    expect(a.released).toBe("2026-09-25");
   });
 
   it("bewahrt einen expliziten Repository-Pfad bei abweichendem Ordnernamen", () => {

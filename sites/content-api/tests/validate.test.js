@@ -76,8 +76,21 @@ describe("validateMinimal", () => {
     ]) {
       const m = validPrompt();
       m.status = s;
+      if (["bronze", "silver", "gold"].includes(s)) m.released_at = "2026-09-25";
       expect(validateMinimal(m).ok).toBe(true);
     }
+  });
+
+  it("fordert für eine finale Freigabe ein Datum", () => {
+    const res = validateMinimal({ ...validPrompt(), status: "bronze" });
+    expect(res.ok).toBe(false);
+    expect(res.errors).toContain("Missing released_at for final release status");
+  });
+
+  it("lehnt ein falsch formatiertes Freigabedatum ab", () => {
+    const res = validateMinimal({ ...validPrompt(), status: "bronze", released_at: "25.09.2026" });
+    expect(res.ok).toBe(false);
+    expect(res.errors).toContain("Invalid released_at: expected YYYY-MM-DD");
   });
 
   it("lehnt non-object input ab", () => {

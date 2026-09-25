@@ -44,6 +44,7 @@ Merge only when:
 - review comments are resolved
 - one human approval is present
 - maintainer agrees with status and release inclusion
+- final release status has a documented `released_at` date in `YYYY-MM-DD` format
 
 Use squash merge. Delete the branch after merge.
 
@@ -73,4 +74,3 @@ Before `v0.1-rc`:
 4. Update `CHANGELOG.md`.
 5. Draft release notes.
 6. Confirm no public post is scheduled without human go.
-

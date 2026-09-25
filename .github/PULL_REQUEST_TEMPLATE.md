@@ -5,7 +5,8 @@
 - Typ: <!-- prompt_package / dataset_package / model / docs / tooling -->
 - Pfad:
 - Maintainer-Code oder Team:
-- Statusvorschlag: <!-- draft / bronze_candidate -->
+- Statusvorschlag: <!-- draft / bronze_candidate / finale Freigabe -->
+- Freigabedatum: <!-- bei bronze / silver / gold: YYYY-MM-DD -->
 
 ## Inhalt
 
