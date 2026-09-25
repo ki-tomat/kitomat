@@ -16,6 +16,14 @@ export const TYPE_MAP = {
   model: "industry",
 };
 
+// Nur diese Stufen sind durch eine menschliche Freigabe abgeschlossen. Kandidaten
+// und Entwürfe bleiben ausschliesslich im internen Review-Prozess sichtbar.
+export const PUBLIC_RELEASE_STATUSES = new Set(["bronze", "silver", "gold"]);
+
+export function isPublicReleaseStatus(status) {
+  return PUBLIC_RELEASE_STATUSES.has(status);
+}
+
 export const TYPE_LABELS = {
   prompt: "Prompt-Paket",
   dataset: "Quellenpaket",

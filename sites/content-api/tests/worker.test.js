@@ -100,7 +100,7 @@ function metadataPromptYaml(id = "prompt-demo", overrides = {}) {
     artifact_type: "prompt_package",
     title: "Demo Prompt",
     category: "Onboarding",
-    status: "draft",
+    status: "gold",
     language: "DE",
     version: "v1.0.0",
     maintainer: "@demo",
@@ -171,6 +171,24 @@ describe("GET /api/content", () => {
     expect(body.artifacts).toHaveLength(1);
     expect(body.artifacts[0].id).toBe("prompt-demo");
     expect(body.artifacts[0].type).toBe("prompt");
+  });
+
+  it("Entwurf -> wird nicht oeffentlich ausgeliefert", async () => {
+    setRoutes({
+      [TREE_URL]: jsonRoute({
+        tree: [{ path: "prompts/draft-demo/metadata.yml", type: "blob" }],
+      }),
+      "raw.githubusercontent.com/ki-tomat/kitomat/main/prompts/draft-demo/metadata.yml":
+        textRoute(metadataPromptYaml("draft-demo", { status: "draft" })),
+    });
+    const res = await mf.dispatchFetch("http://test/api/content");
+    const body = await res.json();
+    expect(body.artifacts).toEqual([]);
+    const db = await mf.getD1Database("DB");
+    const row = await db
+      .prepare("SELECT message FROM sync_runs ORDER BY id DESC LIMIT 1")
+      .first();
+    expect(row?.message ?? "").toMatch(/not-public-release/);
   });
 
   it("abweichender Ordnername bleibt als repoPath erhalten und README wird daraus geladen", async () => {
