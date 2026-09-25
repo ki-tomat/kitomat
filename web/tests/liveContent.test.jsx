@@ -165,7 +165,9 @@ describe('useLibraryData bridge', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     // trailing-slash-sicher zusammengesetzt
-    expect(fetchMock).toHaveBeenCalledWith(ENDPOINT, expect.any(Object));
+    expect(fetchMock).toHaveBeenCalledWith(ENDPOINT, expect.objectContaining({
+      cache: 'no-store',
+    }));
     expect(result.current.status).toBe('live');
     expect(result.current.artifacts).toHaveLength(1);
     expect(result.current.artifacts[0].id).toBe('live-prompt-001');

@@ -329,6 +329,10 @@ export function useLibraryData() {
           try {
             const res = await fetch(contentEndpoint(base), {
               headers: { Accept: 'application/json' },
+              // Freigabestatus dürfen nicht bis zum Ablauf eines Browser-HTTP-Caches
+              // hinter einer älteren Liste zurückbleiben. Der Worker darf serverseitig
+              // weiter cachen, der Browser fragt beim Laden aber frisch nach.
+              cache: 'no-store',
             });
             if (res.ok) {
               const data = await res.json();
