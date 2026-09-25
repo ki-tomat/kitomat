@@ -139,7 +139,12 @@ async function respondList(request, env, payload, ttl) {
     "ETag": etag,
     "Cache-Control": `public, max-age=${ttl}`,
   };
-  if (matchesIfNoneMatch(ifNoneMatch, etag)) {
+  // Browser brauchen für die WebUI immer einen JSON-Body. Eine 304-Antwort
+  // enthält absichtlich keinen Body und ließ die UI deshalb fälschlich auf
+  // einen leeren Offline-Fallback wechseln. Nicht-Browser-Clients behalten
+  // weiterhin die normale ETag-Optimierung.
+  const isBrowserRequest = Boolean(request.headers.get("origin"));
+  if (!isBrowserRequest && matchesIfNoneMatch(ifNoneMatch, etag)) {
     return new Response(null, { status: 304, headers });
   }
   return jsonResponse(payload, { status: 200, headers });

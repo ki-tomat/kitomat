@@ -252,6 +252,23 @@ describe("GET /api/content", () => {
     expect(weak.status).toBe(304);
   });
 
+  it("Browser mit gleichem ETag erhält weiterhin den vollständigen Listen-Body", async () => {
+    setRoutes({
+      [TREE_URL]: jsonRoute({ tree: [] }),
+    });
+    const first = await mf.dispatchFetch("http://test/api/content");
+    const etag = first.headers.get("etag");
+
+    const browser = await mf.dispatchFetch("http://test/api/content", {
+      headers: {
+        "if-none-match": etag,
+        origin: "https://ki-tomat.github.io",
+      },
+    });
+    expect(browser.status).toBe(200);
+    expect((await browser.json()).artifacts).toEqual([]);
+  });
+
   it("GitHub-Fehler ohne Cache -> status=error, leere Liste", async () => {
     setRoutes({
       [TREE_URL]: errorRoute(502),
