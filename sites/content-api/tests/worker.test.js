@@ -191,6 +191,25 @@ describe("GET /api/content", () => {
     expect(row?.message ?? "").toMatch(/not-public-release/);
   });
 
+  it("historischer Cache mit Entwurf -> wird sofort ausgeblendet", async () => {
+    const db = await mf.getD1Database("DB");
+    await db
+      .prepare("INSERT INTO content_cache (cache_key, value_json, updated_at, status) VALUES (?1, ?2, ?3, ?4)")
+      .bind(
+        "content-list-v1",
+        JSON.stringify({ artifacts: [{ id: "cached-draft", status: "draft" }] }),
+        new Date().toISOString(),
+        "live",
+      )
+      .run();
+
+    const listRes = await mf.dispatchFetch("http://test/api/content");
+    expect((await listRes.json()).artifacts).toEqual([]);
+
+    const detailRes = await mf.dispatchFetch("http://test/api/content/cached-draft");
+    expect(detailRes.status).toBe(404);
+  });
+
   it("abweichender Ordnername bleibt als repoPath erhalten und README wird daraus geladen", async () => {
     setRoutes({
       [TREE_URL]: jsonRoute({
