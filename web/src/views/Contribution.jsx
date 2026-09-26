@@ -449,7 +449,7 @@ function MetaStep({ form, setForm }) {
   const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
   return (
     <div>
-      <SuggestionBanner text="KI-Agent hat 5 von 6 Pflichtfeldern vorausgefüllt. Bitte gegenprüfen und ergänzen."/>
+      <SuggestionBanner text="Der Prototyp zeigt Beispielwerte. Bitte prüfe und ergänze alle Angaben vor der Einreichung."/>
       <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:14}}>
         {META_FIELDS.map(({ key, label, mono, suggested }) => (
           <label key={key}>
@@ -462,19 +462,23 @@ function MetaStep({ form, setForm }) {
         ))}
       </div>
       <div style={{marginTop:18}}>
-        <div className="h-eyebrow" style={{marginBottom:10}}>Quellen — automatisch erkannt</div>
+        <div className="h-eyebrow" style={{marginBottom:10}}>Quellen — Demo-Hinweise, nicht übertragen</div>
+        <p className="muted" style={{margin:"0 0 10px", fontSize:13, lineHeight:1.5}}>
+          Diese Hinweise sind nur Beispiele der Oberfläche. Sie sind keine geprüften Quellen und werden nicht in das GitHub-Issue übernommen.
+          Echte Quellen dokumentierst du später im Review.
+        </p>
         <div style={{display:"flex", flexDirection:"column", gap:8}}>
           {[
-            { url:"https://digital.bmwk.de/foerderprogramme", lic:"CC BY 4.0", ok:true },
-            { url:"https://kmu-digital.eu/leitfaden",         lic:"unklar",    ok:false },
-            { url:"https://handwerk.de/leitfaden-ki",         lic:"CC BY-SA 4.0", ok:true },
+            { label:"Beispiel: öffentliches Förderprogramm", hint:"nur Demo", ok:true },
+            { label:"Beispiel: Branchenleitfaden",            hint:"nur Demo", ok:true },
+            { label:"Beispiel: Open-Source-Dokumentation",    hint:"nur Demo", ok:true },
           ].map((s, i) => (
             <div key={i} className="card" style={{padding:"11px 14px", display:"flex", alignItems:"center", gap:14}}>
               <span style={{width:22, height:22, borderRadius:5, background: s.ok ? "var(--leaf-soft)" : "var(--amber-soft)", color: s.ok ? "var(--leaf)" : "var(--amber)", display:"inline-flex", alignItems:"center", justifyContent:"center", fontWeight:700, fontSize:11}}>
                 {s.ok ? "✓" : "!"}
               </span>
-              <a className="mono" style={{fontSize:12.5, color:"var(--ink-2)", flex:1, wordBreak:"break-all"}} href={s.url} target="_blank" rel="noreferrer">{s.url}</a>
-              <span className="mono" style={{fontSize:11.5, color: s.ok ? "var(--leaf)" : "var(--amber)"}}>{s.lic}</span>
+              <span className="mono" style={{fontSize:12.5, color:"var(--ink-2)", flex:1}}>{s.label}</span>
+              <span className="mono" style={{fontSize:11.5, color:"var(--ink-3)"}}>{s.hint}</span>
             </div>
           ))}
         </div>
@@ -497,7 +501,7 @@ function ScenariosStep({ form, setForm }) {
   const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
   return (
     <div>
-      <SuggestionBanner text="KI-Agent hat drei Szenarien aus deinen Dateien vorgeschlagen. Bitte prüfen, ergänzen oder verwerfen."/>
+      <SuggestionBanner text="Der Prototyp zeigt drei Szenario-Vorschläge. Bitte prüfen, ergänzen oder mit „Inhalt leeren“ vollständig ersetzen."/>
       <div style={{display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:12}}>
         <ScenarioEditable color="leaf"   label="Positives Szenario"
           value={form.scenarioPos} onChange={(v) => update("scenarioPos", v)}/>
@@ -530,9 +534,14 @@ function ScenarioEditable({ color, label, value, onChange }) {
   }[color];
   return (
     <div style={{background:palette.bg, border:`1px solid ${palette.border}`, borderRadius:12, padding:16, display:"flex", flexDirection:"column", gap:8}}>
-      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:8}}>
         <span style={{fontWeight:700, fontSize:13, color:palette.ink}}>{label}</span>
-        <span className="mono" style={{fontSize:10, color:palette.ink, opacity:.7, letterSpacing:".06em"}}>AGENT-VORSCHLAG</span>
+        <span style={{display:"flex", alignItems:"center", gap:8}}>
+          <span className="mono" style={{fontSize:10, color:palette.ink, opacity:.7, letterSpacing:".06em"}}>VORSCHLAG</span>
+          <button type="button" onClick={() => onChange("")} className="btn btn-ghost btn-sm" style={{padding:"3px 7px", fontSize:11, color:palette.ink}}>
+            Inhalt leeren
+          </button>
+        </span>
       </div>
       <textarea value={value ?? ""} onChange={(e) => onChange(e.target.value)} style={{
         background:"transparent", border:"none", outline:"none", resize:"vertical",
@@ -548,7 +557,7 @@ function TrustCheckStep() {
     { l:"Pflichtfelder vollständig",            ok:true },
     { l:"Synthetisches Beispiel hinterlegt",    ok:true },
     { l:"Szenario-Triade vollständig",          ok:true },
-    { l:"Quellen mit Lizenzangabe",             ok:false, hint:"1 Quelle hat unklare Lizenz – bitte ergänzen." },
+    { l:"Quellenstatus im Review prüfen",       ok:true,  hint:"Demo-Hinweise werden nicht übertragen; echte Quellen dokumentiert der Review." },
     { l:"Keine sensiblen Daten erkannt",        ok:true },
     { l:"Risiko-Vorschlag gesetzt",             ok:true,  hint:"Agenten-Vorschlag: risk_yellow – Trust Review empfohlen." },
   ];

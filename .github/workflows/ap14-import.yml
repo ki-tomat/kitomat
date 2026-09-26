@@ -65,7 +65,17 @@ jobs:
           git diff --cached --quiet && exit 1
           git commit -m "feat(ap14): Beitrag ${ID} vorbereiten (#${ISSUE})"
           git push --set-upstream origin "$branch"
-          gh pr create --base main --head "$branch" --title "AP14 import: ${ID}" --body "Closes #${ISSUE}\n\n## Menschliche Prüfung\n- [ ] Inhalt fachlich geprüft\n- [ ] Datenschutz und Quellen geprüft\n- [ ] Freigabe dokumentiert" --label "$TYPE" --label needs_peer_review
+          PR_BODY=$(cat <<EOF
+          Closes #${ISSUE}
+
+          ## Menschliche Prüfung
+
+          - [ ] Inhalt fachlich geprüft
+          - [ ] Datenschutz und Quellen geprüft
+          - [ ] Freigabe dokumentiert
+          EOF
+          )
+          gh pr create --base main --head "$branch" --title "AP14 import: ${ID}" --body "$PR_BODY" --label "$TYPE" --label needs_peer_review
       - name: Sicheren Abbruch im Issue melden
         if: failure()
         env:
