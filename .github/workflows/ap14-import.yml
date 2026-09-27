@@ -112,7 +112,7 @@ jobs:
           - [ ] Freigabe dokumentiert
           EOF
           )
-          gh pr create --base main --head "$branch" --title "AP14 import: ${ID}" --body "$PR_BODY" --label "$TYPE" --label needs_peer_review
+          gh pr create --draft --base main --head "$branch" --title "AP14 import: ${ID}" --body "$PR_BODY" --label "$TYPE" --label needs_peer_review
       - name: Sicheren Abbruch im Issue melden
         if: failure()
         env:
