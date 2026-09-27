@@ -1,0 +1,28 @@
+{
+  "type": "prompt",
+  "answers": {
+    "title": "Synthetischer Paritätstest",
+    "id": "synthetischer-paritaetstest",
+    "category": "onboarding",
+    "language": "de",
+    "maintainer": "kitomat-test",
+    "license": "CC-BY-4.0",
+    "license_status": "declared",
+    "data_risk": "green",
+    "ai_act_proximity": "none",
+    "sources_status": "not_required",
+    "target_users": ["KMU"],
+    "use_case": "Synthetischer Testfall.",
+    "required_inputs": ["synthetische Anfrage"],
+    "output_format": "Markdown",
+    "sample_input": "Bitte hilf beim Test.",
+    "sample_output": "Testantwort.",
+    "scenario_positive": "positiv: Der Test ist verständlich.",
+    "scenario_rework": "nachbearbeitbar: Einzelne Angaben ergänzen.",
+    "scenario_negative": "negativ: Keine echten Daten verwenden.",
+    "prompt_text": "Erstelle eine synthetische Antwort.",
+    "personal_data_possible": false,
+    "evaluation_criteria": "Ausgabe ist nachvollziehbar.",
+    "failure_modes": ["Unvollständige Eingabe"]
+  }
+}

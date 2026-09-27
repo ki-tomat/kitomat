@@ -21,11 +21,17 @@ jobs:
       - name: Install validator dependencies
         run: python -m pip install pyyaml
 
+      - name: Preserve approved artifact baseline
+        run: python tools/validators/verify_artifact_baseline.py
+
       - name: Validate metadata
         run: python tools/validators/validate_metadata.py
 
       - name: Validate completeness
         run: python tools/validators/validate_completeness.py
+
+      - name: Validate contribution generator parity
+        run: python tools/validators/test_contribution_parity.py
 
       - name: PII heuristic scan
         run: python tools/validators/pii_heuristic.py

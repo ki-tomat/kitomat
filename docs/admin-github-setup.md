@@ -90,6 +90,7 @@ needs_trust_review
 needs_strict_trust_review
 ready_for_human_eval
 post_mvp
+webui-import
 ```
 
 Do not use `silver`, `gold_candidate` or `gold` as regular course labels.
@@ -120,6 +121,10 @@ If contributors cannot push directly:
 7. maintainer decides merge or changes
 
 This path has the same quality standard as direct pull requests.
+
+## WebUI-Import (AP14)
+
+Für reine Textbeiträge kann ein Maintainer nach Prüfung eines WebUI-Issues das Label `webui-import` setzen. Die Action verankert den freigegebenen Payload-Hash, erzeugt nur einen neuen Draft-Branch und startet die bestehenden Validatoren. Der anschließende Pull Request braucht weiterhin die regulären menschlichen Freigaben. Details stehen in `docs/operations/webui-import-runbook.md`.
 
 ## Large download files
 

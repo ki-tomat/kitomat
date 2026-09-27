@@ -1,61 +1,53 @@
-// AP14: Verbindlicher, rein lokaler GitHub-Handoff. Der Browser sendet nichts
-// selbst; erst ein berechtigter Maintainer setzt das Import-Label im Issue.
-const START = '<!-- kitomat:payload:v1 -->';
-const END = '<!-- /kitomat:payload -->';
-const MAX_BYTES = 32 * 1024;
+import { MAX_PAYLOAD_BYTES, PAYLOAD_BEGIN, PAYLOAD_END, PAYLOAD_VERSION, TYPES, allowedAnswerKeys, slug } from './contribution/model.js';
 
-function slug(value) {
-  return String(value || '').toLowerCase().normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '').slice(0, 80);
+function bytesToBase64(bytes) { let raw = ''; for (const byte of bytes) raw += String.fromCharCode(byte); return btoa(raw); }
+function base64ToBytes(value) { const raw = atob(value); return Uint8Array.from(raw, (char) => char.charCodeAt(0)); }
+function utf8(value) { return new TextEncoder().encode(value); }
+function decodeUtf8(bytes) { return new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
+
+export function buildPayload({ selectedType, answers, acknowledgements, role = 'external' }) {
+  const type = TYPES[selectedType] ? selectedType : 'prompt';
+  return { v: PAYLOAD_VERSION, type, role, answers: { ...answers, id: slug(answers?.id || answers?.title) }, acknowledgements: { ...acknowledgements } };
 }
-
-function text(value, fallback) {
-  const clean = String(value || '').trim().replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '');
-  return clean || fallback;
+export function encodePayload(payload) {
+  const bytes = utf8(JSON.stringify(payload));
+  if (bytes.byteLength > MAX_PAYLOAD_BYTES) throw new Error('Der Übergabetext ist zu groß. Bitte kürze die Eingaben oder nutze den ZIP-Weg.');
+  return `${PAYLOAD_BEGIN}\n${bytesToBase64(bytes)}\n${PAYLOAD_END}`;
 }
-
-function encodeUtf8Base64(value) {
-  const bytes = new TextEncoder().encode(value);
-  let binary = '';
-  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
-  return { bytes, base64: btoa(binary) };
+export function decodePayload(body) {
+  const starts = String(body || '').split(PAYLOAD_BEGIN).length - 1; const ends = String(body || '').split(PAYLOAD_END).length - 1;
+  if (starts !== 1 || ends !== 1) return { ok: false, errors: ['Der Payload muss genau ein vollständiges Markerpaar enthalten.'] };
+  try {
+    const encoded = body.slice(body.indexOf(PAYLOAD_BEGIN) + PAYLOAD_BEGIN.length, body.indexOf(PAYLOAD_END)).trim();
+    if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(encoded)) throw new Error('Der Payload ist kein gültiges Base64.');
+    const bytes = base64ToBytes(encoded);
+    if (bytes.byteLength > MAX_PAYLOAD_BYTES || bytesToBase64(bytes) !== encoded) throw new Error('Der Payload ist zu groß oder nicht kanonisch kodiert.');
+    return parsePayload(JSON.parse(decodeUtf8(bytes)));
+  } catch (error) { return { ok: false, errors: [error.message || 'Der Payload konnte nicht gelesen werden.'] }; }
 }
-
+export function parsePayload(payload) {
+  const errors = [];
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) errors.push('Der Payload muss ein Objekt sein.');
+  const allowedTop = new Set(['v', 'type', 'role', 'answers', 'acknowledgements']);
+  for (const key of Object.keys(payload || {})) if (!allowedTop.has(key)) errors.push(`Unbekanntes Payload-Feld: ${key}.`);
+  if (payload?.v !== PAYLOAD_VERSION) errors.push('Dieser Entwurf stammt aus einer älteren Fassung der Web UI.');
+  if (!TYPES[payload?.type]) errors.push('Unbekannter Artefakttyp.');
+  if (!['external', 'course'].includes(payload?.role)) errors.push('Ungültige Rolle.');
+  const keys = TYPES[payload?.type] ? allowedAnswerKeys(payload.type) : new Set();
+  if (!payload?.answers || typeof payload.answers !== 'object' || Array.isArray(payload.answers)) errors.push('Antworten fehlen.');
+  for (const [key, value] of Object.entries(payload?.answers || {})) {
+    if (!keys.has(key)) errors.push(`Unbekanntes Antwortfeld: ${key}.`);
+    if (typeof value === 'string' && utf8(value).byteLength > 12000) errors.push(`Antwortfeld ${key} ist zu lang.`);
+    if (Array.isArray(value) && (value.length > 25 || value.some((item) => typeof item !== 'string' || utf8(item).byteLength > 2000))) errors.push(`Liste ${key} ist ungültig.`);
+  }
+  if (!/^[a-z0-9][a-z0-9-]{2,79}$/.test(payload?.answers?.id || '')) errors.push('Ungültige Artefakt-ID.');
+  const acks = payload?.acknowledgements;
+  if (!acks || typeof acks !== 'object' || Object.keys(acks).some((key) => !['public_content_confirmed', 'no_real_personal_data_confirmed', 'pii_hints_reviewed'].includes(key))) errors.push('Ungültige Bestätigungen.');
+  if (errors.length) return { ok: false, errors };
+  return { ok: true, payload };
+}
 export function buildAp14IssueDraft(draft) {
-  const form = draft?.form || {};
-  const type = ['prompt', 'dataset', 'industry'].includes(draft?.selectedType) ? draft.selectedType : 'prompt';
-  const id = slug(form.title);
-  if (!id || id.length < 3) throw new Error('Bitte gib einen Titel mit mindestens drei Zeichen ein.');
-
-  const language = String(form.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en';
-  const common = {
-    id,
-    title: text(form.title, id),
-    category: 'general', language,
-    maintainer: slug(String(form.contributor || 'contributor').replace(/^@/, '')) || 'contributor',
-    license: text(form.license, 'CC-BY-4.0') === '—' ? 'CC-BY-4.0' : text(form.license, 'CC-BY-4.0'),
-    license_status: 'declared', data_risk: 'green', ai_act_proximity: 'none', sources_status: 'not_required',
-    target_users: [text(form.audience, 'Mitarbeitende kleiner Organisationen')],
-    use_case: text(form.context, 'Synthetischer KItomat-Beitrag zur Orientierung.'),
-    required_inputs: ['Synthetischer Beispielinput'],
-    output_format: 'Markdown',
-    scenario_positive: text(form.scenarioPos, 'Synthetisches positives Szenario.'),
-    scenario_rework: text(form.scenarioRework, 'Synthetisches nachbearbeitbares Szenario.'),
-    scenario_negative: text(form.scenarioNeg, 'Synthetisches negatives Szenario.'),
-    sample_input: text(form.sampleIn, 'Synthetischer Beispielinput.'),
-    sample_output: text(form.sampleOut, 'Synthetische Beispielausgabe.'),
-  };
-  const answers = type === 'dataset'
-    ? { ...common, dataset_description: common.use_case, linked_artifacts: [], data_origin: 'synthetisch', contains_personal_data: false, contains_sensitive_data: false, sources_date: '2026-01-01', usage_scope: common.use_case, release_asset_required: false }
-    : type === 'industry'
-      ? { ...common, model_type: 'framework', application_scope: common.use_case, framework_references: [], required_review_level: 'human_review', model_description: common.use_case, application_guide: common.output_format, sample_case: common.sample_input }
-      : { ...common, personal_data_possible: false, evaluation_criteria: 'Ausgabe nachvollziehbar, synthetisch und menschlich prüfbar.', prompt_text: common.sample_input, failure_modes: ['Unvollständige Eingaben', 'Unklare Anforderungen'] };
-  const payload = { v: 1, type, role: 'external', answers, acknowledgements: { public_content_confirmed: true, no_real_personal_data_confirmed: true, pii_hints_reviewed: true } };
-  const json = JSON.stringify(payload);
-  const { bytes, base64 } = encodeUtf8Base64(json);
-  if (bytes.byteLength > MAX_BYTES) throw new Error('Der Übergabetext ist zu groß. Bitte kürze die Eingaben.');
-  const title = `AP14 Gate: ${common.title}`;
-  const body = `KItomat AP14 Gate: ${common.title}\n\nTyp: ${type}\nRolle: external\nID: ${id}\n\n${START}\n${base64}\n${END}`;
-  return { title, body, id };
+  const payload = buildPayload(draft); const encoded = encodePayload(payload); const title = `AP14-Beitrag: ${payload.answers.title}`;
+  const body = `## KItomat-Beitrag\n\nTyp: ${TYPES[payload.type].label}\nID: \`${payload.answers.id}\`\n\nDie folgenden Angaben werden nach der Einreichung öffentlich im Issue und im Pull Request sichtbar. Binäranhänge sind nicht enthalten; bitte nutze dafür den ZIP-Weg.\n\n${encoded}`;
+  return { title, body, id: payload.answers.id, payload };
 }

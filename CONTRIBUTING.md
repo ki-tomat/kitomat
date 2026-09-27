@@ -68,6 +68,10 @@ Regeln:
 - Status maximal `draft` oder `bronze_candidate` vorschlagen
 - OpenClaw/Codex-Vorfeedback ist kein Merge- oder Release-Approval
 
+## Weboberfläche
+
+Die Seite „Beitrag vorbereiten" bietet zwei datensparsame Wege: reine Textantworten können nach aktiver Bestätigung als GitHub-Issue übergeben werden; vollständige Pakete einschließlich PDF/DOCX werden als lokales ZIP heruntergeladen und über Fork plus Pull Request eingereicht. Der WebUI-Import erzeugt nur neue Branches mit dem Suffix `-i<Issue-Nummer>` und überschreibt keine bestehenden Artefakte.
+
 ## Review
 
 Peer Review prueft:

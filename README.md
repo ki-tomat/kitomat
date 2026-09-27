@@ -1,5 +1,7 @@
 # KItomat
 
+> Beitrag einreichen: [WebUI-Anleitung](docs/guides/webui-beitrag-vorbereiten.md)
+
 ![KItomat logo](assets/brand/kitomat.png)
 
 Frische KI-Ressourcen. Reife Ideen.

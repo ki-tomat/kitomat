@@ -43,12 +43,45 @@ jobs:
           echo "path=$(node -e 'console.log(JSON.parse(process.argv[1]).artifactPath)' "$result")" >> "$GITHUB_OUTPUT"
           echo "type=$(node -e 'console.log(JSON.parse(process.argv[1]).artifactType)' "$result")" >> "$GITHUB_OUTPUT"
           echo "risk=$(node -e 'console.log(JSON.parse(process.argv[1]).risk)' "$result")" >> "$GITHUB_OUTPUT"
+          echo "payload_hash=$(node -e 'console.log(JSON.parse(process.argv[1]).payloadHash)' "$result")" >> "$GITHUB_OUTPUT"
+      - name: Payload-Freigabe festhalten
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPOSITORY: ${{ github.repository }}
+          PAYLOAD_HASH: ${{ steps.artifact.outputs.payload_hash }}
+        run: |
+          marker="<!-- kitomat:approved-payload-sha256:${PAYLOAD_HASH} -->"
+          markers="$(gh api "repos/${REPOSITORY}/issues/${ISSUE}/comments" --paginate --jq '.[].body' | grep -E '^<!-- kitomat:approved-payload-sha256:[a-f0-9]{64} -->$' || true)"
+          if [ -n "$markers" ] && ! printf '%s\n' "$markers" | grep -Fxq "$marker"; then
+            echo "Der Payload wurde nach einer früheren Freigabe geändert. Bitte neuen Issue anlegen." >&2
+            exit 1
+          fi
+          if [ -z "$markers" ]; then
+            gh issue comment "$ISSUE" --body "$marker"
+          fi
       - name: Validieren
         run: |
           python -m pip install pyyaml
           python tools/validators/validate_metadata.py
           python tools/validators/validate_completeness.py
           python tools/validators/pii_heuristic.py
+      - name: Review-Labels sicherstellen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          TYPE: ${{ steps.artifact.outputs.type }}
+        run: |
+          ensure_label() {
+            label="$1"
+            color="$2"
+            description="$3"
+            gh api "repos/${REPOSITORY}/labels/${label}" >/dev/null 2>&1 || \
+              gh api --method POST "repos/${REPOSITORY}/labels" \
+                -f name="$label" -f color="$color" -f description="$description" >/dev/null
+          }
+          ensure_label "$TYPE" "1D76DB" "Artefakttyp für importierte AP14-Beiträge"
+          ensure_label "needs_peer_review" "FBCA04" "Menschliche Peer-Prüfung erforderlich"
       - name: Review-PR erstellen
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,6 +91,10 @@ jobs:
           ISSUE: ${{ github.event.issue.number }}
         run: |
           branch="ap14/${ID}-i${ISSUE}"
+          if git ls-remote --exit-code origin "refs/heads/${branch}" >/dev/null 2>&1; then
+            echo "Zu diesem Issue existiert bereits ein Import-Branch: ${branch}" >&2
+            exit 1
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
@@ -75,7 +112,7 @@ jobs:
           - [ ] Freigabe dokumentiert
           EOF
           )
-          gh pr create --base main --head "$branch" --title "AP14 import: ${ID}" --body "$PR_BODY" --label "$TYPE" --label needs_peer_review
+          gh pr create --draft --base main --head "$branch" --title "AP14 import: ${ID}" --body "$PR_BODY" --label "$TYPE" --label needs_peer_review
       - name: Sicheren Abbruch im Issue melden
         if: failure()
         env:

@@ -5,7 +5,7 @@
 import { CONTENT_REPO_URL } from './links.js';
 import { DATENSCHUTZ_KURZ_DONT } from '../data/content.js';
 
-export const DRAFT_KEY = 'kitomat_contribution_draft_v1';
+export const DRAFT_KEY = 'kitomat_contribution_draft_v2';
 export const CONTENT_ISSUE_NEW_URL = `${CONTENT_REPO_URL}/issues/new`;
 
 const TYPE_LABELS = {
