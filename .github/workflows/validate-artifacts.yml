@@ -21,6 +21,9 @@ jobs:
       - name: Install validator dependencies
         run: python -m pip install pyyaml
 
+      - name: Preserve approved artifact baseline
+        run: python tools/validators/verify_artifact_baseline.py
+
       - name: Validate metadata
         run: python tools/validators/validate_metadata.py
 

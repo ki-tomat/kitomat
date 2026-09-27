@@ -43,6 +43,23 @@ jobs:
           echo "path=$(node -e 'console.log(JSON.parse(process.argv[1]).artifactPath)' "$result")" >> "$GITHUB_OUTPUT"
           echo "type=$(node -e 'console.log(JSON.parse(process.argv[1]).artifactType)' "$result")" >> "$GITHUB_OUTPUT"
           echo "risk=$(node -e 'console.log(JSON.parse(process.argv[1]).risk)' "$result")" >> "$GITHUB_OUTPUT"
+          echo "payload_hash=$(node -e 'console.log(JSON.parse(process.argv[1]).payloadHash)' "$result")" >> "$GITHUB_OUTPUT"
+      - name: Payload-Freigabe festhalten
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPOSITORY: ${{ github.repository }}
+          PAYLOAD_HASH: ${{ steps.artifact.outputs.payload_hash }}
+        run: |
+          marker="<!-- kitomat:approved-payload-sha256:${PAYLOAD_HASH} -->"
+          markers="$(gh api "repos/${REPOSITORY}/issues/${ISSUE}/comments" --paginate --jq '.[].body' | grep -E '^<!-- kitomat:approved-payload-sha256:[a-f0-9]{64} -->$' || true)"
+          if [ -n "$markers" ] && ! printf '%s\n' "$markers" | grep -Fxq "$marker"; then
+            echo "Der Payload wurde nach einer früheren Freigabe geändert. Bitte neuen Issue anlegen." >&2
+            exit 1
+          fi
+          if [ -z "$markers" ]; then
+            gh issue comment "$ISSUE" --body "$marker"
+          fi
       - name: Validieren
         run: |
           python -m pip install pyyaml
@@ -58,6 +75,10 @@ jobs:
           ISSUE: ${{ github.event.issue.number }}
         run: |
           branch="ap14/${ID}-i${ISSUE}"
+          if git ls-remote --exit-code origin "refs/heads/${branch}" >/dev/null 2>&1; then
+            echo "Zu diesem Issue existiert bereits ein Import-Branch: ${branch}" >&2
+            exit 1
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"

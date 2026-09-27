@@ -13,11 +13,11 @@ import markUrl from '../assets/kitomat-mark.png';
 const explainerVideoUrl = new URL('../../KITomatExplainerVideo.mp4', import.meta.url).href;
 
 const PROCESS = [
-  { n: '01', t: 'Artefakt vorbereiten',     d: 'Typ wählen, Idee strukturieren.',                  tone: 'human' },
-  { n: '02', t: 'Dateien hochladen',        d: 'MD, YAML, JSON, PDF, DOCX, TXT.',                  tone: 'human' },
-  { n: '03', t: 'KI-Agent prüft',           d: 'Metadaten, Quellen, Datenschutz, Szenarien.',      tone: 'agent' },
-  { n: '04', t: 'Mensch kontrolliert',      d: 'Vorschläge sichten, korrigieren, freigeben.',      tone: 'human' },
-  { n: '05', t: 'Review Request erstellen', d: 'GitHub-Issue oder Pull Request vorbereiten.',      tone: 'human' },
+  { n: '01', t: 'Typ und Grunddaten wählen', d: 'Beitrag in Alltagssprache beschreiben.',           tone: 'human' },
+  { n: '02', t: 'Inhalt lokal übernehmen',   d: 'Textdateien bleiben zunächst im Browser.',          tone: 'human' },
+  { n: '03', t: 'Szenarien und Grenzen',     d: 'Positiv, nachbearbeitbar und negativ ergänzen.',    tone: 'human' },
+  { n: '04', t: 'Formal prüfen',             d: 'Pflichtfelder, Struktur und PII-Hinweise prüfen.',  tone: 'agent' },
+  { n: '05', t: 'Einreichung wählen',        d: 'GitHub-Issue für Text oder lokales ZIP.',           tone: 'human' },
   { n: '06', t: 'Reviewer prüfen',          d: 'Peer Review · Trust Review bei Risiken.',          tone: 'human' },
   { n: '07', t: 'Maintainer entscheidet',   d: 'Status, Merge & Aufnahme in die Bibliothek.',      tone: 'human' },
 ];

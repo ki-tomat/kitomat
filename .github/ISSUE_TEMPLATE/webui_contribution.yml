@@ -1,0 +1,16 @@
+name: WebUI-Beitrag
+description: Beitrag aus der KItomat-Weboberfläche einreichen
+title: "AP14-Beitrag: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Füge den vollständigen Payload aus der Weboberfläche hier ein. Ein Maintainer prüft ihn und setzt danach das Label `webui-import`.
+  - type: textarea
+    id: payload
+    attributes:
+      label: KItomat-Payload
+      description: Enthält einen sichtbaren Überblick und einen unsichtbaren Base64-Block.
+    validations:
+      required: true

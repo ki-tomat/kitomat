@@ -5,80 +5,35 @@ import { ToastProvider } from '../src/components/index.js';
 import Contribution from '../src/views/Contribution.jsx';
 import { DRAFT_KEY, readDraft } from '../src/lib/contributionDraft.js';
 
-function renderContribution() {
-  return render(
-    <ToastProvider>
-      <Contribution go={vi.fn()} />
-    </ToastProvider>,
-  );
-}
+function renderContribution() { return render(<ToastProvider><Contribution go={vi.fn()} /></ToastProvider>); }
+beforeEach(() => sessionStorage.clear());
+afterEach(() => { cleanup(); sessionStorage.clear(); });
 
-beforeEach(() => {
-  sessionStorage.clear();
-});
-
-afterEach(() => {
-  cleanup();
-  sessionStorage.clear();
-});
-
-describe('Contribution Opt-in-Persistenz', () => {
-  it('bietet fuer jedes Szenario eine eindeutige Funktion zum Leeren an', () => {
+describe('Contribution local-only workflow', () => {
+  it('starts without invented contributor content or an agent result', () => {
     renderContribution();
-
-    for (let step = 0; step < 4; step += 1) {
-      fireEvent.click(screen.getByRole('button', { name: /^Weiter/i }));
-    }
-
-    const clearButtons = screen.getAllByRole('button', { name: /Inhalt leeren/i });
-    expect(clearButtons).toHaveLength(3);
-
-    const scenarioInputs = screen.getAllByRole('textbox').slice(0, 3);
-    expect(scenarioInputs[2]).not.toHaveValue('');
-    fireEvent.click(clearButtons[2]);
-    expect(scenarioInputs[2]).toHaveValue('');
+    fireEvent.click(screen.getByRole('button', { name: /Grunddaten/i }));
+    expect(document.querySelector('#field-title')).toHaveValue('');
+    expect(screen.queryByText(/Analyse abgeschlossen/i)).not.toBeInTheDocument();
   });
-
-  it('ohne Opt-in wird kein Entwurf gespeichert', () => {
+  it('stores a version-2 draft only after explicit opt-in', () => {
     renderContribution();
-    expect(screen.getByRole('checkbox')).not.toBeChecked();
+    const checkbox = screen.getByRole('checkbox', { name: /Entwurf nur/i });
     expect(readDraft()).toBeNull();
-  });
-
-  it('Aktivieren des Opt-ins speichert den Stand sofort', () => {
-    renderContribution();
-    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(checkbox);
+    expect(readDraft()).toMatchObject({ v: 2, step: 0, selectedType: 'prompt' });
     expect(sessionStorage.getItem(DRAFT_KEY)).not.toBeNull();
-    expect(readDraft()).toMatchObject({ step: 0, selectedType: 'prompt' });
   });
-
-  it('Deaktivieren des Opt-ins loescht den Entwurf sofort', () => {
+  it('clears the local draft on reset', () => {
     renderContribution();
-    const cb = screen.getByRole('checkbox');
-    fireEvent.click(cb);
-    expect(readDraft()).not.toBeNull();
-    fireEvent.click(cb);
-    expect(readDraft()).toBeNull();
-  });
-
-  it('mit Opt-in wird der Entwurf beim erneuten Mounten (Reload) wiederhergestellt', () => {
-    const first = renderContribution();
-    fireEvent.click(screen.getByRole('checkbox'));
-    expect(readDraft()).not.toBeNull();
-    first.unmount();
-
-    // Reload im selben Tab simulieren: Storage bleibt, Komponente wird neu gemountet.
-    renderContribution();
-    expect(screen.getByRole('checkbox')).toBeChecked();
-  });
-
-  it('Reset ("Neuer Beitrag") loescht den Entwurf und deaktiviert Opt-in', () => {
-    renderContribution();
-    fireEvent.click(screen.getByRole('checkbox'));
-    expect(readDraft()).not.toBeNull();
-
+    fireEvent.click(screen.getByRole('checkbox', { name: /Entwurf nur/i }));
     fireEvent.click(screen.getByRole('button', { name: /Neuer Beitrag/i }));
     expect(readDraft()).toBeNull();
-    expect(screen.getByRole('checkbox')).not.toBeChecked();
+  });
+  it('shows real form failures rather than a successful trust claim', () => {
+    renderContribution();
+    fireEvent.click(screen.getByRole('button', { name: /Prüfung & Vorschau/i }));
+    expect(screen.getByText(/Angaben müssen noch korrigiert/i)).toBeInTheDocument();
+    expect(screen.queryByText(/6\/6 erfüllt/i)).not.toBeInTheDocument();
   });
 });
