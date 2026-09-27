@@ -5,6 +5,7 @@ import { emptyAnswers, fieldsForType } from '../src/lib/contribution/model.js';
 import { validateForm } from '../src/lib/contribution/validateForm.js';
 import { validatePackage } from '../src/lib/contribution/validate.js';
 import { buildZip } from '../src/lib/contribution/zip.js';
+import fixture from './fixtures/contribution-parity.json';
 
 function complete(type = 'prompt') {
   const answers = emptyAnswers(type);
@@ -34,6 +35,10 @@ describe('AP14 contribution core', () => {
     const draft = buildAp14IssueDraft({ selectedType: 'prompt', answers, acknowledgements: { public_content_confirmed: true, no_real_personal_data_confirmed: true, pii_hints_reviewed: true } });
     expect(decodePayload(draft.body)).toMatchObject({ ok: true });
     expect(parsePayload({ ...draft.payload, foreign: true }).ok).toBe(false);
+  });
+  it('accepts the shared JS/Python parity fixture', () => {
+    const files = buildFiles(fixture);
+    expect(validatePackage(files, { ...fixture.answers, artifact_type: 'prompt_package', status: 'draft', human_review_required: true }, fixture.type).errors).toEqual([]);
   });
   it('writes a non-empty ZIP blob', async () => {
     const blob = await buildZip([{ path: 'prompts/test/README.md', content: 'Hallo Ümlaut' }]);

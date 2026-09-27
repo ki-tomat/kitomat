@@ -15,10 +15,11 @@
 
 ## Verifikation
 
-- `npm run test:ci`: 45 Tests bestanden
+- `npm run test:ci`: 46 Tests bestanden
 - `npm run build`: bestanden
 - `node --test tools/ap14/tests/import-issue.test.mjs`: bestanden
 - `unzip -t /tmp/ap14-zip-test.zip`: bestanden
 - Python-Metadaten- und Vollständigkeitsvalidatoren: bestanden
 - PII-Heuristik: nur bestehende Hinweise, Exit-Code 0
+- JS/Python-Paritätsfixture: bestanden
 - Browserprüfung: leerer Entwurf zeigt Fehler aus Ebene 1 und 2; keine simulierte Erfolgsmeldung

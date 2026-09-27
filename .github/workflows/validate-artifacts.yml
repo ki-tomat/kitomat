@@ -30,5 +30,8 @@ jobs:
       - name: Validate completeness
         run: python tools/validators/validate_completeness.py
 
+      - name: Validate contribution generator parity
+        run: python tools/validators/test_contribution_parity.py
+
       - name: PII heuristic scan
         run: python tools/validators/pii_heuristic.py
