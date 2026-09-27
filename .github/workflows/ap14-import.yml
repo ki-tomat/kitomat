@@ -66,6 +66,22 @@ jobs:
           python tools/validators/validate_metadata.py
           python tools/validators/validate_completeness.py
           python tools/validators/pii_heuristic.py
+      - name: Review-Labels sicherstellen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          TYPE: ${{ steps.artifact.outputs.type }}
+        run: |
+          ensure_label() {
+            label="$1"
+            color="$2"
+            description="$3"
+            gh api "repos/${REPOSITORY}/labels/${label}" >/dev/null 2>&1 || \
+              gh api --method POST "repos/${REPOSITORY}/labels" \
+                -f name="$label" -f color="$color" -f description="$description" >/dev/null
+          }
+          ensure_label "$TYPE" "1D76DB" "Artefakttyp für importierte AP14-Beiträge"
+          ensure_label "needs_peer_review" "FBCA04" "Menschliche Peer-Prüfung erforderlich"
       - name: Review-PR erstellen
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
