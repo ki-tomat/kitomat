@@ -1,0 +1,24 @@
+name = "kitomat-submissions"
+main = "src/worker.js"
+compatibility_date = "2026-09-28"
+workers_dev = true
+preview_urls = false
+
+[vars]
+# Productive uploads remain disabled until the AP15 legal gate is documented.
+SUBMISSIONS_ENABLED = "false"
+ALLOWED_ORIGIN = "https://ki-tomat.github.io"
+GITHUB_OIDC_AUDIENCE = "kitomat-ap15-submissions"
+GITHUB_REPOSITORY = "ki-tomat/kitomat"
+
+[triggers]
+crons = ["0 3 * * *"]
+
+[[r2_buckets]]
+binding = "PACKAGES"
+bucket_name = "kitomat-submissions"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kitomat-submissions"
+database_id = "REPLACE_BEFORE_DEPLOY"
