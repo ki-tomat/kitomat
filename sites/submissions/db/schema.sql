@@ -40,5 +40,19 @@ CREATE TABLE IF NOT EXISTS submission_audit_log (
   FOREIGN KEY (submission_id) REFERENCES submissions(id)
 );
 
+CREATE TABLE IF NOT EXISTS submission_reviews (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  submission_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  actor_role TEXT NOT NULL,
+  actor_id TEXT NOT NULL,
+  outcome TEXT NOT NULL,
+  requested_status TEXT,
+  note TEXT,
+  checklist_json TEXT NOT NULL,
+  FOREIGN KEY (submission_id) REFERENCES submissions(id)
+);
+
 CREATE INDEX IF NOT EXISTS submissions_owner_state_idx ON submissions(owner_github_id, state);
 CREATE INDEX IF NOT EXISTS submissions_expiry_idx ON submissions(expires_at);
+CREATE INDEX IF NOT EXISTS submission_reviews_submission_idx ON submission_reviews(submission_id, id);

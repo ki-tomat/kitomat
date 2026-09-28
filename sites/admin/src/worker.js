@@ -80,6 +80,11 @@ export function createWorker({ firebaseKeyResolver } = {}) {
         if (!canReviewSubmissions(currentUser)) return renderAccessDenied(403, 'Kein Review-Zugriff', 'Für die Einreichungswarteschlange ist eine Admin-, Maintainer- oder Reviewer-Rolle erforderlich.');
         return handleSubmissionQueue(env, currentUser);
       }
+      const submissionPackage = url.pathname.match(/^\/api\/admin\/submissions\/([0-9a-f-]{36})\/package$/);
+      if (submissionPackage && method === 'GET') {
+        if (!canReviewSubmissions(currentUser)) return renderAccessDenied(403, 'Kein Review-Zugriff', 'Für Paketprüfungen ist eine Admin-, Maintainer- oder Reviewer-Rolle erforderlich.');
+        return handleSubmissionPackage(env, submissionPackage[1]);
+      }
       const submissionDecision = url.pathname.match(/^\/api\/admin\/submissions\/([0-9a-f-]{36})\/decision$/);
       if (submissionDecision && method === 'POST') {
         if (!canReviewSubmissions(currentUser)) return renderAccessDenied(403, 'Kein Review-Zugriff', 'Für Statusentscheidungen ist eine Admin-, Maintainer- oder Reviewer-Rolle erforderlich.');
@@ -771,31 +776,62 @@ async function handleSubmissionQueue(env, currentUser) {
   return jsonResp({ ...payload, actor: { email: currentUser.email, roles: currentUser.roles } });
 }
 
+async function handleSubmissionPackage(env, submissionId) {
+  const response = await submissionServiceRequest(env, `/internal/submissions/${submissionId}/package`, {}, false);
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    return jsonResp({ error: payload.error || 'Prüfpaket ist nicht verfügbar.' }, response.status);
+  }
+  return new Response(response.body, {
+    status: response.status,
+    headers: {
+      'Content-Type': 'application/zip',
+      'Content-Disposition': response.headers.get('Content-Disposition') || `attachment; filename="ap15-${submissionId}.zip"`,
+      'Cache-Control': 'private, no-store',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Kitomat-Sha256': response.headers.get('X-Kitomat-Sha256') || '',
+    },
+  });
+}
+
 async function handleSubmissionDecision(request, env, currentUser, submissionId) {
   const body = await readJson(request);
   if (body.error) return body.error;
   const status = String(body.status || '').trim();
-  if (!['bronze', 'silver', 'gold'].includes(status)) return jsonResp({ error: 'Nur Bronze, Silber oder Gold können entschieden werden.' }, 400);
+  const outcome = String(body.outcome || '').trim();
+  if (!['approved_for_import', 'changes_requested', 'rejected'].includes(outcome)) return jsonResp({ error: 'Unbekannte Review-Entscheidung.' }, 400);
+  if (outcome === 'approved_for_import' && !['bronze', 'silver', 'gold'].includes(status)) return jsonResp({ error: 'Nur Bronze, Silber oder Gold können zur Veröffentlichung vorgeschlagen werden.' }, 400);
   const role = currentUser.roles.find((item) => ['admin', 'maintainer', 'reviewer'].includes(item));
   const response = await submissionServiceRequest(env, `/internal/submissions/${submissionId}/decision`, {
     method: 'POST',
-    body: JSON.stringify({ actor: currentUser.email, role, status }),
+    body: JSON.stringify({
+      actor: currentUser.email,
+      role,
+      outcome,
+      status,
+      note: String(body.note || ''),
+      checks: body.checks,
+    }),
   });
-  if (!response.ok) return jsonResp({ error: 'Statusentscheidung konnte nicht gespeichert werden.' }, 503);
-  await writeAudit(env, { actor: currentUser.email, action: 'ap15_status_decided', targetType: 'submission', targetId: submissionId, details: status });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    return jsonResp({ error: payload.error || 'Review-Entscheidung konnte nicht gespeichert werden.' }, response.status);
+  }
+  await writeAudit(env, { actor: currentUser.email, action: 'ap15_review_decided', targetType: 'submission', targetId: submissionId, details: JSON.stringify({ outcome, status: outcome === 'approved_for_import' ? status : null }) });
   return jsonResp(await response.json());
 }
 
-async function submissionServiceRequest(env, path, init = {}) {
+async function submissionServiceRequest(env, path, init = {}, jsonContent = true) {
   const base = String(env.SUBMISSIONS_API_URL || '').replace(/\/$/, '');
   if (!base || !env.SUBMISSIONS_INTERNAL_SERVICE_TOKEN) return new Response(null, { status: 503 });
+  const headers = {
+    'X-Kitomat-Internal-Token': env.SUBMISSIONS_INTERNAL_SERVICE_TOKEN,
+    ...(init.headers || {}),
+  };
+  if (jsonContent) headers['Content-Type'] = 'application/json';
   return fetch(`${base}${path}`, {
     ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Kitomat-Internal-Token': env.SUBMISSIONS_INTERNAL_SERVICE_TOKEN,
-      ...(init.headers || {}),
-    },
+    headers,
   });
 }
 
@@ -1322,12 +1358,13 @@ ${firebaseSessionScript(env)}
 function renderSubmissionQueuePage(env, currentUser) {
   return new Response(`<!doctype html>
 <html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>AP15 Einreichungen</title>
-<style>:root{font-family:Inter,system-ui,sans-serif;color:#1f1d1a;background:#f8f5ee}body{margin:0}main{max-width:1100px;margin:40px auto;padding:0 20px}.notice{padding:14px;background:#fff7df;border:1px solid #e4cf8a;border-radius:8px}table{width:100%;margin-top:20px;border-collapse:collapse;background:white}th,td{text-align:left;padding:10px;border-bottom:1px solid #ddd8ce;vertical-align:top}button,select{padding:8px;border-radius:6px;border:1px solid #aaa}button{background:#e63329;color:white;border:0;font-weight:700}small{display:block;color:#655d52}#message{min-height:1.5em}</style></head>
-<body><main><p><a href="/">← Admin-Start</a></p><h1>AP15 Einreichungswarteschlange</h1><p>Entscheidungen erzeugen nur einen geschützten Entwurfs-PR. Sie veröffentlichen nichts und ersetzen nicht die inhaltliche, Lizenz- oder Datenschutzprüfung.</p><p class="notice">Angemeldet: <strong>${esc(currentUser.email)}</strong>. Zulässige Rolle: ${esc(currentUser.roles.filter((role) => ['admin', 'maintainer', 'reviewer'].includes(role)).join(', '))}.</p><p id="message" role="status"></p><table><thead><tr><th>Artefakt</th><th>Einreichung</th><th>Stand</th><th>Status entscheiden</th></tr></thead><tbody id="rows"><tr><td colspan="4">Lade Einreichungen …</td></tr></tbody></table></main>
+<style>:root{font-family:Inter,system-ui,sans-serif;color:#1f1d1a;background:#f8f5ee}body{margin:0}main{max-width:1180px;margin:40px auto;padding:0 20px}.notice{padding:14px;background:#fff7df;border:1px solid #e4cf8a;border-radius:8px}table{width:100%;margin-top:20px;border-collapse:collapse;background:white}th,td{text-align:left;padding:10px;border-bottom:1px solid #ddd8ce;vertical-align:top}button,select,textarea{padding:8px;border-radius:6px;border:1px solid #aaa;font:inherit}button{background:#e63329;color:white;border:0;font-weight:700;cursor:pointer}button.secondary{background:#655d52}button.danger{background:#8d241e}button:disabled{opacity:.45;cursor:not-allowed}textarea{display:block;width:100%;min-height:72px;box-sizing:border-box;margin:8px 0}.checks{display:grid;gap:5px;margin:8px 0}.checks label{font-size:13px}small{display:block;color:#655d52}#message{min-height:1.5em}.actions{min-width:360px}.download{display:inline-block;margin-top:6px}</style></head>
+<body><main><p><a href="/">← Admin-Start</a></p><h1>AP15 Einreichungswarteschlange</h1><p>Prüfe zuerst das unveränderte ZIP-Paket. Eine Freigabe erlaubt anschließend nur den Import in einen Entwurfs-PR; veröffentlicht wird weiterhin erst nach menschlichem PR-Review und Merge.</p><p class="notice">Angemeldet: <strong>${esc(currentUser.email)}</strong>. Zulässige Rolle: ${esc(currentUser.roles.filter((role) => ['admin', 'maintainer', 'reviewer'].includes(role)).join(', '))}.</p><p id="message" role="status"></p><table><thead><tr><th>Artefakt</th><th>Einreichung</th><th>Stand</th><th>Prüfung und Entscheidung</th></tr></thead><tbody id="rows"><tr><td colspan="4">Lade Einreichungen …</td></tr></tbody></table></main>
 <script>
 const rows=document.querySelector('#rows'),message=document.querySelector('#message');
 function cell(row,value){const td=document.createElement('td');td.textContent=value??'';row.append(td);return td}
-async function load(){const response=await fetch('/api/admin/submissions',{credentials:'same-origin'});const data=await response.json();if(!response.ok){message.textContent=data.error||'Warteschlange nicht verfügbar.';return}rows.textContent='';for(const item of data.submissions){const tr=document.createElement('tr');const a=cell(tr,item.artifact_id);const type=document.createElement('small');type.textContent=item.artifact_type;a.append(type);cell(tr,item.id);const state=cell(tr,item.state);const requested=document.createElement('small');requested.textContent=item.requested_status?'Ziel: '+item.requested_status:'noch keine Entscheidung';state.append(requested);const action=document.createElement('td');if(['submitted','changes_requested'].includes(item.state)){const select=document.createElement('select');for(const name of ['bronze','silver','gold']){const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option)}const button=document.createElement('button');button.textContent='Entwurfs-PR freigeben';button.onclick=async()=>{button.disabled=true;const result=await fetch('/api/admin/submissions/'+encodeURIComponent(item.id)+'/decision',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({status:select.value})});const body=await result.json();message.textContent=result.ok?'Entscheidung gespeichert. Die geschützte Import-Action kann nun einen Entwurfs-PR erstellen.':(body.error||'Entscheidung fehlgeschlagen.');await load()};action.append(select,document.createTextNode(' '),button)}else action.textContent='Keine Aktion möglich';tr.append(action);rows.append(tr)}if(!data.submissions.length)rows.innerHTML='<tr><td colspan="4">Keine offenen Einreichungen.</td></tr>'}load();
+async function decide(item,outcome,status,note,checks,buttons){for(const button of buttons)button.disabled=true;const result=await fetch('/api/admin/submissions/'+encodeURIComponent(item.id)+'/decision',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({outcome,status,note,checks})});const body=await result.json();message.textContent=result.ok?(outcome==='approved_for_import'?'Prüfung gespeichert. Die Import-Action darf jetzt einen Entwurfs-PR erstellen.':'Review-Entscheidung gespeichert.'):(body.error||'Entscheidung fehlgeschlagen.');if(result.ok)await load();else for(const button of buttons)button.disabled=false}
+async function load(){const response=await fetch('/api/admin/submissions',{credentials:'same-origin'});const data=await response.json();if(!response.ok){message.textContent=data.error||'Warteschlange nicht verfügbar.';return}rows.textContent='';for(const item of data.submissions){const tr=document.createElement('tr');const a=cell(tr,item.artifact_id);const type=document.createElement('small');type.textContent=item.artifact_type;a.append(type);const download=document.createElement('a');download.className='download';download.href='/api/admin/submissions/'+encodeURIComponent(item.id)+'/package';download.textContent='Prüfpaket herunterladen';a.append(download);const idCell=cell(tr,item.id);const packageInfo=document.createElement('small');packageInfo.textContent='Revision '+item.current_revision+' · '+Math.ceil(Number(item.package_size||0)/1024)+' KiB · SHA-256 '+String(item.package_sha256||'').slice(0,12)+'…';idCell.append(packageInfo);const state=cell(tr,item.state);const requested=document.createElement('small');requested.textContent=item.requested_status?'Ziel: '+item.requested_status:'noch keine Freigabe';state.append(requested);const action=document.createElement('td');action.className='actions';if(['submitted','changes_requested'].includes(item.state)){const select=document.createElement('select');for(const name of ['bronze','silver','gold']){const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option)}const note=document.createElement('textarea');note.maxLength=2000;note.placeholder='Review-Notiz; bei Änderungswunsch oder Ablehnung mindestens 10 Zeichen';const checks=document.createElement('div');checks.className='checks';const boxes={};for(const [key,label] of [['content','Inhalt und Nutzbarkeit geprüft'],['sources_license','Quellen und Lizenz geprüft'],['privacy','Datenschutz- und PII-Hinweise geprüft']]){const checkbox=document.createElement('input');checkbox.type='checkbox';boxes[key]=checkbox;const wrapper=document.createElement('label');wrapper.append(checkbox,document.createTextNode(' '+label));checks.append(wrapper)}const approve=document.createElement('button');approve.textContent='Für Entwurfs-PR freigeben';const changes=document.createElement('button');changes.className='secondary';changes.textContent='Änderungen anfordern';const reject=document.createElement('button');reject.className='danger';reject.textContent='Ablehnen';const buttons=[approve,changes,reject];const checkValues=()=>Object.fromEntries(Object.entries(boxes).map(([key,input])=>[key,input.checked]));approve.onclick=()=>decide(item,'approved_for_import',select.value,note.value,checkValues(),buttons);changes.onclick=()=>decide(item,'changes_requested',null,note.value,checkValues(),buttons);reject.onclick=()=>decide(item,'rejected',null,note.value,checkValues(),buttons);action.append(select,note,checks,approve,document.createTextNode(' '),changes,document.createTextNode(' '),reject)}else action.textContent='Keine Review-Aktion in diesem Stand möglich';tr.append(action);rows.append(tr)}if(!data.submissions.length)rows.innerHTML='<tr><td colspan="4">Keine offenen Einreichungen.</td></tr>'}load();
 </script>${firebaseSessionScript(env)}</body></html>`, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
 
