@@ -1,0 +1,16 @@
+{
+  "name": "kitomat-sites-submissions",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Disabled-by-default KI-Tomat AP15 submission worker.",
+  "scripts": {
+    "test": "node --test",
+    "build": "node --check src/worker.js",
+    "deploy:dry-run": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.9",
+    "wrangler": "^4.0.0"
+  }
+}

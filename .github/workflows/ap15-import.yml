@@ -1,0 +1,92 @@
+name: AP15 Import
+
+on:
+  workflow_dispatch:
+    inputs:
+      submission_id:
+        description: "Freigegebene AP15-Einreichungs-ID"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  import:
+    environment: ap15-import
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Einreichung über GitHub-OIDC abrufen
+        id: package
+        env:
+          SUBMISSION_ID: ${{ inputs.submission_id }}
+          SUBMISSIONS_URL: ${{ vars.AP15_SUBMISSIONS_URL }}
+        run: |
+          test -n "$SUBMISSIONS_URL"
+          token="$(curl -fsSL -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=kitomat-ap15-submissions" | jq -r .value)"
+          test -n "$token" && test "$token" != null
+          curl --fail --silent --show-error --max-time 30 \
+            -H "Authorization: Bearer $token" \
+            -D "$RUNNER_TEMP/ap15.headers" \
+            -o "$RUNNER_TEMP/package.zip" \
+            "$SUBMISSIONS_URL/internal/action/submissions/$SUBMISSION_ID/package"
+          grep -i '^x-kitomat-artifact-id:' "$RUNNER_TEMP/ap15.headers" | cut -d' ' -f2- | tr -d '\r' | sed 's/^/artifact_id=/' >> "$GITHUB_OUTPUT"
+          grep -i '^x-kitomat-artifact-type:' "$RUNNER_TEMP/ap15.headers" | cut -d' ' -f2- | tr -d '\r' | sed 's/^/artifact_type=/' >> "$GITHUB_OUTPUT"
+          grep -i '^x-kitomat-requested-status:' "$RUNNER_TEMP/ap15.headers" | cut -d' ' -f2- | tr -d '\r' | sed 's/^/requested_status=/' >> "$GITHUB_OUTPUT"
+          grep -i '^x-kitomat-sha256:' "$RUNNER_TEMP/ap15.headers" | cut -d' ' -f2- | tr -d '\r' | sed 's/^/sha256=/' >> "$GITHUB_OUTPUT"
+      - name: Paket sicher entpacken
+        id: extract
+        env:
+          ARTIFACT_ID: ${{ steps.package.outputs.artifact_id }}
+          ARTIFACT_TYPE: ${{ steps.package.outputs.artifact_type }}
+          REQUESTED_STATUS: ${{ steps.package.outputs.requested_status }}
+          EXPECTED_SHA256: ${{ steps.package.outputs.sha256 }}
+        run: |
+          test -n "$ARTIFACT_ID" && test -n "$ARTIFACT_TYPE" && test -n "$REQUESTED_STATUS" && test -n "$EXPECTED_SHA256"
+          actual_sha256="$(sha256sum "$RUNNER_TEMP/package.zip" | cut -d' ' -f1)"
+          test "$actual_sha256" = "$EXPECTED_SHA256"
+          python -m pip install pyyaml
+          result="$(python tools/ap15/prepare_package.py --zip "$RUNNER_TEMP/package.zip" --type "$ARTIFACT_TYPE" --id "$ARTIFACT_ID" --status "$REQUESTED_STATUS" --destination "$RUNNER_TEMP/ap15")"
+          echo "$result"
+          node -e 'const value=JSON.parse(process.argv[1]); for (const [key,item] of Object.entries(value)) console.log(`${key}=${item}`)' "$result" >> "$GITHUB_OUTPUT"
+      - name: Python-Validatoren ausführen
+        run: |
+          cp -R "$RUNNER_TEMP/ap15/"{prompts,datasets,models} . 2>/dev/null || true
+          python tools/validators/validate_metadata.py
+          python tools/validators/validate_completeness.py
+          python tools/validators/pii_heuristic.py
+          python tools/validators/verify_artifact_baseline.py
+      - name: Draft-PR erstellen
+        env:
+          ARTIFACT_ID: ${{ steps.package.outputs.artifact_id }}
+          ARTIFACT_PATH: ${{ steps.extract.outputs.artifact_path }}
+          SUBMISSION_ID: ${{ inputs.submission_id }}
+          SUBMISSIONS_URL: ${{ vars.AP15_SUBMISSIONS_URL }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branch="webui/ap15-${SUBMISSION_ID}"
+          existing_pr=""
+          if git ls-remote --exit-code origin "refs/heads/${branch}" >/dev/null 2>&1; then
+            existing_pr="$(gh pr view "$branch" --json number --jq .number)"
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if test -z "$existing_pr"; then
+            git switch -c "$branch"
+            git add -- "$ARTIFACT_PATH"
+            git diff --cached --quiet && exit 1
+            git commit -m "feat(ap15): Einreichung ${ARTIFACT_ID} vorbereiten"
+            git push --set-upstream origin "$branch"
+            gh label create needs_peer_review --color FBCA04 --description "Menschliche Peer-Prüfung erforderlich" 2>/dev/null || true
+            pr_url="$(gh pr create --draft --base main --head "$branch" --title "AP15 import: ${ARTIFACT_ID}" --body "AP15-Submission: ${SUBMISSION_ID}\n\n- [ ] Inhalt geprüft\n- [ ] Lizenz und Datenschutz geprüft\n- [ ] Statusentscheidung dokumentiert" --label needs_peer_review)"
+            existing_pr="$(gh pr view "$pr_url" --json number --jq .number)"
+          fi
+          token="$(curl -fsSL -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=kitomat-ap15-submissions" | jq -r .value)"
+          curl --fail --silent --show-error --max-time 30 -X POST -H "Authorization: Bearer $token" -H "Content-Type: application/json" --data "{\"pullRequestNumber\":$existing_pr,\"branch\":\"$branch\"}" "$SUBMISSIONS_URL/internal/action/submissions/$SUBMISSION_ID/imported"

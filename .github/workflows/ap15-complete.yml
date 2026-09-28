@@ -1,0 +1,29 @@
+name: AP15 Abschluss
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  id-token: write
+
+jobs:
+  complete:
+    if: "startsWith(github.event.pull_request.title, 'AP15 import: ') && contains(github.event.pull_request.body, 'AP15-Submission: ')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Einreichung nach PR-Abschluss datensparsam abschließen
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGED: ${{ github.event.pull_request.merged }}
+          SUBMISSIONS_URL: ${{ vars.AP15_SUBMISSIONS_URL }}
+        run: |
+          test -n "$SUBMISSIONS_URL"
+          submission_id="$(printf '%s\n' "$BODY" | sed -n 's/^AP15-Submission: \([0-9a-f-]\{36\}\)$/\1/p' | head -n1)"
+          test -n "$submission_id"
+          outcome=rejected
+          test "$MERGED" = true && outcome=merged
+          token="$(curl -fsSL -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=kitomat-ap15-submissions" | jq -r .value)"
+          curl --fail --silent --show-error --max-time 30 -X POST -H "Authorization: Bearer $token" -H "Content-Type: application/json" --data "{\"pullRequestNumber\":$PR_NUMBER,\"outcome\":\"$outcome\"}" "$SUBMISSIONS_URL/internal/action/submissions/$submission_id/complete"

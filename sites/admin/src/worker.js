@@ -72,6 +72,20 @@ export function createWorker({ firebaseKeyResolver } = {}) {
 
       const currentUser = await resolveCurrentUser(env, auth.identity, isLocalDev);
 
+      if (url.pathname === '/submissions' && method === 'GET') {
+        if (!canReviewSubmissions(currentUser)) return renderAccessDenied(403, 'Kein Review-Zugriff', 'Für die Einreichungswarteschlange ist eine Admin-, Maintainer- oder Reviewer-Rolle erforderlich.');
+        return renderSubmissionQueuePage(env, currentUser);
+      }
+      if (url.pathname === '/api/admin/submissions' && method === 'GET') {
+        if (!canReviewSubmissions(currentUser)) return renderAccessDenied(403, 'Kein Review-Zugriff', 'Für die Einreichungswarteschlange ist eine Admin-, Maintainer- oder Reviewer-Rolle erforderlich.');
+        return handleSubmissionQueue(env, currentUser);
+      }
+      const submissionDecision = url.pathname.match(/^\/api\/admin\/submissions\/([0-9a-f-]{36})\/decision$/);
+      if (submissionDecision && method === 'POST') {
+        if (!canReviewSubmissions(currentUser)) return renderAccessDenied(403, 'Kein Review-Zugriff', 'Für Statusentscheidungen ist eine Admin-, Maintainer- oder Reviewer-Rolle erforderlich.');
+        return handleSubmissionDecision(request, env, currentUser, submissionDecision[1]);
+      }
+
       if (!currentUser.isAdmin) {
         return renderAccessDenied(403, 'Kein Admin-Zugriff', 'Dein Login wurde erkannt, aber deiner Person ist keine Admin-Rolle zugewiesen.');
       }
@@ -746,6 +760,45 @@ async function handleArtifactStatusPost(request, env, currentUser) {
   return jsonResp({ ok: true });
 }
 
+function canReviewSubmissions(currentUser) {
+  return currentUser.roles.some((role) => ['admin', 'maintainer', 'reviewer'].includes(role));
+}
+
+async function handleSubmissionQueue(env, currentUser) {
+  const response = await submissionServiceRequest(env, '/internal/queue');
+  if (!response.ok) return jsonResp({ error: 'Einreichungswarteschlange ist nicht verfügbar.' }, 503);
+  const payload = await response.json();
+  return jsonResp({ ...payload, actor: { email: currentUser.email, roles: currentUser.roles } });
+}
+
+async function handleSubmissionDecision(request, env, currentUser, submissionId) {
+  const body = await readJson(request);
+  if (body.error) return body.error;
+  const status = String(body.status || '').trim();
+  if (!['bronze', 'silver', 'gold'].includes(status)) return jsonResp({ error: 'Nur Bronze, Silber oder Gold können entschieden werden.' }, 400);
+  const role = currentUser.roles.find((item) => ['admin', 'maintainer', 'reviewer'].includes(item));
+  const response = await submissionServiceRequest(env, `/internal/submissions/${submissionId}/decision`, {
+    method: 'POST',
+    body: JSON.stringify({ actor: currentUser.email, role, status }),
+  });
+  if (!response.ok) return jsonResp({ error: 'Statusentscheidung konnte nicht gespeichert werden.' }, 503);
+  await writeAudit(env, { actor: currentUser.email, action: 'ap15_status_decided', targetType: 'submission', targetId: submissionId, details: status });
+  return jsonResp(await response.json());
+}
+
+async function submissionServiceRequest(env, path, init = {}) {
+  const base = String(env.SUBMISSIONS_API_URL || '').replace(/\/$/, '');
+  if (!base || !env.SUBMISSIONS_INTERNAL_SERVICE_TOKEN) return new Response(null, { status: 503 });
+  return fetch(`${base}${path}`, {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Kitomat-Internal-Token': env.SUBMISSIONS_INTERNAL_SERVICE_TOKEN,
+      ...(init.headers || {}),
+    },
+  });
+}
+
 async function readJson(request) {
   try {
     return await request.json();
@@ -1013,6 +1066,9 @@ async function renderAdminPage(env, currentUser) {
     ? `<div class="hint info"><strong>Datenquelle:</strong> ${esc(state.apiWarning)}</div>`
     : '';
   const externalHint = `<div class="hint info"><strong>Hinweis zu externen Personen:</strong> Rollen in D1 reichen fuer den Admin-Zugang nicht allein. Die Person muss sich mit einer bestaetigten Firebase-/Google-E-Mail anmelden und zusaetzlich in der Admin-Allowlist stehen.</div>`;
+  const submissionLink = canReviewSubmissions(currentUser)
+    ? '<div class="hint info"><strong>AP15:</strong> <a href="/submissions">Einreichungswarteschlange öffnen</a> – eine Entscheidung erstellt höchstens einen Entwurfs-PR, keine Veröffentlichung.</div>'
+    : '';
 
   const inventoryRows = state.inventory.length > 0
     ? state.inventory.map((item) => {
@@ -1140,7 +1196,7 @@ async function renderAdminPage(env, currentUser) {
 <main>
   <h1>KI-tomat Admin</h1>
   <p class="topline">Angemeldet als <strong>${esc(currentUser.email)}</strong> · Rollen: ${esc(currentUser.roles.join(', '))} · <button id="firebase-logout" class="danger-lite" type="button">Abmelden</button></p>
-  ${configHint}${apiErrorHint}${apiWarningHint}${externalHint}
+  ${configHint}${apiErrorHint}${apiWarningHint}${externalHint}${submissionLink}
 
   <section class="grid">
     <div class="card"><div class="card-label">Content API</div><div class="card-value" style="font-size:15px">${esc(state.apiStatus)}</div></div>
@@ -1261,6 +1317,18 @@ ${firebaseSessionScript(env)}
       'Cache-Control': 'no-store',
     },
   });
+}
+
+function renderSubmissionQueuePage(env, currentUser) {
+  return new Response(`<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>AP15 Einreichungen</title>
+<style>:root{font-family:Inter,system-ui,sans-serif;color:#1f1d1a;background:#f8f5ee}body{margin:0}main{max-width:1100px;margin:40px auto;padding:0 20px}.notice{padding:14px;background:#fff7df;border:1px solid #e4cf8a;border-radius:8px}table{width:100%;margin-top:20px;border-collapse:collapse;background:white}th,td{text-align:left;padding:10px;border-bottom:1px solid #ddd8ce;vertical-align:top}button,select{padding:8px;border-radius:6px;border:1px solid #aaa}button{background:#e63329;color:white;border:0;font-weight:700}small{display:block;color:#655d52}#message{min-height:1.5em}</style></head>
+<body><main><p><a href="/">← Admin-Start</a></p><h1>AP15 Einreichungswarteschlange</h1><p>Entscheidungen erzeugen nur einen geschützten Entwurfs-PR. Sie veröffentlichen nichts und ersetzen nicht die inhaltliche, Lizenz- oder Datenschutzprüfung.</p><p class="notice">Angemeldet: <strong>${esc(currentUser.email)}</strong>. Zulässige Rolle: ${esc(currentUser.roles.filter((role) => ['admin', 'maintainer', 'reviewer'].includes(role)).join(', '))}.</p><p id="message" role="status"></p><table><thead><tr><th>Artefakt</th><th>Einreichung</th><th>Stand</th><th>Status entscheiden</th></tr></thead><tbody id="rows"><tr><td colspan="4">Lade Einreichungen …</td></tr></tbody></table></main>
+<script>
+const rows=document.querySelector('#rows'),message=document.querySelector('#message');
+function cell(row,value){const td=document.createElement('td');td.textContent=value??'';row.append(td);return td}
+async function load(){const response=await fetch('/api/admin/submissions',{credentials:'same-origin'});const data=await response.json();if(!response.ok){message.textContent=data.error||'Warteschlange nicht verfügbar.';return}rows.textContent='';for(const item of data.submissions){const tr=document.createElement('tr');const a=cell(tr,item.artifact_id);const type=document.createElement('small');type.textContent=item.artifact_type;a.append(type);cell(tr,item.id);const state=cell(tr,item.state);const requested=document.createElement('small');requested.textContent=item.requested_status?'Ziel: '+item.requested_status:'noch keine Entscheidung';state.append(requested);const action=document.createElement('td');if(['submitted','changes_requested'].includes(item.state)){const select=document.createElement('select');for(const name of ['bronze','silver','gold']){const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option)}const button=document.createElement('button');button.textContent='Entwurfs-PR freigeben';button.onclick=async()=>{button.disabled=true;const result=await fetch('/api/admin/submissions/'+encodeURIComponent(item.id)+'/decision',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({status:select.value})});const body=await result.json();message.textContent=result.ok?'Entscheidung gespeichert. Die geschützte Import-Action kann nun einen Entwurfs-PR erstellen.':(body.error||'Entscheidung fehlgeschlagen.');await load()};action.append(select,document.createTextNode(' '),button)}else action.textContent='Keine Aktion möglich';tr.append(action);rows.append(tr)}if(!data.submissions.length)rows.innerHTML='<tr><td colspan="4">Keine offenen Einreichungen.</td></tr>'}load();
+</script>${firebaseSessionScript(env)}</body></html>`, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
 
 function renderAccessDenied(status, title, message) {

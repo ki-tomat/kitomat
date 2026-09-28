@@ -12,6 +12,8 @@ FIREBASE_PROJECT_ID = "ki-tomat"
 FIREBASE_API_KEY = "AIzaSyAAcQWpUwwPDGaTzH1dnN0wdvA9bj76tHA"
 FIREBASE_AUTH_DOMAIN = "kitomat-admin.ki-tomat.workers.dev"
 FIREBASE_APP_ID = "1:686019698516:web:067319259e04bea4f1b2c1"
+# URL and internal token are configured only once AP15's legal gate is cleared.
+SUBMISSIONS_API_URL = ""
 
 [[d1_databases]]
 binding = "DB"

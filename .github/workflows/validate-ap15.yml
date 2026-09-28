@@ -1,0 +1,38 @@
+name: Validate AP15
+
+on:
+  pull_request:
+    paths:
+      - 'sites/submissions/**'
+      - 'sites/admin/**'
+      - 'tools/ap15/**'
+      - '.github/workflows/ap15-import.yml'
+      - '.github/workflows/ap15-complete.yml'
+      - '.github/workflows/validate-ap15.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'sites/submissions/**'
+      - 'sites/admin/**'
+      - 'tools/ap15/**'
+      - '.github/workflows/ap15-import.yml'
+      - '.github/workflows/ap15-complete.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: sites/submissions/package-lock.json
+      - run: npm --prefix sites/submissions ci
+      - run: npm --prefix sites/submissions run test
+      - run: npm --prefix sites/submissions run build
+      - run: python3 -m py_compile tools/ap15/prepare_package.py
+      - run: python3 tools/validators/verify_artifact_baseline.py
