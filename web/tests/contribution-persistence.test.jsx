@@ -36,4 +36,19 @@ describe('Contribution local-only workflow', () => {
     expect(screen.getByText(/Angaben müssen noch korrigiert/i)).toBeInTheDocument();
     expect(screen.queryByText(/6\/6 erfüllt/i)).not.toBeInTheDocument();
   });
+  it('accepts only text files on field imports and exposes PDF/DOCX only as local ZIP attachments', () => {
+    renderContribution();
+    fireEvent.click(screen.getByRole('button', { name: /Grunddaten/i }));
+    for (const input of screen.getAllByLabelText(/aus Datei übernehmen/i)) {
+      expect(input).toHaveAttribute('accept', '.md,.txt,.yml,.yaml,.json');
+    }
+    fireEvent.click(screen.getByRole('button', { name: /Inhalt/i }));
+    const attachmentInput = screen.getByLabelText(/Lokale ZIP-Anhänge auswählen/i);
+    expect(attachmentInput).toHaveAttribute('accept', '.pdf,.docx');
+    fireEvent.change(attachmentInput, { target: { files: [new File(['lokaler Inhalt'], 'nachweis.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })] } });
+    expect(screen.getByText(/nachweis\.docx/i)).toBeInTheDocument();
+    expect(screen.getByText(/Keine Übertragung, kein GitHub-Issue-Upload/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Entfernen/i }));
+    expect(screen.queryByText(/nachweis\.docx/i)).not.toBeInTheDocument();
+  });
 });
