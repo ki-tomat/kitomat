@@ -2,7 +2,8 @@ id: masterprompt-websiteanalysekonzept-kmu
 artifact_type: prompt_package
 title: "Masterprompt Websiteanalysekonzept fuer KMU"
 category: online_marketing
-status: draft
+status: gold
+released_at: "2026-09-29"
 language: de
 version: "0.1.0"
 maintainer: "p99"

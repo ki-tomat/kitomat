@@ -12,7 +12,8 @@ subcategories:
 
 language: de
 version: "0.1.0"
-status: bronze_candidate
+status: gold
+released_at: "2026-09-29"
 
 repository_path: "prompts/kiwerkstatt-leadbearbeitung/"
 

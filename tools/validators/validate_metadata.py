@@ -68,7 +68,7 @@ ALLOWED = {
     "license_status": {"declared", "unclear", "not_applicable"},
 }
 
-COURSE_BLOCKED_STATUS = {"silver", "gold_candidate", "gold"}
+FINAL_RELEASE_STATUS = {"bronze", "silver", "gold"}
 
 
 def load_yaml(path: Path) -> dict:
@@ -152,14 +152,11 @@ def validate_file(path: Path) -> list[str]:
             errors.append(f"{path.relative_to(ROOT)}: invalid {field}: {value!r}")
 
     status = data.get("status")
-    if status in COURSE_BLOCKED_STATUS:
-        errors.append(f"{path.relative_to(ROOT)}: status {status!r} is not allowed for the MVP course")
+    if status in FINAL_RELEASE_STATUS and data.get("human_review_required") is not True:
+        errors.append(f"{path.relative_to(ROOT)}: final release status requires human_review_required: true")
 
-    if data.get("status") == "bronze" and data.get("human_review_required") is not True:
-        errors.append(f"{path.relative_to(ROOT)}: bronze requires human_review_required: true")
-
-    if data.get("sources_status") in {"missing", "unclear"} and data.get("status") == "bronze":
-        errors.append(f"{path.relative_to(ROOT)}: bronze cannot have missing or unclear sources")
+    if data.get("sources_status") in {"missing", "unclear"} and status in FINAL_RELEASE_STATUS:
+        errors.append(f"{path.relative_to(ROOT)}: final release status cannot have missing or unclear sources")
 
     return errors
 

@@ -2,7 +2,8 @@ id: product-message-support-alignment
 artifact_type: prompt_package
 title: Product Message and Support Alignment Prompt
 category: product_marketing_support
-status: bronze_candidate
+status: gold
+released_at: "2026-09-29"
 language: de
 version: 0.1.0
 maintainer: dAIvid-lehmann

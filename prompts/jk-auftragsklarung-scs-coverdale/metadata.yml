@@ -2,7 +2,8 @@ id: auftragsklarung-scs-coverdale
 artifact_type: prompt_package
 title: "Auftrag schärfen — Projektstart mit SCS-Analyse und Coverdale-Zielscheibe"
 category: project-management
-status: bronze_candidate
+status: gold
+released_at: "2026-09-29"
 language: de
 version: "0.1.0"
 maintainer: jk

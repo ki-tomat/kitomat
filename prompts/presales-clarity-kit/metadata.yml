@@ -2,7 +2,8 @@ id: presales-clarity-kit
 artifact_type: prompt_package
 title: "Pre-Sales Clarity Kit"
 category: consulting
-status: bronze_candidate
+status: gold
+released_at: "2026-09-29"
 language: de
 version: "1.1.0"
 maintainer: "Nadine Schadt (@tireeshore)"

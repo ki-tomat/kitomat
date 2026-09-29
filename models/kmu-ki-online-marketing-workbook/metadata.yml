@@ -2,7 +2,8 @@ id: kmu-ki-online-marketing-workbook
 artifact_type: model
 title: "KI-Online-Marketing-Beratungsmodell für Kleinstunternehmen"
 category: consulting
-status: bronze_candidate
+status: gold
+released_at: "2026-09-29"
 language: de
 version: "0.1.0"
 maintainer: p99
