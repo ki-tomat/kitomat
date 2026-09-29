@@ -2,7 +2,8 @@ id: lean-dashboard-manuelle-linienmontage
 artifact_type: model
 title: "Lean-Dashboard fuer manuelle Linienmontage"
 category: production_operations_lean_management
-status: bronze_candidate
+status: gold
+released_at: "2026-09-29"
 language: de
 version: "0.1.0"
 maintainer: Murat-777

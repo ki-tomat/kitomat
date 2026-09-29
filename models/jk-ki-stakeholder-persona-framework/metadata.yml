@@ -2,7 +2,8 @@ id: ki-stakeholder-persona-framework
 artifact_type: model
 title: "Perspektive wechseln — Stakeholder simulieren und Gespräche vorbereiten"
 category: consulting
-status: bronze_candidate
+status: gold
+released_at: "2026-09-29"
 language: de
 version: "0.1.0"
 maintainer: jk
