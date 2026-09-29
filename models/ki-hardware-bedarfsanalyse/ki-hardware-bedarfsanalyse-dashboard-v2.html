@@ -1,0 +1,1388 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KI-Hardware-Bedarfsanalyse</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1f2933;
+      --muted: #52606d;
+      --line: #d8dee6;
+      --panel: #ffffff;
+      --soft: #f5f7fa;
+      --green: #147d64;
+      --yellow: #a15c00;
+      --red: #b42318;
+      --blue: #1f6fb2;
+      --teal: #087f8c;
+      --violet: #6b46c1;
+      --shadow: 0 10px 30px rgba(31, 41, 51, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #eef2f6;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+      padding: 18px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 24px;
+      line-height: 1.2;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin: 0 0 16px;
+    }
+
+    h3 {
+      font-size: 15px;
+      margin: 18px 0 10px;
+    }
+
+    p {
+      line-height: 1.5;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+      max-width: 980px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    nav {
+      position: sticky;
+      top: 96px;
+      align-self: start;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+
+    nav a {
+      display: block;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 9px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      background: #e8f1fb;
+      outline: none;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    section,
+    .summary {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      border-left: 4px solid var(--blue);
+      background: var(--soft);
+      border-radius: 6px;
+      padding: 12px;
+      min-height: 96px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .metric span {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .metric.green {
+      border-left-color: var(--green);
+    }
+
+    .metric.yellow {
+      border-left-color: var(--yellow);
+    }
+
+    .metric.red {
+      border-left-color: var(--red);
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0 0 6px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #b8c2cc;
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--ink);
+      font: inherit;
+      padding: 9px 10px;
+      min-height: 39px;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px;
+      min-height: 40px;
+      background: #fff;
+    }
+
+    .check input {
+      margin-top: 2px;
+    }
+
+    .check span {
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .matrix-row {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .matrix-head {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 160px 160px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .axis-title {
+      font-weight: 700;
+    }
+
+    .axis-help {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .range-wrap {
+      display: grid;
+      grid-template-columns: 1fr 34px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--teal);
+    }
+
+    .score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: #e6f4f1;
+      color: #075e54;
+      font-weight: 700;
+    }
+
+    .score-help {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      border: 1px solid #8aa4bd;
+      background: #ffffff;
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 9px 12px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: #1f6fb2;
+      border-color: #1f6fb2;
+      color: #fff;
+    }
+
+    button:hover,
+    button:focus {
+      outline: 2px solid rgba(31, 111, 178, 0.25);
+      outline-offset: 2px;
+    }
+
+    .export-box {
+      min-height: 220px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      white-space: pre;
+    }
+
+    .note {
+      border-left: 4px solid var(--violet);
+      background: #f5f1ff;
+      border-radius: 6px;
+      padding: 12px;
+      color: #3f2a75;
+      margin: 12px 0 0;
+    }
+
+    @media (max-width: 980px) {
+      header {
+        position: static;
+      }
+
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+      }
+
+      .summary-grid,
+      .field-grid,
+      .field-grid.three,
+      .choice-grid,
+      .matrix-head {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      header,
+      nav,
+      .actions {
+        display: none;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      .shell {
+        display: block;
+        padding: 0;
+      }
+
+      section,
+      .summary {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>KI-Hardware-Bedarfsanalyse</h1>
+    <p class="subtitle">Interaktives Worksheet fuer Beratung, Workshop und Vorpruefung. Alle Eingaben bleiben lokal im Browser.</p>
+  </header>
+
+  <div class="shell">
+    <nav aria-label="Navigation">
+      <a href="#summary">Auswertung</a>
+      <a href="#profile">Kurzprofil</a>
+      <a href="#context">Organisation</a>
+      <a href="#usecase">KI-Einsatz</a>
+      <a href="#data">Daten & Governance</a>
+      <a href="#workload">LLM & Workload</a>
+      <a href="#media">Medien</a>
+      <a href="#ops">Betrieb</a>
+      <a href="#budget">Budget</a>
+      <a href="#skills">Reifegrad</a>
+      <a href="#priorities">Prioritaeten</a>
+      <a href="#matrix">Matrix</a>
+      <a href="#decision">Entscheidung</a>
+      <a href="#export">Export</a>
+    </nav>
+
+    <main>
+      <div id="summary" class="summary">
+        <div class="summary-grid">
+          <div class="metric">
+            <strong>Verwendete Zielklasse</strong>
+            <span id="summaryClass">Noch offen</span>
+          </div>
+          <div class="metric" id="summaryLight">
+            <strong>Ampel</strong>
+            <span id="summarySignal">Offen</span>
+          </div>
+          <div class="metric">
+            <strong>Profil</strong>
+            <span id="summaryProfile">Noch nicht bewertet</span>
+          </div>
+          <div class="metric">
+            <strong>Gesamtscore</strong>
+            <span id="summaryScore">0 / 27</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" type="button" id="saveBtn">Speichern</button>
+          <button type="button" id="loadBtn">Laden</button>
+          <button type="button" id="resetBtn">Zuruecksetzen</button>
+          <button type="button" id="printBtn">Drucken</button>
+        </div>
+      </div>
+
+      <section id="profile">
+        <h2>1. Kurzprofil des Vorhabens</h2>
+        <div class="field-grid">
+          <div>
+            <label for="org">Organisation / Kontext</label>
+            <input id="org" data-field="Organisation" type="text">
+          </div>
+          <div>
+            <label for="timeline">Geplanter Einsatzzeitpunkt</label>
+            <input id="timeline" data-field="Einsatzzeitpunkt" type="text">
+          </div>
+          <div>
+            <label for="goal">Ziel der KI-Nutzung</label>
+            <textarea id="goal" data-field="Ziel"></textarea>
+          </div>
+          <div>
+            <label for="conflict">Wichtigster Entscheidungskonflikt</label>
+            <textarea id="conflict" data-field="Entscheidungskonflikt"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section id="context">
+        <h2>2. A. Organisations- und Nutzerprofil</h2>
+        <div class="field-grid three">
+          <div>
+            <label for="role">Rolle / Funktion</label>
+            <select id="role" data-field="Rolle">
+              <option value="">Bitte waehlen</option>
+              <option>Geschaeftsfuehrung / Inhaber</option>
+              <option>IT-Leitung / Systemadministration</option>
+              <option>Datenschutz / Compliance</option>
+              <option>Software-Entwicklung / Automatisierung</option>
+              <option>Fachabteilung</option>
+              <option>KI-Beratung / Enablement</option>
+              <option>Kreativbereich</option>
+              <option>Forschung / Lehre</option>
+            </select>
+          </div>
+          <div>
+            <label for="industry">Branche / Einsatzkontext</label>
+            <select id="industry" data-field="Branche">
+              <option value="">Bitte waehlen</option>
+              <option>Industrie / Produktion</option>
+              <option>Handel / E-Commerce</option>
+              <option>Dienstleistung / Beratung</option>
+              <option>Gesundheit / Medizin</option>
+              <option>Recht / Steuer / Finanzen</option>
+              <option>Oeffentliche Verwaltung / Bildung</option>
+              <option>Medien / Agentur / Kreativwirtschaft</option>
+              <option>IT / Software / Tech</option>
+            </select>
+          </div>
+          <div>
+            <label for="size">Organisationsgroesse</label>
+            <select id="size" data-field="Organisationsgroesse">
+              <option value="">Bitte waehlen</option>
+              <option>1 Person</option>
+              <option>2-9 Mitarbeitende</option>
+              <option>10-49 Mitarbeitende</option>
+              <option>50-249 Mitarbeitende</option>
+              <option>250+ Mitarbeitende</option>
+            </select>
+          </div>
+          <div>
+            <label for="users">Geplante Nutzerzahl</label>
+            <select id="users" data-field="Nutzerzahl">
+              <option value="">Bitte waehlen</option>
+              <option>Einzelplatz</option>
+              <option>2-5 Nutzer</option>
+              <option>6-20 Nutzer</option>
+              <option>21-100 Nutzer</option>
+              <option>100+ Nutzer</option>
+            </select>
+          </div>
+          <div>
+            <label for="region">Regulatorischer Kontext</label>
+            <select id="region" data-field="Regulatorischer Kontext">
+              <option value="">Bitte waehlen</option>
+              <option>Deutschland</option>
+              <option>EU / EWR</option>
+              <option>International mit EU-Fokus</option>
+              <option>International ohne EU-Fokus</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section id="usecase">
+        <h2>3. B. Strategischer Einsatz von KI</h2>
+        <div class="field-grid">
+          <div>
+            <label for="mainPurpose">Hauptzweck</label>
+            <select id="mainPurpose" data-field="Hauptzweck">
+              <option value="">Bitte waehlen</option>
+              <option>Textassistenz / Wissensarbeit / Chat</option>
+              <option>Interne Wissensdatenbank / RAG / Dokumentenanalyse</option>
+              <option>Prozessautomatisierung / Agenten</option>
+              <option>Software-Entwicklung / Coding</option>
+              <option>Bild / Video / Audio</option>
+              <option>Fine-Tuning / Modellforschung</option>
+              <option>KI-Consulting / Enablement</option>
+              <option>Cloud/API-Governance / FinOps</option>
+            </select>
+          </div>
+          <div>
+            <label for="horizon">Zeithorizont</label>
+            <select id="horizon" data-field="Zeithorizont">
+              <option value="">Bitte waehlen</option>
+              <option>Pilot</option>
+              <option>Produktiver Einsatz</option>
+              <option>Ausbau in 24-36 Monaten</option>
+              <option>Unklar / explorativ</option>
+            </select>
+          </div>
+          <div>
+            <label for="intensity">Nutzungsintensitaet</label>
+            <select id="intensity" data-field="Nutzungsintensitaet">
+              <option value="">Bitte waehlen</option>
+              <option>Gelegentlich</option>
+              <option>Taeglich</option>
+              <option>Mehrere Stunden taeglich</option>
+              <option>Dauerlast / Batch / API</option>
+            </select>
+          </div>
+          <div>
+            <label for="secondary">Nebenzwecke</label>
+            <textarea id="secondary" data-field="Nebenzwecke"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section id="data">
+        <h2>4. C. Daten, Datenschutz und Governance</h2>
+        <h3>Datenarten</h3>
+        <div class="choice-grid" data-group="Datenarten">
+          <label class="check"><input type="checkbox" value="Oeffentliche Daten"><span>Oeffentliche Daten</span></label>
+          <label class="check"><input type="checkbox" value="Interne Informationen"><span>Interne Informationen</span></label>
+          <label class="check"><input type="checkbox" value="Personenbezogene Daten"><span>Personenbezogene Daten</span></label>
+          <label class="check"><input type="checkbox" value="Geschaeftsgeheimnisse"><span>Geschaeftsgeheimnisse</span></label>
+          <label class="check"><input type="checkbox" value="HR-Daten"><span>HR-Daten</span></label>
+          <label class="check"><input type="checkbox" value="Finanzdaten"><span>Finanzdaten</span></label>
+          <label class="check"><input type="checkbox" value="Vertraege / Rechtsdokumente"><span>Vertraege / Rechtsdokumente</span></label>
+          <label class="check"><input type="checkbox" value="Kundendaten / Mandantendaten"><span>Kundendaten / Mandantendaten</span></label>
+        </div>
+        <div class="field-grid three" style="margin-top:14px">
+          <div>
+            <label for="cloudPolicy">Datenverarbeitung erlaubt</label>
+            <select id="cloudPolicy" data-field="Datenverarbeitung">
+              <option value="">Bitte waehlen</option>
+              <option>Cloud erlaubt</option>
+              <option>Nur EU / EWR</option>
+              <option>Nur Deutschland</option>
+              <option>Hybrid: sensible Daten lokal, Rest Cloud</option>
+              <option>Nur lokal / On-Premise</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+          <div>
+            <label for="governance">Governance-Anforderungen</label>
+            <select id="governance" data-field="Governance">
+              <option value="">Bitte waehlen</option>
+              <option>Keine besonderen Anforderungen bekannt</option>
+              <option>Rollen/Rechte</option>
+              <option>Logging / Auditierbarkeit</option>
+              <option>Freigabeprozess / menschliche Aufsicht</option>
+              <option>Mandantentrennung</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+          <div>
+            <label for="legal">Rechtliche Einordnung</label>
+            <select id="legal" data-field="Rechtliche Einordnung">
+              <option value="">Bitte waehlen</option>
+              <option>Unkritisch</option>
+              <option>Datenschutz relevant</option>
+              <option>Potenziell KI-VO / AI-Act-relevant</option>
+              <option>Unklar / externe Pruefung noetig</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section id="workload">
+        <h2>5. D. LLM- und Modellanforderungen</h2>
+        <div class="field-grid three">
+          <div>
+            <label for="modelOps">Betriebsmodell</label>
+            <select id="modelOps" data-field="Betriebsmodell">
+              <option value="">Bitte waehlen</option>
+              <option>Nur Cloud / Browser-LLMs</option>
+              <option>Cloud plus kleinere lokale Modelle</option>
+              <option>Primaer lokale Modelle</option>
+              <option>Eigene Inferenzumgebung</option>
+              <option>Fine-Tuning / LoRA / Forschung</option>
+              <option>Offen</option>
+            </select>
+          </div>
+          <div>
+            <label for="modelSize">Modellgroesse</label>
+            <select id="modelSize" data-field="Modellgroesse">
+              <option value="">Bitte waehlen</option>
+              <option>Klein / bis 8B</option>
+              <option>Mittel / 13-34B</option>
+              <option>Gross / 70B+</option>
+              <option>Offen</option>
+            </select>
+          </div>
+          <div>
+            <label for="contextDepth">Kontext / Dokumenttiefe</label>
+            <select id="contextDepth" data-field="Kontext">
+              <option value="">Bitte waehlen</option>
+              <option>Kurze Prompts</option>
+              <option>Mittlere Dokumente</option>
+              <option>Lange Kontexte</option>
+              <option>Viele Dokumente / RAG</option>
+            </select>
+          </div>
+          <div>
+            <label for="loadProfile">Lastprofil</label>
+            <select id="loadProfile" data-field="Lastprofil">
+              <option value="">Bitte waehlen</option>
+              <option>Einzelabfragen</option>
+              <option>Mehrere Nutzer</option>
+              <option>Batch-Verarbeitung</option>
+              <option>API-Serving</option>
+              <option>Echtzeit / Low Latency</option>
+            </select>
+          </div>
+          <div>
+            <label for="bottleneck">Vermuteter Flaschenhals</label>
+            <select id="bottleneck" data-field="Flaschenhals">
+              <option value="">Bitte waehlen</option>
+              <option>Geschwindigkeit</option>
+              <option>RAM / VRAM</option>
+              <option>Kontext / KV-Cache</option>
+              <option>Nutzerzahl</option>
+              <option>Kosten</option>
+              <option>Einfachheit im Betrieb</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section id="media">
+        <h2>6. E. Medien- und Kreativ-Workloads</h2>
+        <div class="field-grid three">
+          <div>
+            <label for="mediaType">Medien relevant?</label>
+            <select id="mediaType" data-field="Medien">
+              <option value="">Bitte waehlen</option>
+              <option>Nein</option>
+              <option>Bildgenerierung</option>
+              <option>Bild-Batches / Kampagnen</option>
+              <option>Video</option>
+              <option>Audio</option>
+              <option>3D / VFX</option>
+            </select>
+          </div>
+          <div>
+            <label for="quality">Qualitaetsziel</label>
+            <select id="quality" data-field="Qualitaetsziel">
+              <option value="">Bitte waehlen</option>
+              <option>Demo / intern</option>
+              <option>Marketingqualitaet</option>
+              <option>Professionelle Produktion</option>
+              <option>Nicht relevant</option>
+            </select>
+          </div>
+          <div>
+            <label for="waitTime">Akzeptable Wartezeit</label>
+            <select id="waitTime" data-field="Wartezeit">
+              <option value="">Bitte waehlen</option>
+              <option>Echtzeit</option>
+              <option>Minuten</option>
+              <option>Stunden / Overnight</option>
+              <option>Nicht relevant</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section id="ops">
+        <h2>7. F. Infrastruktur, Formfaktor und Betrieb</h2>
+        <div class="field-grid three">
+          <div>
+            <label for="formFactor">Bevorzugter Formfaktor</label>
+            <select id="formFactor" data-field="Formfaktor">
+              <option value="">Bitte waehlen</option>
+              <option>Notebook</option>
+              <option>Mini-PC</option>
+              <option>Desktop / Workstation</option>
+              <option>Zentraler Server</option>
+              <option>Keine Praeferenz</option>
+            </select>
+          </div>
+          <div>
+            <label for="hardwarePref">Hardwarepraeferenz</label>
+            <select id="hardwarePref" data-field="Hardwarepraeferenz">
+              <option value="">Bitte waehlen</option>
+              <option>NVIDIA / CUDA</option>
+              <option>Apple / Unified Memory</option>
+              <option>NPU / AI-PC</option>
+              <option>AMD</option>
+              <option>Keine Praeferenz</option>
+            </select>
+          </div>
+          <div>
+            <label for="noise">Lautstaerke</label>
+            <select id="noise" data-field="Lautstaerke">
+              <option value="">Bitte waehlen</option>
+              <option>Egal</option>
+              <option>Leise wichtig</option>
+              <option>Sehr leise erforderlich</option>
+            </select>
+          </div>
+          <div>
+            <label for="mobility">Mobilitaet</label>
+            <select id="mobility" data-field="Mobilitaet">
+              <option value="">Bitte waehlen</option>
+              <option>Stationaer</option>
+              <option>Teilweise mobil</option>
+              <option>Stark mobil</option>
+            </select>
+          </div>
+          <div>
+            <label for="infra">Infrastruktur</label>
+            <select id="infra" data-field="Infrastruktur">
+              <option value="">Bitte waehlen</option>
+              <option>Standardbuero</option>
+              <option>Serverraum</option>
+              <option>Starke Stromversorgung / Kuehlung</option>
+              <option>Backup / Netzwerk vorhanden</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section id="budget">
+        <h2>8. G. Budget und Betriebsmodell</h2>
+        <div class="field-grid three">
+          <div>
+            <label for="budgetRange">Budgetrahmen</label>
+            <select id="budgetRange" data-field="Budgetrahmen">
+              <option value="">Bitte waehlen</option>
+              <option>&lt; 1.000 EUR</option>
+              <option>1.000-2.000 EUR</option>
+              <option>2.000-3.500 EUR</option>
+              <option>3.500-5.000 EUR</option>
+              <option>5.000-12.000 EUR</option>
+              <option>&gt; 12.000 EUR</option>
+              <option>Offen</option>
+            </select>
+          </div>
+          <div>
+            <label for="budgetLogic">Budgetlogik</label>
+            <select id="budgetLogic" data-field="Budgetlogik">
+              <option value="">Bitte waehlen</option>
+              <option>CAPEX bevorzugt</option>
+              <option>OPEX bevorzugt</option>
+              <option>Hybrid</option>
+              <option>Offen</option>
+            </select>
+          </div>
+          <div>
+            <label for="life">Nutzungsdauer</label>
+            <select id="life" data-field="Nutzungsdauer">
+              <option value="">Bitte waehlen</option>
+              <option>Pilot / &lt; 1 Jahr</option>
+              <option>1-3 Jahre</option>
+              <option>3-5 Jahre</option>
+              <option>&gt; 5 Jahre</option>
+            </select>
+          </div>
+          <div>
+            <label for="cloudCosts">Cloud-/API-Kosten</label>
+            <select id="cloudCosts" data-field="Cloud-/API-Kosten">
+              <option value="">Bitte waehlen</option>
+              <option>Moeglichst vermeiden</option>
+              <option>Begrenzt ok</option>
+              <option>Cloud-first ok</option>
+              <option>Offen</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section id="skills">
+        <h2>9. H. Technische Reife und Software-Stack</h2>
+        <div class="field-grid three">
+          <div>
+            <label for="skillLevel">Team-Reifegrad</label>
+            <select id="skillLevel" data-field="Team-Reifegrad">
+              <option value="">Bitte waehlen</option>
+              <option>Einsteiger</option>
+              <option>Power User</option>
+              <option>IT/Admin vorhanden</option>
+              <option>DevOps / MLOps / Plattform-Team</option>
+            </select>
+          </div>
+          <div>
+            <label for="complexity">Betriebskomplexitaet akzeptabel</label>
+            <select id="complexity" data-field="Betriebskomplexitaet">
+              <option value="">Bitte waehlen</option>
+              <option>One-Click / GUI-first</option>
+              <option>Docker ok</option>
+              <option>Mehrere Services ok</option>
+              <option>Plattformbetrieb ok</option>
+            </select>
+          </div>
+          <div>
+            <label for="owner">Verantwortliche Person fuer Betrieb</label>
+            <select id="owner" data-field="Betriebsverantwortung">
+              <option value="">Bitte waehlen</option>
+              <option>Ja</option>
+              <option>Nein</option>
+              <option>Offen</option>
+            </select>
+          </div>
+        </div>
+        <h3>Bereits genutzte Tools</h3>
+        <div class="choice-grid" data-group="Tools">
+          <label class="check"><input type="checkbox" value="ChatGPT / Browser-LLMs"><span>ChatGPT / Browser-LLMs</span></label>
+          <label class="check"><input type="checkbox" value="Ollama / LM Studio"><span>Ollama / LM Studio</span></label>
+          <label class="check"><input type="checkbox" value="Open WebUI"><span>Open WebUI</span></label>
+          <label class="check"><input type="checkbox" value="AnythingLLM"><span>AnythingLLM</span></label>
+          <label class="check"><input type="checkbox" value="Dify"><span>Dify</span></label>
+          <label class="check"><input type="checkbox" value="n8n / Agenten"><span>n8n / Agenten</span></label>
+          <label class="check"><input type="checkbox" value="ComfyUI / SD-WebUI"><span>ComfyUI / SD-WebUI</span></label>
+          <label class="check"><input type="checkbox" value="vLLM / llama.cpp"><span>vLLM / llama.cpp</span></label>
+        </div>
+      </section>
+
+      <section id="priorities">
+        <h2>10. I. Prioritaeten, Must-haves und Ausschluesse</h2>
+        <h3>Top-3 Prioritaeten</h3>
+        <div class="choice-grid" data-group="Prioritaeten">
+          <label class="check"><input type="checkbox" value="Kosten"><span>Kosten</span></label>
+          <label class="check"><input type="checkbox" value="Performance"><span>Performance</span></label>
+          <label class="check"><input type="checkbox" value="Datenschutz"><span>Datenschutz</span></label>
+          <label class="check"><input type="checkbox" value="Einfache Bedienbarkeit"><span>Einfache Bedienbarkeit</span></label>
+          <label class="check"><input type="checkbox" value="Mobilitaet / Lautstaerke"><span>Mobilitaet / Lautstaerke</span></label>
+          <label class="check"><input type="checkbox" value="Governance"><span>Governance</span></label>
+          <label class="check"><input type="checkbox" value="Zukunftssicherheit"><span>Zukunftssicherheit</span></label>
+        </div>
+        <div class="field-grid" style="margin-top:14px">
+          <div>
+            <label for="must">Must-haves</label>
+            <textarea id="must" data-field="Must-haves"></textarea>
+          </div>
+          <div>
+            <label for="noGos">No-Gos</label>
+            <textarea id="noGos" data-field="No-Gos"></textarea>
+          </div>
+          <div>
+            <label for="constraints">Offene Randbedingungen</label>
+            <textarea id="constraints" data-field="Offene Randbedingungen"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section id="matrix">
+        <h2>11. Bewertungsmatrix</h2>
+        <div id="matrixRows"></div>
+      </section>
+
+      <section id="decision">
+        <h2>12. Zielklasse, Risiken und naechster Schritt</h2>
+        <div class="field-grid">
+          <div>
+            <label for="manualClass">Manuell gesetzte Zielklasse</label>
+            <select id="manualClass" data-field="Manuelle Zielklasse">
+              <option value="">Automatische Tendenz verwenden</option>
+              <option>Klasse 1: Browser-/Cloud-Arbeitsplatz</option>
+              <option>Klasse 2: Leichter AI-PC</option>
+              <option>Klasse 3: Lokaler Datenschutz- oder Shared-Memory-Knoten</option>
+              <option>Klasse 4: Prosumer-GPU-System</option>
+              <option>Klasse 5: Workstation / High-End-GPU-System</option>
+              <option>Klasse 6: Forschungs-, Cluster- oder Hybrid-Modell</option>
+            </select>
+          </div>
+          <div>
+            <label for="altClass">Beratend ergaenzte alternative Zielklasse</label>
+            <input id="altClass" data-field="Alternative Zielklasse" type="text">
+          </div>
+          <div>
+            <label for="risks">Wichtigste Risiken</label>
+            <textarea id="risks" data-field="Risiken"></textarea>
+          </div>
+          <div>
+            <label for="openQuestions">Offene Prueffragen</label>
+            <textarea id="openQuestions" data-field="Offene Prueffragen"></textarea>
+          </div>
+          <div>
+            <label for="nextStep">Naechster sinnvoller Schritt</label>
+            <textarea id="nextStep" data-field="Naechster Schritt"></textarea>
+          </div>
+          <div>
+            <label for="review">Benoetigte externe Pruefung</label>
+            <textarea id="review" data-field="Externe Pruefung"></textarea>
+          </div>
+        </div>
+        <div class="note" id="pflichtHinweise">Pflicht-Hinweise erscheinen nach der Matrixbewertung.</div>
+        <div class="note" id="ampelBegruendung">Ampel-Begruendung erscheint nach der Matrixbewertung.</div>
+      </section>
+
+      <section id="export">
+        <h2>13. Export</h2>
+        <textarea id="exportText" class="export-box" readonly></textarea>
+        <div class="actions">
+          <button class="primary" type="button" id="generateBtn">Markdown aktualisieren</button>
+          <button type="button" id="copyBtn">Kopieren</button>
+          <button type="button" id="downloadBtn">Als Markdown speichern</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const axes = [
+      {
+        id: "A",
+        title: "Compute-/GPU-Druck",
+        help: "GPU-Rohleistung, CUDA, Rendering, Medienproduktion oder schnelle lokale Inferenz.",
+        levels: [
+          "Reine Wissensarbeit, Text, Dokumente, leichte Assistenz",
+          "Gelegentliche lokale Inferenz kleiner oder mittlerer Modelle",
+          "Spuerbarer Wunsch nach schneller lokaler Inferenz oder Coding-Last",
+          "Medienproduktion, CUDA, Fine-Tuning, ComfyUI, Video, High-Speed-Inferenz"
+        ]
+      },
+      {
+        id: "B",
+        title: "Speicher-/Modellgroessendruck",
+        help: "RAM, Unified Memory, VRAM, Modellgroesse, Dokumenttiefe oder grosse Wissensraeume.",
+        levels: [
+          "Keine lokale Modellnutzung oder nur sehr kleine Modelle",
+          "Kleine bis mittlere lokale Modelle",
+          "30B-70B-Klasse oder groessere RAG-Wissensraeume",
+          "70B+, sehr lange Kontexte, grosse lokale Wissensbasis, hoher Parallelitaetsdruck"
+        ]
+      },
+      {
+        id: "C",
+        title: "Datenschutz- und Datenkritikalitaet",
+        help: "Personenbezogene, vertrauliche oder regulierte Daten und deren Architekturwirkung.",
+        levels: [
+          "Oeffentliche oder unkritische Daten",
+          "Interne, aber nicht besonders kritische Daten",
+          "Sensible Unternehmensdaten, Vertraege, Kundendaten",
+          "Hochkritische oder regulierte Daten, starke lokale Kontrollanforderung"
+        ]
+      },
+      {
+        id: "D",
+        title: "Governance- und Auditbedarf",
+        help: "Rollen, Freigaben, Logging, Nachvollziehbarkeit und kontrollierter Betrieb.",
+        levels: [
+          "Einzelplatz, unkritisch, kein Governance-Fokus",
+          "Einfache Teamnutzung ohne starke Auditpflicht",
+          "Rollen, Freigaben und Dokumentationspflichten relevant",
+          "Audit-Logs, Mandantentrennung, formale Nachvollziehbarkeit und klare Betriebsverantwortung noetig"
+        ]
+      },
+      {
+        id: "E",
+        title: "Parallelitaets- und Mehrnutzerdruck",
+        help: "Gleichzeitige Nutzer, API-Serving oder geteilte Teamnutzung.",
+        levels: [
+          "Einzelplatz",
+          "Gelegentliche Mitnutzung durch wenige Personen",
+          "2-10 Nutzer mit zeitweiser Parallelitaet",
+          "Team- oder Abteilungsnutzung mit regelmaessiger Parallelitaet"
+        ]
+      },
+      {
+        id: "F",
+        title: "Betriebs- und Adminreife",
+        help: "Self-Hosting, Wartung, Betrieb, IT- und DevOps-Faehigkeit.",
+        levels: [
+          "Kaum technische Betreuung moeglich",
+          "Power-User oder einfache IT vorhanden",
+          "Docker, mehrere Services oder einfache Administration moeglich",
+          "DevOps, MLOps oder Plattformbetrieb vorhanden"
+        ]
+      },
+      {
+        id: "G",
+        title: "Mobilitaet, Lautstaerke und Arbeitsplatzrealitaet",
+        help: "Formfaktor, Lautstaerke, Energiebedarf und Mobilitaet.",
+        levels: [
+          "Stationaer, Lautstaerke egal",
+          "Begrenzte Arbeitsplatzanforderungen",
+          "Leise oder kompakt wichtig",
+          "Stark mobil oder sehr geraeuschempfindlich"
+        ]
+      },
+      {
+        id: "H",
+        title: "Budgetstaerke",
+        help: "Hoehe und architektonische Nutzbarkeit des Budgets.",
+        levels: [
+          "Sehr knapp, Pilot oder Minimalbudget",
+          "Begrenztes Mittelklasse-Budget",
+          "Solides Projektbudget",
+          "Professionelles Budget mit Zukunftspfad"
+        ]
+      },
+      {
+        id: "I",
+        title: "Zukunfts- und Ausbaupfad",
+        help: "Pilot, Erweiterung, Skalierung, Agenten, Fine-Tuning oder Mandantenfaehigkeit.",
+        levels: [
+          "Punktuelle Nutzung, kein Ausbau geplant",
+          "Kleinere Erweiterungen denkbar",
+          "Mehr Workflows, mehr Nutzer oder groessere Modelle absehbar",
+          "Strategischer Ausbau, Agenten, Fine-Tuning, Mandantenfaehigkeit oder mehrere Lastklassen geplant"
+        ]
+      }
+    ];
+
+    const matrixRows = document.getElementById("matrixRows");
+
+    axes.forEach(axis => {
+      const row = document.createElement("div");
+      row.className = "matrix-row";
+      row.innerHTML = `
+        <div class="matrix-head">
+          <div>
+            <div class="axis-title">${axis.id}. ${axis.title}</div>
+            <div class="axis-help">${axis.help}</div>
+          </div>
+          <div>
+            <label for="score${axis.id}">Wert 0-3</label>
+            <div class="range-wrap">
+              <input id="score${axis.id}" data-score="${axis.id}" type="range" min="0" max="3" value="0">
+              <span class="score" id="scoreOut${axis.id}">0</span>
+            </div>
+          </div>
+          <div>
+            <label for="status${axis.id}">Status</label>
+            <select id="status${axis.id}" data-status="${axis.id}">
+              <option>bestaetigt</option>
+              <option>plausibel abgeleitet</option>
+              <option>offen</option>
+            </select>
+          </div>
+        </div>
+        <div class="score-help" id="help${axis.id}">${axis.levels[0]}</div>
+        <div style="margin-top:10px">
+          <label for="reason${axis.id}">Kurzbegruendung</label>
+          <input id="reason${axis.id}" data-reason="${axis.id}" type="text">
+        </div>
+      `;
+      matrixRows.appendChild(row);
+    });
+
+    function getScores() {
+      return Object.fromEntries(axes.map(axis => [axis.id, Number(document.getElementById(`score${axis.id}`).value)]));
+    }
+
+    function checkedValues(groupName) {
+      return Array.from(document.querySelectorAll(`[data-group="${groupName}"] input:checked`)).map(input => input.value);
+    }
+
+    function fieldValue(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    function setMetricClass(signal) {
+      const metric = document.getElementById("summaryLight");
+      metric.classList.remove("green", "yellow", "red");
+      if (signal === "Gruen") metric.classList.add("green");
+      if (signal === "Gelb") metric.classList.add("yellow");
+      if (signal === "Rot") metric.classList.add("red");
+    }
+
+    function inferClass(scores) {
+      const { A, B, C, D, E, F, G, H, I } = scores;
+      if (E >= 3 && B >= 2) return "Klasse 6: Forschungs-, Cluster- oder Hybrid-Modell";
+      if (I >= 3 && (E >= 2 || A >= 2 || B >= 2)) return "Klasse 6: Forschungs-, Cluster- oder Hybrid-Modell";
+      if (A >= 3 && I >= 2 && F >= 2 && H >= 2) return "Klasse 5: Workstation / High-End-GPU-System";
+      if (A >= 3 || (A + I >= 5)) return "Klasse 4: Prosumer-GPU-System";
+      if ((B + C + E >= 6) && A <= 2) return "Klasse 3: Lokaler Datenschutz- oder Shared-Memory-Knoten";
+      if (A <= 1 && B <= 1 && E <= 1 && G >= 1) return "Klasse 2: Leichter AI-PC";
+      if (C <= 1 && A <= 1 && B <= 1 && F <= 1) return "Klasse 1: Browser-/Cloud-Arbeitsplatz";
+      if (C >= 2 || B >= 2) return "Klasse 3: Lokaler Datenschutz- oder Shared-Memory-Knoten";
+      return "Klasse 1: Browser-/Cloud-Arbeitsplatz";
+    }
+
+    function inferProfile(scores) {
+      const { A, B, C, D, E, F, G, I } = scores;
+      if (C + D >= 5) return "Governance-first";
+      if (A >= 3 || A + I >= 5) return "GPU-/CUDA-first";
+      if (B + C + E >= 6 && A <= 2) return "RAM-/Shared-Memory-first";
+      if (E >= 3 && B >= 2) return "Mehrnutzer-/Server-Tendenz";
+      if (I >= 3 && E >= 2) return "Skalierungs-/Hybrid-Tendenz";
+      if (A <= 1 && B <= 1 && C <= 1 && F <= 1) return "Cloud-/Browser-first";
+      if (G >= 2 && A <= 1 && B <= 1) return "Leichter AI-PC";
+      return "Gemischtes Profil";
+    }
+
+    function inferSignal(scores) {
+      const openCore = ["cloudPolicy", "budgetRange", "users", "mainPurpose"].some(id => {
+        const value = fieldValue(id);
+        return value === "" || value === "Unklar" || value === "Offen";
+      });
+      const ownerProblem = ["Nein", "Offen"].includes(fieldValue("owner")) && (scores.C >= 2 || scores.E >= 2 || fieldValue("modelOps").includes("lokale") || fieldValue("modelOps").includes("Inferenz"));
+      const sensitiveOpen = scores.C >= 2 && (fieldValue("cloudPolicy") === "" || fieldValue("cloudPolicy") === "Unklar");
+      const contradiction = fieldValue("mediaType") !== "" && fieldValue("mediaType") !== "Nein" && scores.A <= 1;
+
+      if (sensitiveOpen || ownerProblem || contradiction) return "Rot";
+      if (openCore || scores.C >= 2 || scores.D >= 2 || scores.E >= 2) return "Gelb";
+      return "Gruen";
+    }
+
+    function uniqueItems(items) {
+      return [...new Set(items.filter(Boolean))];
+    }
+
+    function signalReasons(scores) {
+      const reasons = [];
+      const cloudPolicy = fieldValue("cloudPolicy");
+      const budgetRange = fieldValue("budgetRange");
+      const users = fieldValue("users");
+      const mainPurpose = fieldValue("mainPurpose");
+      const owner = fieldValue("owner");
+      const modelOps = fieldValue("modelOps");
+      const mediaType = fieldValue("mediaType");
+
+      if (scores.C >= 2) {
+        reasons.push("sensible oder vertrauliche Daten die Architektur praegen");
+      }
+      if (scores.C >= 2 && (cloudPolicy === "" || cloudPolicy === "Unklar")) {
+        reasons.push("die Cloud-Policy bei sensiblen Daten noch unklar ist");
+      }
+      if (["Nein", "Offen"].includes(owner) && (scores.C >= 2 || scores.E >= 2 || modelOps.includes("lokale") || modelOps.includes("Inferenz"))) {
+        reasons.push("lokale oder geteilte Nutzung erkennbar ist, aber die Betriebsverantwortung fehlt oder offen ist");
+      }
+      if (budgetRange === "" || budgetRange === "Offen") {
+        reasons.push("der Budgetrahmen noch offen ist");
+      }
+      if (users === "" || users === "Offen") {
+        reasons.push("Nutzerzahl oder Parallelitaet noch nicht ausreichend geklaert sind");
+      }
+      if (mainPurpose === "" || mainPurpose === "Unklar") {
+        reasons.push("der Hauptzweck der KI-Nutzung noch unklar ist");
+      }
+      if (mediaType !== "" && mediaType !== "Nein" && scores.A <= 1) {
+        reasons.push("Medien- oder Vision-Workloads genannt sind, der Compute-Druck aber niedrig bewertet wurde");
+      }
+      if (scores.D >= 2) {
+        reasons.push("Governance, Rollen, Rechte oder Nachvollziehbarkeit relevant sind");
+      }
+      if (scores.E >= 2) {
+        reasons.push("Mehrnutzerlast und Betriebsmodell geprueft werden muessen");
+      }
+
+      return uniqueItems(reasons);
+    }
+
+    function ampelBegruendung(scores, signal) {
+      const reasons = signalReasons(scores);
+      if (signal === "Rot") {
+        const reasonText = reasons.length
+          ? `, weil ${reasons.join("; ")}`
+          : ", weil wesentliche Entscheidungsgrundlagen fehlen oder widerspruechlich sind";
+        return `Die Ampel steht auf Rot. Eine konkrete Hardwareempfehlung ist noch nicht sinnvoll${reasonText}. Vor einer Produktauswahl muessen die offenen Punkte geklaert und verantwortliche Personen einbezogen werden.`;
+      }
+      if (signal === "Gelb") {
+        const reasonText = reasons.length
+          ? ` Relevante Pruefpunkte sind: ${reasons.join("; ")}.`
+          : "";
+        return `Die Ampel steht auf Gelb. Eine Architektur- oder Hardwaretendenz kann dokumentiert werden, konkrete Produkte sollten aber erst nach Klaerung der offenen Punkte und aktueller Quellenpruefung vorbereitet werden.${reasonText}`;
+      }
+      return "Die Ampel steht auf Gruen. Eine konkrete Produktauswahl kann vorbereitet werden, sofern aktuelle Quellen, Preise, Verfuegbarkeit und verantwortliche Freigaben geprueft werden.";
+    }
+
+    function pflichtHinweise(scores) {
+      const notes = [];
+      if (scores.C >= 2) notes.push("Datenresidenz, lokale vs. Cloud-Verarbeitung und Zugriffskontrolle dokumentieren.");
+      if (scores.D >= 2) notes.push("Rollen, Rechte, Logging, Freigaben und Betriebsverantwortung dokumentieren.");
+      if (scores.E >= 2) notes.push("Mehrnutzerlast, KV-Cache, Session-Management und Betriebsmodell pruefen.");
+      if (scores.F <= 1) notes.push("Betriebs-Komplexitaet begrenzen und keine unnoetig komplexe Architektur empfehlen.");
+      if (scores.I >= 2) notes.push("Startloesung und Ausbaupfad getrennt dokumentieren.");
+      return notes;
+    }
+
+    function updateSummary() {
+      const scores = getScores();
+      axes.forEach(axis => {
+        const value = scores[axis.id];
+        document.getElementById(`scoreOut${axis.id}`).textContent = value;
+        document.getElementById(`help${axis.id}`).textContent = axis.levels[value];
+      });
+
+      const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
+      const autoClass = inferClass(scores);
+      const manual = fieldValue("manualClass");
+      const signal = inferSignal(scores);
+      const notes = pflichtHinweise(scores);
+      const signalText = ampelBegruendung(scores, signal);
+
+      document.getElementById("summaryClass").textContent = manual || autoClass;
+      document.getElementById("summarySignal").textContent = signal;
+      document.getElementById("summaryProfile").textContent = inferProfile(scores);
+      document.getElementById("summaryScore").textContent = `${total} / 27`;
+      document.getElementById("pflichtHinweise").innerHTML = notes.length
+        ? `<strong>Pflicht-Hinweise:</strong><ul>${notes.map(note => `<li>${note}</li>`).join("")}</ul>`
+        : "Keine zusaetzlichen Pflicht-Hinweise aus den Scores.";
+      document.getElementById("ampelBegruendung").innerHTML = `<strong>Ampel-Begruendung:</strong> ${signalText}`;
+      setMetricClass(signal);
+      generateMarkdown();
+    }
+
+    function collectFields() {
+      return Array.from(document.querySelectorAll("[data-field]")).map(el => ({
+        label: el.dataset.field,
+        value: el.value || ""
+      }));
+    }
+
+    function generateMarkdown() {
+      const scores = getScores();
+      const signal = inferSignal(scores);
+      const autoClass = inferClass(scores);
+      const manualClass = fieldValue("manualClass");
+      const targetClass = manualClass || autoClass;
+      const alternativeClass = fieldValue("altClass");
+      const profile = inferProfile(scores);
+      const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
+      const notes = pflichtHinweise(scores);
+      const signalText = ampelBegruendung(scores, signal);
+
+      const lines = [];
+      lines.push("# KI-Hardware-Bedarfsanalyse");
+      lines.push("");
+      lines.push("## Klassifizierung");
+      lines.push("");
+      lines.push(`- Automatisch abgeleitete Zielklasse: ${autoClass}`);
+      lines.push(`- Verwendete Zielklasse: ${targetClass}`);
+      lines.push(`- Manuell gesetzte Zielklasse: ${manualClass || "nicht gesetzt"}`);
+      lines.push(`- Beratend ergaenzte alternative Zielklasse: ${alternativeClass || "nicht gesetzt"}`);
+      lines.push(`- Profil: ${profile}`);
+      lines.push(`- Ampel: ${signal}`);
+      lines.push(`- Gesamtscore: ${total} / 27`);
+      lines.push("");
+      lines.push("## Ampel-Begruendung");
+      lines.push("");
+      lines.push(signalText);
+      lines.push("");
+      lines.push("## Kurzprofil");
+      collectFields().forEach(item => {
+        if (item.value) lines.push(`- ${item.label}: ${item.value}`);
+      });
+      const groups = ["Datenarten", "Tools", "Prioritaeten"];
+      groups.forEach(group => {
+        const values = checkedValues(group);
+        if (values.length) lines.push(`- ${group}: ${values.join(", ")}`);
+      });
+      lines.push("");
+      lines.push("## Bewertungsmatrix");
+      lines.push("");
+      lines.push("| Achse | Wert | Status | Begruendung |");
+      lines.push("|---|---:|---|---|");
+      axes.forEach(axis => {
+        const status = document.getElementById(`status${axis.id}`).value;
+        const reason = fieldValue(`reason${axis.id}`);
+        lines.push(`| ${axis.id}. ${axis.title} | ${scores[axis.id]} | ${status} | ${reason} |`);
+      });
+      lines.push("");
+      lines.push("## Pflicht-Hinweise");
+      if (notes.length) {
+        notes.forEach(note => lines.push(`- ${note}`));
+      } else {
+        lines.push("- Keine zusaetzlichen Pflicht-Hinweise aus den Scores.");
+      }
+      lines.push("");
+      lines.push("## Entscheidung");
+      lines.push(`- Beratend ergaenzte alternative Zielklasse: ${alternativeClass}`);
+      lines.push(`- Risiken: ${fieldValue("risks")}`);
+      lines.push(`- Offene Prueffragen: ${fieldValue("openQuestions")}`);
+      lines.push(`- Externe Pruefung: ${fieldValue("review")}`);
+      lines.push(`- Naechster Schritt: ${fieldValue("nextStep")}`);
+      lines.push("");
+      lines.push("Hinweis: Konkrete Produkte nur nach aktueller Quellen-, Preis- und Verfuegbarkeitspruefung empfehlen.");
+
+      document.getElementById("exportText").value = lines.join("\n");
+    }
+
+    function saveState() {
+      const data = {};
+      document.querySelectorAll("input, select, textarea").forEach(el => {
+        if (el.type === "checkbox") {
+          data[el.value + "::" + el.closest("[data-group]")?.dataset.group] = el.checked;
+        } else {
+          data[el.id] = el.value;
+        }
+      });
+      localStorage.setItem("ki-hardware-dashboard-v2", JSON.stringify(data));
+    }
+
+    function loadState() {
+      const data = JSON.parse(localStorage.getItem("ki-hardware-dashboard-v2") || "{}");
+      document.querySelectorAll("input, select, textarea").forEach(el => {
+        if (el.type === "checkbox") {
+          const key = el.value + "::" + el.closest("[data-group]")?.dataset.group;
+          el.checked = Boolean(data[key]);
+        } else if (el.id && Object.prototype.hasOwnProperty.call(data, el.id)) {
+          el.value = data[el.id];
+        }
+      });
+      updateSummary();
+    }
+
+    function resetState() {
+      if (!confirm("Alle Eingaben im Dashboard zuruecksetzen?")) return;
+      localStorage.removeItem("ki-hardware-dashboard-v2");
+      document.querySelectorAll("input, select, textarea").forEach(el => {
+        if (el.type === "checkbox") el.checked = false;
+        else if (el.type === "range") el.value = "0";
+        else el.value = "";
+      });
+      updateSummary();
+    }
+
+    function downloadMarkdown() {
+      generateMarkdown();
+      const blob = new Blob([document.getElementById("exportText").value], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ki-hardware-bedarfsanalyse-ergebnis.md";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    document.addEventListener("input", updateSummary);
+    document.addEventListener("change", updateSummary);
+    document.getElementById("saveBtn").addEventListener("click", saveState);
+    document.getElementById("loadBtn").addEventListener("click", loadState);
+    document.getElementById("resetBtn").addEventListener("click", resetState);
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+    document.getElementById("generateBtn").addEventListener("click", generateMarkdown);
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      generateMarkdown();
+      const exportText = document.getElementById("exportText");
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(exportText.value);
+      } else {
+        exportText.focus();
+        exportText.select();
+        document.execCommand("copy");
+      }
+    });
+    document.getElementById("downloadBtn").addEventListener("click", downloadMarkdown);
+
+    loadState();
+    updateSummary();
+  </script>
+</body>
+</html>

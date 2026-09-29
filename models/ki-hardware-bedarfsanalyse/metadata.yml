@@ -1,0 +1,51 @@
+id: ki-hardware-bedarfsanalyse
+artifact_type: model
+title: "Beratungsmodell zur KI-Hardware-Bedarfsanalyse"
+category: consulting
+status: bronze_candidate
+language: de
+version: "0.1.0"
+maintainer: pf
+license: CC-BY-4.0
+license_status: declared
+data_risk: yellow
+human_review_required: true
+ai_act_proximity: unclear
+legal_disclaimer: "Dieses Artefakt ist eine Arbeits- und Orientierungshilfe. Es ersetzt keine technische Beschaffungspruefung, keine Rechtsberatung, keine Datenschutzfreigabe, kein IT-Sicherheitsaudit und keine verbindliche Kaufempfehlung. Vor produktiver Nutzung oder Beschaffung sind Kontext, Daten, Quellen, technische Anforderungen und Ergebnisse durch verantwortliche Personen zu pruefen."
+sources_status: provided
+
+model_type: worksheet
+target_users:
+  - "KMU-Geschaeftsfuehrung"
+  - "IT-Verantwortliche in KMU"
+  - "KI-Beraterinnen und KI-Berater"
+  - "Projektleitungen fuer KI-Einfuehrungen"
+  - "Fachbereiche mit KI-Vorhaben"
+use_case: "KI-Vorhaben vor einer Hardware- oder Architekturentscheidung strukturiert klaeren und eine begruendete Zielklasse mit offenen Prueffragen ableiten"
+required_inputs:
+  - "Beschreibung des KI-Vorhabens"
+  - "Organisationstyp und Nutzerzahl"
+  - "Haupt- und Nebenzwecke der KI-Nutzung"
+  - "Datenarten und Datenschutzanforderungen"
+  - "Gewuenschtes Betriebsmodell"
+  - "Workload-Typ und Lastprofil"
+  - "Vorhandene IT und Betriebsreife"
+  - "Budgetrahmen"
+  - "Must-haves, No-Gos und offene Randbedingungen"
+output_format: "Ausgefuelltes Worksheet mit Bewertungsmatrix, Zielklasse, Empfehlungstendenz, Risiken, offenen Fragen und naechstem Schritt"
+application_scope: "Discovery, Beratung, Workshop, Vorpruefung und Entscheidungsvorbereitung fuer KI-Hardware- und Architekturfragen in KMU"
+framework_references:
+  - "Eigene Bewertungsmatrix zur KI-Hardware-Bedarfsanalyse"
+  - "Konsolidierte KI-Checkliste und Umfrage 2026"
+  - "Konsolidiertes Assistenzdokument KI-Hardware-Bedarfsanalyse 2026"
+  - "Deep-Research-Report zu KI-Hardware fuer KMU"
+required_review_level: trust_review
+companion_artifacts:
+  - path: "ki-hardware-bedarfsanalyse-dashboard-v2.html"
+    type: "interactive_dashboard"
+    review_scope: "optional companion artifact"
+    note: "Lokales HTML-Dashboard fuer Workshops und Beratungsgespraeche; Eingaben bleiben im Browser."
+  - path: "ki-hardware-bedarfsanalyse-erklaerboard.html"
+    type: "explanation_board"
+    review_scope: "optional companion artifact"
+    note: "Begleitdokument zur schnellen Erklaerung von Modelllogik, Zielklassen und Grenzen."
