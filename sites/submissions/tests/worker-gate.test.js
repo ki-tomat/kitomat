@@ -16,3 +16,14 @@ test('does not accept an unauthenticated upload request', async () => {
   const response = await worker.fetch(new Request('https://submissions.example/api/submissions', { method: 'POST' }), { SUBMISSIONS_ENABLED: 'false' });
   assert.equal(response.status, 401);
 });
+
+test('keeps the upload form unavailable while the legal gate is disabled even with an allowlist', async () => {
+  const worker = createWorker();
+  const response = await worker.fetch(
+    new Request('https://submissions.example/'),
+    { SUBMISSIONS_ENABLED: 'false', ALLOWED_GITHUB_LOGINS: 'ki-consultant-01' },
+  );
+  const html = await response.text();
+  assert.doesNotMatch(html, /submission-form/);
+  assert.match(html, /Direkteinreichungen sind deaktiviert/);
+});
